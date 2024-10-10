@@ -2,22 +2,7 @@ import { Search } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { state } from './stores/worldStore';
 import { Entity } from './types';
-
-const SelectionBox: React.FC<{ entity: Entity }> = ({ entity }) => {
-  const boxSize = 20 * entity.scale + 4;
-  return (
-    <rect
-      x={entity.x - boxSize / 2}
-      y={entity.y - boxSize / 2}
-      width={boxSize}
-      height={boxSize}
-      fill='none'
-      stroke='blue'
-      strokeWidth='1'
-      strokeDasharray='2, 2'
-    />
-  );
-};
+import { SelectionBox } from './components/SelectionBox';
 
 export default function GameSandbox() {
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
@@ -47,6 +32,8 @@ export default function GameSandbox() {
         if (renderContent !== null) {
           newEntityRenderContents.push([entity as any, renderContent] as const);
         }
+
+        console.log(entity.id, renderContent);
       }
       setEntityRenderContents(newEntityRenderContents);
     }
@@ -79,41 +66,6 @@ export default function GameSandbox() {
     // Here you would handle the prompt, e.g., add new entities, modify existing ones, etc.
     setPrompt('');
   };
-
-  // const addBehaviorToSelectedEntity = useCallback(
-  //   (behavior: Behavior | CustomBehaviorOptions) => {
-  //     if (selectedEntity) {
-  //       setEntities(prevEntities =>
-  //         prevEntities.map(entity => {
-  //           if (entity.id === selectedEntity.id) {
-  //             return {
-  //               ...entity,
-  //               behaviors: [
-  //                 ...entity.behaviors,
-  //                 behavior instanceof Object && 'name' in behavior
-  //                   ? CustomBehavior(behavior)
-  //                   : behavior,
-  //               ],
-  //             };
-  //           }
-  //           return entity;
-  //         })
-  //       );
-  //     }
-  //   },
-  //   [selectedEntity]
-  // );
-
-  // // Expose the API to the window object
-  // useEffect(() => {
-  //   (window as any).gameSandboxAPI = {
-  //     addBehaviorToSelectedEntity: addBehaviorToSelectedEntity,
-  //   };
-
-  //   return () => {
-  //     delete (window as any).gameSandboxAPI;
-  //   };
-  // }, [addBehaviorToSelectedEntity]);
 
   return (
     <div className='w-full h-screen relative overflow-hidden'>
