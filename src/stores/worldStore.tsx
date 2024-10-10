@@ -6,36 +6,36 @@ interface GameState {
   selectedEntityId: number | null;
 }
 
-const state = proxy<GameState>({
+const worldState = proxy<GameState>({
   entities: [],
   selectedEntityId: null,
 });
 
-const actions = {
+const worldStateActions = {
   addEntity: (entity: Entity) => {
-    state.entities.push(entity);
-    console.log('Added entity', entity);
+    worldState.entities.push(entity);
+    console.debug('Added entity', entity);
   },
   removeEntity: (id: number) => {
-    state.entities = state.entities.filter(e => e.id !== id);
+    worldState.entities = worldState.entities.filter(e => e.id !== id);
   },
   addBehaviorToEntity: (entityId: number, behavior: Behavior) => {
-    const entity = state.entities.find(e => e.id === entityId);
+    const entity = worldState.entities.find(e => e.id === entityId);
     if (entity) {
       entity.behaviors.push(behavior);
     }
   },
   removeBehaviorFromEntity: (entityId: number, behaviorName: string) => {
-    const entity = state.entities.find(e => e.id === entityId);
+    const entity = worldState.entities.find(e => e.id === entityId);
     if (entity) {
       entity.behaviors = entity.behaviors.filter(b => b.name !== behaviorName);
     }
   },
   setSelectedEntityId: (id: number | null) => {
-    state.selectedEntityId = id;
+    worldState.selectedEntityId = id;
   },
   updateEntities: (deltaTime: number) => {
-    state.entities.forEach(entity => {
+    worldState.entities.forEach(entity => {
       entity.behaviors.forEach(behavior => {
         if (behavior.update) {
           behavior.update(entity, deltaTime);
@@ -44,11 +44,11 @@ const actions = {
     });
   },
   clearWorld: () => {
-    state.entities = [];
-    state.selectedEntityId = null;
+    worldState.entities = [];
+    worldState.selectedEntityId = null;
   },
 };
 
-Object.assign(globalThis, { state });
+Object.assign(globalThis, { state: worldState });
 
-export { actions, state };
+export { worldStateActions as actions, worldState as state };

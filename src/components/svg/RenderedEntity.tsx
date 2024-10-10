@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSnapshot } from 'valtio';
-import { state } from '../stores/worldStore';
-import { Entity } from '../types';
+import { Entity } from '../../types';
+import { state } from '../../stores/worldStore';
 
 interface RenderedEntityProps {
   entityId: number;

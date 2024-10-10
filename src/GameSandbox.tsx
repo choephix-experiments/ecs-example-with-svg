@@ -1,14 +1,14 @@
-import { Search } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSnapshot } from 'valtio';
-import { RenderedEntity } from './components/RenderedEntity';
-import { SelectionBox } from './components/SelectionBox';
+import { PromptBar } from './components/gui/PromptBar';
+import { Grid } from './components/svg/Grid';
+import { RenderedEntity } from './components/svg/RenderedEntity';
+import { SelectionBox } from './components/svg/SelectionBox';
 import { state } from './stores/worldStore';
 import { Entity } from './types';
 
 export default function GameSandbox() {
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
-  const [prompt, setPrompt] = useState('');
   const requestRef = useRef<number>();
   const previousTimeRef = useRef<number>();
 
@@ -47,28 +47,10 @@ export default function GameSandbox() {
     setSelectedEntity(null);
   }, []);
 
-  const handlePromptSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Prompt submitted:', prompt);
-    setPrompt('');
-  };
-
   return (
     <div className='w-full h-screen relative overflow-hidden'>
       <svg className='w-full h-full' onClick={handleBackgroundClick}>
-        <defs>
-          <pattern
-            id='plusPattern'
-            x='0'
-            y='0'
-            width='40'
-            height='40'
-            patternUnits='userSpaceOnUse'
-          >
-            <path d='M20 15 V25 M15 20 H25' stroke='#e0e0e0' strokeWidth='1' />
-          </pattern>
-        </defs>
-        <rect width='100%' height='100%' fill='url(#plusPattern)' />
+        <Grid />
         {entities.map(entity => (
           <RenderedEntity key={entity.id} entityId={entity.id} onClick={handleEntityClick} />
         ))}
@@ -92,23 +74,7 @@ export default function GameSandbox() {
         </div>
       )}
 
-      <form
-        onSubmit={handlePromptSubmit}
-        className='absolute bottom-8 left-1/2 transform -translate-x-1/2'
-      >
-        <div className='relative'>
-          <input
-            type='text'
-            value={prompt}
-            onChange={e => setPrompt(e.target.value)}
-            placeholder='Enter prompt...'
-            className='w-96 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
-          />
-          <button type='submit' className='absolute right-2 top-1/2 transform -translate-y-1/2'>
-            <Search className='h-5 w-5 text-gray-500' />
-          </button>
-        </div>
-      </form>
+      <PromptBar />
     </div>
   );
 }
