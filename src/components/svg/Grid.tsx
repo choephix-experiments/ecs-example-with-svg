@@ -14,11 +14,12 @@ export function Grid({ cellSize = 40 }: GridProps) {
           height={cellSize}
           patternUnits="userSpaceOnUse"
         >
+          <rect width={cellSize} height={cellSize} fill="#f8f8f8" />
           <path
             d={`M${cellSize / 2} ${cellSize * 0.375} V${cellSize * 0.625} M${
               cellSize * 0.375
             } ${cellSize / 2} H${cellSize * 0.625}`}
-            stroke="#e0e0e0"
+            stroke="#d8d8d8"
             strokeWidth="1"
           />
         </pattern>
