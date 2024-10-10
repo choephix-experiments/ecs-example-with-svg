@@ -7,11 +7,11 @@ interface Entity {
   y: number;
   rotation: number;
   scale: number;
-  components: Component[];
+  behaviors: Behavior[];
   renderContent: React.ReactNode;
 }
 
-interface Component {
+interface Behavior {
   name: string;
   start?: () => void;
   update?: (entity: Entity, deltaTime: number) => void;
@@ -19,7 +19,15 @@ interface Component {
   render?: (entity: Entity) => void;
 }
 
-const RenderCircle: Component = {
+interface CustomBehaviorOptions {
+  name: string;
+  start?: string;
+  update?: string;
+  destroy?: string;
+  render?: string;
+}
+
+const RenderCircle: Behavior = {
   name: 'RenderCircle',
   render: (entity: Entity) => {
     entity.renderContent = (
@@ -33,7 +41,7 @@ const RenderCircle: Component = {
   },
 };
 
-const MovementComponent: Component = {
+const MovementBehavior: Behavior = {
   name: 'Movement',
   update: (entity: Entity, deltaTime: number) => {
     entity.x += Math.sin(Date.now() * 0.001) * 0.5 * deltaTime;
@@ -41,12 +49,41 @@ const MovementComponent: Component = {
   },
 };
 
-const FillColor: (color: string) => Component = (color: string) => ({
+const FillColor: (color: string) => Behavior = (color: string) => ({
   name: 'FillColor',
   render: (entity: Entity) => {
     entity.renderContent = <g fill={color}>{entity.renderContent}</g>;
   },
 });
+
+const CustomBehavior = (options: CustomBehaviorOptions): Behavior => {
+  // WARNING: Using eval() can be a security risk if the input is not trusted.
+  // Make sure to validate and sanitize any input before using this in a real application.
+  const behavior: Behavior = {
+    name: options.name,
+  };
+
+  if (options.start) {
+    behavior.start = new Function(options.start) as () => void;
+  }
+
+  if (options.update) {
+    behavior.update = new Function('entity', 'deltaTime', options.update) as (
+      entity: Entity,
+      deltaTime: number
+    ) => void;
+  }
+
+  if (options.destroy) {
+    behavior.destroy = new Function(options.destroy) as () => void;
+  }
+
+  if (options.render) {
+    behavior.render = new Function('entity', options.render) as (entity: Entity) => void;
+  }
+
+  return behavior;
+};
 
 const SelectionBox: React.FC<{ entity: Entity }> = ({ entity }) => {
   const boxSize = 20 * entity.scale + 4;
@@ -80,10 +117,19 @@ export default function GameSandbox() {
         y: Math.random() * window.innerHeight,
         rotation: Math.random() * 360,
         scale: 0.5 + Math.random() * 1.5,
-        components: [
+        behaviors: [
           RenderCircle,
-          MovementComponent,
+          MovementBehavior,
           FillColor(`hsl(${Math.random() * 360}, 70%, 50%)`),
+          CustomBehavior({
+            name: 'CustomRotation',
+            update: `
+              entity.rotation += deltaTime * 50;
+              if (entity.rotation > 360) {
+                entity.rotation -= 360;
+              }
+            `,
+          }),
         ],
         renderContent: null,
       });
@@ -97,12 +143,12 @@ export default function GameSandbox() {
       setEntities(prevEntities =>
         prevEntities.map(entity => {
           const updatedEntity = { ...entity, renderContent: null };
-          entity.components.forEach(component => {
-            if (component.update) {
-              component.update(updatedEntity, deltaTime);
+          entity.behaviors.forEach(behavior => {
+            if (behavior.update) {
+              behavior.update(updatedEntity, deltaTime);
             }
-            if (component.render) {
-              component.render(updatedEntity);
+            if (behavior.render) {
+              behavior.render(updatedEntity);
             }
           });
           return updatedEntity;
@@ -138,6 +184,41 @@ export default function GameSandbox() {
     // Here you would handle the prompt, e.g., add new entities, modify existing ones, etc.
     setPrompt('');
   };
+
+  const addBehaviorToSelectedEntity = useCallback(
+    (behavior: Behavior | CustomBehaviorOptions) => {
+      if (selectedEntity) {
+        setEntities(prevEntities =>
+          prevEntities.map(entity => {
+            if (entity.id === selectedEntity.id) {
+              return {
+                ...entity,
+                behaviors: [
+                  ...entity.behaviors,
+                  behavior instanceof Object && 'name' in behavior
+                    ? CustomBehavior(behavior)
+                    : behavior,
+                ],
+              };
+            }
+            return entity;
+          })
+        );
+      }
+    },
+    [selectedEntity]
+  );
+
+  // Expose the API to the window object
+  useEffect(() => {
+    (window as any).gameSandboxAPI = {
+      addBehaviorToSelectedEntity: addBehaviorToSelectedEntity,
+    };
+
+    return () => {
+      delete (window as any).gameSandboxAPI;
+    };
+  }, [addBehaviorToSelectedEntity]);
 
   return (
     <div className='w-full h-screen relative overflow-hidden'>
@@ -175,10 +256,10 @@ export default function GameSandbox() {
           <p>Y: {selectedEntity.y.toFixed(2)}</p>
           <p>Rotation: {selectedEntity.rotation.toFixed(2)}</p>
           <p>Scale: {selectedEntity.scale.toFixed(2)}</p>
-          <h3 className='font-bold mt-2'>Components:</h3>
+          <h3 className='font-bold mt-2'>Behaviors:</h3>
           <ul>
-            {selectedEntity.components.map((component, index) => (
-              <li key={index}>{component.name}</li>
+            {selectedEntity.behaviors.map((behavior, index) => (
+              <li key={index}>{behavior.name}</li>
             ))}
           </ul>
         </div>
