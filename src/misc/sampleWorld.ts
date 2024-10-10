@@ -12,17 +12,17 @@ export function populateSampleWorld() {
       scale: 0.5 + Math.random() * 1.5,
       behaviors: [
         RenderCircle,
-        MovementBehavior,
+        // MovementBehavior,
         FillColor(`hsl(${Math.random() * 360}, 70%, 50%)`),
-        CustomBehavior({
-          name: 'CustomRotation',
-          update: `
-            entity.rotation += deltaTime * 50;
-            if (entity.rotation > 360) {
-              entity.rotation -= 360;
-            }
-          `,
-        }),
+        // CustomBehavior({
+        //   name: 'CustomRotation',
+        //   update: `
+        //     entity.rotation += deltaTime * 50;
+        //     if (entity.rotation > 360) {
+        //       entity.rotation -= 360;
+        //     }
+        //   `,
+        // }),
       ],
     });
   }
