@@ -53,12 +53,10 @@ export default function GameSandbox() {
   useEffect(() => {
     const updateViewBox = () => {
       const { innerWidth, innerHeight } = window;
-      const scale = Math.min(innerWidth / stage.width, innerHeight / stage.height) * .9;
+      const scale = Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.9;
       const viewBoxWidth = innerWidth / scale;
       const viewBoxHeight = innerHeight / scale;
-      const viewBoxX = (stage.width - viewBoxWidth) / 2;
-      const viewBoxY = (stage.height - viewBoxHeight) / 2;
-      setViewBox(`${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`);
+      setViewBox(`${-viewBoxWidth / 2} ${-viewBoxHeight / 2} ${viewBoxWidth} ${viewBoxHeight}`);
     };
 
     updateViewBox();
@@ -71,8 +69,8 @@ export default function GameSandbox() {
       <svg className='w-full h-full' viewBox={viewBox} onClick={handleBackgroundClick}>
         <Grid />
         <rect
-          x="0"
-          y="0"
+          x={-stage.width / 2}
+          y={-stage.height / 2}
           width={stage.width}
           height={stage.height}
           fill="none"

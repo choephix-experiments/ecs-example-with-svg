@@ -23,7 +23,13 @@ export function Grid({ cellSize = 40 }: GridProps) {
           />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#plusPattern)" />
+      <rect
+        x="-50%"
+        y="-50%"
+        width="100%"
+        height="100%"
+        fill="url(#plusPattern)"
+      />
     </>
   );
 }
