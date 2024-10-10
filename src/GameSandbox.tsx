@@ -16,7 +16,7 @@ interface Component {
   start?: () => void;
   update?: (entity: Entity, deltaTime: number) => void;
   destroy?: () => void;
-  render?: (entity: Entity) => React.ReactNode;
+  render?: (entity: Entity) => void;
 }
 
 const RenderCircle: Component = {
