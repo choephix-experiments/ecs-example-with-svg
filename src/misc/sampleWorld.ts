@@ -1,12 +1,12 @@
 import { FillColor, RenderCircle } from '../behaviors/behaviors';
-import { actions, state } from '../stores/worldStore';
+import { worldStateActions, worldState } from '../stores/worldStore';
 
 export function populateSampleWorld() {
-  actions.clearWorld();
-  const { width, height } = state.stage;
+  worldStateActions.clearWorld();
+  const { width, height } = worldState.stage;
 
   for (let i = 0; i < 20; i++) {
-    actions.addEntity({
+    worldStateActions.addEntity({
       id: i,
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,

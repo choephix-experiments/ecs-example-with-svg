@@ -3,7 +3,6 @@ import { Behavior, Entity } from '../types';
 
 interface GameState {
   entities: Entity[];
-  selectedEntityId: number | null;
   stage: {
     width: number;
     height: number;
@@ -12,7 +11,6 @@ interface GameState {
 
 const worldState = proxy<GameState>({
   entities: [],
-  selectedEntityId: null,
   stage: {
     width: 1000,
     height: 1000,
@@ -39,9 +37,6 @@ const worldStateActions = {
       entity.behaviors = entity.behaviors.filter(b => b.name !== behaviorName);
     }
   },
-  setSelectedEntityId: (id: number | null) => {
-    worldState.selectedEntityId = id;
-  },
   updateEntities: (deltaTime: number) => {
     worldState.entities.forEach(entity => {
       entity.behaviors.forEach(behavior => {
@@ -53,10 +48,9 @@ const worldStateActions = {
   },
   clearWorld: () => {
     worldState.entities = [];
-    worldState.selectedEntityId = null;
   },
 };
 
 Object.assign(globalThis, { state: worldState });
 
-export { worldStateActions as actions, worldState as state };
+export { worldStateActions, worldState };

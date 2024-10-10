@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSnapshot } from 'valtio';
 import { Entity } from '../../types';
-import { state } from '../../stores/worldStore';
+import { worldState } from '../../stores/worldStore';
 
 interface RenderedEntityProps {
   entityId: number;
@@ -9,7 +9,7 @@ interface RenderedEntityProps {
 }
 
 export const RenderedEntity: React.FC<RenderedEntityProps> = React.memo(({ entityId, onClick }) => {
-  const { entities } = useSnapshot(state);
+  const { entities } = useSnapshot(worldState);
   const entity = entities.find(e => e.id === entityId) as Entity;
 
   if (!entity) return null;
