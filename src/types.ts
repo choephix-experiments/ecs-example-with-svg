@@ -17,11 +17,3 @@ export interface Behavior {
     currentContent: React.ReactNode | null
   ) => React.ReactNode | null;
 }
-
-type ReadonlyDeep<T> = {
-  readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U>
-    ? readonly ReadonlyDeep<U>[]
-    : T[P] extends Readonly<infer U>
-    ? ReadonlyDeep<U>
-    : T[P];
-};

@@ -1,4 +1,4 @@
-import { CustomBehavior, FillColor, MovementBehavior, RenderCircle } from "../behaviors/all";
+import { CustomBehavior, FillColor, MovementBehavior, RenderCircle } from "../behaviors/behaviors";
 import { actions } from "../stores/worldStore";
 
 export function populateSampleWorld() {
