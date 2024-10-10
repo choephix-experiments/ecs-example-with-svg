@@ -13,7 +13,7 @@ export default function GameSandbox() {
   const requestRef = useRef<number>();
   const previousTimeRef = useRef<number>();
 
-  const { entities } = useSnapshot(state);
+  const { entities, stage } = useSnapshot(state);
 
   const updateEntities = useCallback((time: number) => {
     if (previousTimeRef.current != undefined) {
@@ -48,10 +48,37 @@ export default function GameSandbox() {
     setSelectedEntity(null);
   }, []);
 
+  const [viewBox, setViewBox] = useState('0 0 1000 1000');
+
+  useEffect(() => {
+    const updateViewBox = () => {
+      const { innerWidth, innerHeight } = window;
+      const scale = Math.min(innerWidth / stage.width, innerHeight / stage.height) * .9;
+      const viewBoxWidth = innerWidth / scale;
+      const viewBoxHeight = innerHeight / scale;
+      const viewBoxX = (stage.width - viewBoxWidth) / 2;
+      const viewBoxY = (stage.height - viewBoxHeight) / 2;
+      setViewBox(`${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`);
+    };
+
+    updateViewBox();
+    window.addEventListener('resize', updateViewBox);
+    return () => window.removeEventListener('resize', updateViewBox);
+  }, [stage.width, stage.height]);
+
   return (
     <div className='w-full h-screen relative overflow-hidden'>
-      <svg className='w-full h-full' onClick={handleBackgroundClick}>
+      <svg className='w-full h-full' viewBox={viewBox} onClick={handleBackgroundClick}>
         <Grid />
+        <rect
+          x="0"
+          y="0"
+          width={stage.width}
+          height={stage.height}
+          fill="none"
+          stroke="gray"
+          strokeWidth="4"
+        />
         {entities.map(entity => (
           <RenderedEntity key={entity.id} entityId={entity.id} onClick={handleEntityClick} />
         ))}

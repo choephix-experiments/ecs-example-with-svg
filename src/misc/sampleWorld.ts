@@ -1,13 +1,14 @@
 import { CustomBehavior, FillColor, MovementBehavior, RenderCircle } from "../behaviors/behaviors";
-import { actions } from "../stores/worldStore";
+import { actions, state } from "../stores/worldStore";
 
 export function populateSampleWorld() {
   actions.clearWorld();
+  const { width, height } = state.stage;
   for (let i = 0; i < 20; i++) {
     actions.addEntity({
       id: i,
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
+      x: Math.random() * width,
+      y: Math.random() * height,
       rotation: Math.random() * 360,
       scale: 0.5 + Math.random() * 1.5,
       behaviors: [

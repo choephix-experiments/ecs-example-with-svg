@@ -4,11 +4,19 @@ import { Behavior, Entity } from '../types';
 interface GameState {
   entities: Entity[];
   selectedEntityId: number | null;
+  stage: {
+    width: number;
+    height: number;
+  };
 }
 
 const worldState = proxy<GameState>({
   entities: [],
   selectedEntityId: null,
+  stage: {
+    width: 1000,
+    height: 1000,
+  },
 });
 
 const worldStateActions = {
