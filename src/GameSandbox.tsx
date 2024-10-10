@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSnapshot } from 'valtio';
+import { EntityInspector } from './components/gui/EntityInspector';
 import { PromptBar } from './components/gui/PromptBar';
 import { Grid } from './components/svg/Grid';
 import { RenderedEntity } from './components/svg/RenderedEntity';
@@ -57,22 +58,7 @@ export default function GameSandbox() {
         {selectedEntity && <SelectionBox entity={selectedEntity} />}
       </svg>
 
-      {selectedEntity && (
-        <div className='absolute top-4 right-4 bg-white p-4 rounded shadow-lg'>
-          <h2 className='text-lg font-bold mb-2'>Selected Entity</h2>
-          <p>ID: {selectedEntity.id}</p>
-          <p>X: {selectedEntity.x.toFixed(2)}</p>
-          <p>Y: {selectedEntity.y.toFixed(2)}</p>
-          <p>Rotation: {selectedEntity.rotation.toFixed(2)}</p>
-          <p>Scale: {selectedEntity.scale.toFixed(2)}</p>
-          <h3 className='font-bold mt-2'>Behaviors:</h3>
-          <ul>
-            {selectedEntity.behaviors.map((behavior, index) => (
-              <li key={index}>{behavior.name}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {selectedEntity && <EntityInspector entity={selectedEntity} />}
 
       <PromptBar />
     </div>
