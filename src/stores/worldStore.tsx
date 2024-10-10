@@ -1,5 +1,6 @@
 import { proxy } from 'valtio';
-import { Behavior, Entity } from '../types';
+import { AnyBehaviorProps, createBehavior } from '../behaviors/behaviors';
+import { Entity } from '../types';
 
 interface GameState {
   entities: Entity[];
@@ -25,9 +26,10 @@ const worldStateActions = {
   removeEntity: (id: number) => {
     worldState.entities = worldState.entities.filter(e => e.id !== id);
   },
-  addBehaviorToEntity: (entityId: number, behavior: Behavior) => {
+  addBehaviorToEntity: (entityId: number, behaviorProps: AnyBehaviorProps) => {
     const entity = worldState.entities.find(e => e.id === entityId);
     if (entity) {
+      const behavior = createBehavior(behaviorProps);
       entity.behaviors.push(behavior);
     }
   },
@@ -53,4 +55,4 @@ const worldStateActions = {
 
 Object.assign(globalThis, { state: worldState });
 
-export { worldStateActions, worldState };
+export { worldState, worldStateActions };

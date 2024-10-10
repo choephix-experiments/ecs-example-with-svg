@@ -1,57 +1,134 @@
-import { Behavior } from '../types';
+import React from 'react';
+import { Behavior, Entity, BehaviorProps } from '../types';
 
-interface CustomBehaviorOptions {
-  name: string;
-  start?: string | Behavior['start'];
-  update?: string | Behavior['update'];
-  destroy?: string | Behavior['destroy'];
-  render?: string | Behavior['render'];
+interface RenderCircleProps extends BehaviorProps {
+  type: 'RenderCircle';
+  radius?: number;
 }
 
-export const RenderCircle: Behavior = {
-  name: 'RenderCircle',
-  render: entity => {
+class RenderCircle implements Behavior<RenderCircleProps> {
+  name = 'RenderCircle';
+  private radius: number = 10;
+
+  render(entity: Entity) {
     return (
       <circle
         cx={entity.x}
         cy={entity.y}
-        r={10 * entity.scale}
+        r={this.radius * entity.scale}
         transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
       />
     );
-  },
-};
+  }
 
-export const MovementBehavior: Behavior = {
-  name: 'Movement',
-  update: (entity, deltaTime) => {
-    entity.x += Math.sin(Date.now() * 0.001) * 0.5 * deltaTime;
-    entity.y += Math.cos(Date.now() * 0.001) * 0.5 * deltaTime;
-  },
-};
+  applyProps(props: RenderCircleProps) {
+    if (props.radius !== undefined) {
+      this.radius = props.radius;
+    }
+  }
+}
 
-export const FillColor: (color: string) => Behavior = (color: string) => ({
-  name: 'FillColor',
-  render: (_, content) => {
-    return <g fill={color}>{content}</g>;
-  },
-});
+interface MovementBehaviorProps extends BehaviorProps {
+  type: 'Movement';
+  speed?: number;
+}
 
-export const CustomBehavior = (options: CustomBehaviorOptions): Behavior => {
-  const behavior: Behavior = {
-    name: options.name || 'CustomBehavior',
-  };
+class MovementBehavior implements Behavior<MovementBehaviorProps> {
+  name = 'Movement';
+  private speed: number = 0.5;
 
-  const funcKeys = ['start', 'update', 'destroy', 'render'] as const;
-  for (const key of funcKeys) {
-    if (options[key]) {
-      if (typeof options[key] === 'string') {
-        behavior[key] = new Function(options[key]) as () => any;
-      } else {
-        behavior[key] = options[key] as () => any;
+  update(entity: Entity, deltaTime: number) {
+    entity.x += Math.sin(Date.now() * 0.001) * this.speed * deltaTime;
+    entity.y += Math.cos(Date.now() * 0.001) * this.speed * deltaTime;
+  }
+
+  applyProps(props: MovementBehaviorProps) {
+    if (props.speed !== undefined) {
+      this.speed = props.speed;
+    }
+  }
+}
+
+interface FillColorProps extends BehaviorProps {
+  type: 'FillColor';
+  color: string;
+}
+
+class FillColor implements Behavior<FillColorProps> {
+  name = 'FillColor';
+  private color: string;
+
+  constructor(color: string) {
+    this.color = color;
+  }
+
+  render(_: Entity, content: React.ReactNode | null) {
+    return <g fill={this.color}>{content}</g>;
+  }
+
+  applyProps(props: FillColorProps) {
+    this.color = props.color;
+  }
+}
+
+interface CustomBehaviorProps extends BehaviorProps {
+  type: 'CustomBehavior';
+  name: string;
+  start?: string | (() => void);
+  update?: string | ((entity: Entity, deltaTime: number) => void);
+  destroy?: string | (() => void);
+  render?: string | ((entity: Entity, currentContent: React.ReactNode | null) => React.ReactNode | null);
+}
+
+class CustomBehavior implements Behavior<CustomBehaviorProps> {
+  name: string;
+  start?: () => void;
+  update?: (entity: Entity, deltaTime: number) => void;
+  destroy?: () => void;
+  render?: (entity: Entity, currentContent: React.ReactNode | null) => React.ReactNode | null;
+
+  constructor(options: CustomBehaviorProps) {
+    this.name = options.name || 'CustomBehavior';
+    this.applyProps(options);
+  }
+
+  applyProps(props: CustomBehaviorProps) {
+    this.name = props.name;
+    const funcKeys = ['start', 'update', 'destroy', 'render'] as const;
+    for (const key of funcKeys) {
+      if (props[key]) {
+        if (typeof props[key] === 'string') {
+          this[key] = new Function(props[key] as string) as any;
+        } else {
+          this[key] = props[key] as any;
+        }
       }
     }
   }
+}
 
-  return behavior;
+export const createBehavior = (props: BehaviorProps): Behavior<any> => {
+  switch (props.type) {
+    case 'RenderCircle':
+      const renderCircle = new RenderCircle();
+      renderCircle.applyProps(props as RenderCircleProps);
+      return renderCircle;
+    case 'Movement':
+      const movement = new MovementBehavior();
+      movement.applyProps(props as MovementBehaviorProps);
+      return movement;
+    case 'FillColor':
+      const fillColor = new FillColor((props as FillColorProps).color);
+      fillColor.applyProps(props as FillColorProps);
+      return fillColor;
+    case 'CustomBehavior':
+      return new CustomBehavior(props as CustomBehaviorProps);
+    default:
+      throw new Error(`Unknown behavior type: ${props.type}`);
+  }
 };
+
+export type { RenderCircleProps, MovementBehaviorProps, FillColorProps, CustomBehaviorProps };
+
+export type AnyBehaviorProps = RenderCircleProps | MovementBehaviorProps | FillColorProps | CustomBehaviorProps;
+export type AnyBehavior = RenderCircle | MovementBehavior | FillColor | CustomBehavior;
