@@ -21,10 +21,10 @@ interface Behavior {
 
 interface CustomBehaviorOptions {
   name: string;
-  start?: string;
-  update?: string;
-  destroy?: string;
-  render?: string;
+  start?: string | Behavior['start'];
+  update?: string | Behavior['update'];
+  destroy?: string | Behavior['destroy'];
+  render?: string | Behavior['render'];
 }
 
 const RenderCircle: Behavior = {
@@ -57,29 +57,19 @@ const FillColor: (color: string) => Behavior = (color: string) => ({
 });
 
 const CustomBehavior = (options: CustomBehaviorOptions): Behavior => {
-  // WARNING: Using eval() can be a security risk if the input is not trusted.
-  // Make sure to validate and sanitize any input before using this in a real application.
   const behavior: Behavior = {
-    name: options.name,
+    name: options.name || 'CustomBehavior',
   };
 
-  if (options.start) {
-    behavior.start = new Function(options.start) as () => void;
-  }
-
-  if (options.update) {
-    behavior.update = new Function('entity', 'deltaTime', options.update) as (
-      entity: Entity,
-      deltaTime: number
-    ) => void;
-  }
-
-  if (options.destroy) {
-    behavior.destroy = new Function(options.destroy) as () => void;
-  }
-
-  if (options.render) {
-    behavior.render = new Function('entity', options.render) as (entity: Entity) => void;
+  const funcKeys = ['start', 'update', 'destroy', 'render'] as const;
+  for (const key of funcKeys) {
+    if (options[key]) {
+      if (typeof options[key] === 'string') {
+        behavior[key] = new Function(options[key]) as () => void;
+      } else {
+        behavior[key] = options[key] as () => void;
+      }
+    }
   }
 
   return behavior;
