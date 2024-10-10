@@ -1,8 +1,10 @@
 import { Search } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useSnapshot } from 'valtio';
+import { RenderedEntity } from './components/RenderedEntity';
+import { SelectionBox } from './components/SelectionBox';
 import { state } from './stores/worldStore';
 import { Entity } from './types';
-import { SelectionBox } from './components/SelectionBox';
 
 export default function GameSandbox() {
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
@@ -10,32 +12,17 @@ export default function GameSandbox() {
   const requestRef = useRef<number>();
   const previousTimeRef = useRef<number>();
 
-  const { entities } = state;
-  const [entityRenderContents, setEntityRenderContents] = useState<[Entity, React.ReactNode][]>([]);
+  const { entities } = useSnapshot(state);
 
   const updateEntities = useCallback((time: number) => {
     if (previousTimeRef.current != undefined) {
       const deltaTime = (time - previousTimeRef.current) / 1000;
 
-      for (const entity of entities) {
+      for (const entity of state.entities) {
         for (const behavior of entity.behaviors) {
           behavior.update?.(entity as any, deltaTime);
         }
       }
-
-      const newEntityRenderContents: typeof entityRenderContents = [];
-      for (const entity of entities) {
-        let renderContent: React.ReactNode = null;
-        for (const behavior of entity.behaviors) {
-          renderContent = behavior.render?.(entity, renderContent);
-        }
-        if (renderContent !== null) {
-          newEntityRenderContents.push([entity as any, renderContent] as const);
-        }
-
-        console.log(entity.id, renderContent);
-      }
-      setEntityRenderContents(newEntityRenderContents);
     }
 
     previousTimeRef.current = time;
@@ -63,7 +50,6 @@ export default function GameSandbox() {
   const handlePromptSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Prompt submitted:', prompt);
-    // Here you would handle the prompt, e.g., add new entities, modify existing ones, etc.
     setPrompt('');
   };
 
@@ -83,14 +69,8 @@ export default function GameSandbox() {
           </pattern>
         </defs>
         <rect width='100%' height='100%' fill='url(#plusPattern)' />
-        {entityRenderContents.map(([entity, content]) => (
-          <g
-            key={entity.id}
-            onClick={e => handleEntityClick(entity, e)}
-            style={{ cursor: 'pointer' }}
-          >
-            {content}
-          </g>
+        {entities.map(entity => (
+          <RenderedEntity key={entity.id} entityId={entity.id} onClick={handleEntityClick} />
         ))}
         {selectedEntity && <SelectionBox entity={selectedEntity} />}
       </svg>
