@@ -1,79 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search } from 'lucide-react';
-
-interface Entity {
-  id: number;
-  x: number;
-  y: number;
-  rotation: number;
-  scale: number;
-  behaviors: Behavior[];
-  renderContent: React.ReactNode;
-}
-
-interface Behavior {
-  name: string;
-  start?: () => void;
-  update?: (entity: Entity, deltaTime: number) => void;
-  destroy?: () => void;
-  render?: (entity: Entity) => void;
-}
-
-interface CustomBehaviorOptions {
-  name: string;
-  start?: string | Behavior['start'];
-  update?: string | Behavior['update'];
-  destroy?: string | Behavior['destroy'];
-  render?: string | Behavior['render'];
-}
-
-const RenderCircle: Behavior = {
-  name: 'RenderCircle',
-  render: (entity: Entity) => {
-    entity.renderContent = (
-      <circle
-        cx={entity.x}
-        cy={entity.y}
-        r={10 * entity.scale}
-        transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
-      />
-    );
-  },
-};
-
-const MovementBehavior: Behavior = {
-  name: 'Movement',
-  update: (entity: Entity, deltaTime: number) => {
-    entity.x += Math.sin(Date.now() * 0.001) * 0.5 * deltaTime;
-    entity.y += Math.cos(Date.now() * 0.001) * 0.5 * deltaTime;
-  },
-};
-
-const FillColor: (color: string) => Behavior = (color: string) => ({
-  name: 'FillColor',
-  render: (entity: Entity) => {
-    entity.renderContent = <g fill={color}>{entity.renderContent}</g>;
-  },
-});
-
-const CustomBehavior = (options: CustomBehaviorOptions): Behavior => {
-  const behavior: Behavior = {
-    name: options.name || 'CustomBehavior',
-  };
-
-  const funcKeys = ['start', 'update', 'destroy', 'render'] as const;
-  for (const key of funcKeys) {
-    if (options[key]) {
-      if (typeof options[key] === 'string') {
-        behavior[key] = new Function(options[key]) as () => void;
-      } else {
-        behavior[key] = options[key] as () => void;
-      }
-    }
-  }
-
-  return behavior;
-};
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { state } from './stores/worldStore';
+import { Entity } from './types';
 
 const SelectionBox: React.FC<{ entity: Entity }> = ({ entity }) => {
   const boxSize = 20 * entity.scale + 4;
@@ -92,72 +20,49 @@ const SelectionBox: React.FC<{ entity: Entity }> = ({ entity }) => {
 };
 
 export default function GameSandbox() {
-  const [entities, setEntities] = useState<Entity[]>([]);
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
   const [prompt, setPrompt] = useState('');
   const requestRef = useRef<number>();
   const previousTimeRef = useRef<number>();
 
-  const initializeEntities = useCallback(() => {
-    const newEntities: Entity[] = [];
-    for (let i = 0; i < 20; i++) {
-      newEntities.push({
-        id: i,
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        rotation: Math.random() * 360,
-        scale: 0.5 + Math.random() * 1.5,
-        behaviors: [
-          RenderCircle,
-          MovementBehavior,
-          FillColor(`hsl(${Math.random() * 360}, 70%, 50%)`),
-          CustomBehavior({
-            name: 'CustomRotation',
-            update: `
-              entity.rotation += deltaTime * 50;
-              if (entity.rotation > 360) {
-                entity.rotation -= 360;
-              }
-            `,
-          }),
-        ],
-        renderContent: null,
-      });
-    }
-    setEntities(newEntities);
-  }, []);
+  const { entities } = state;
+  const [entityRenderContents, setEntityRenderContents] = useState<[Entity, React.ReactNode][]>([]);
 
   const updateEntities = useCallback((time: number) => {
     if (previousTimeRef.current != undefined) {
       const deltaTime = (time - previousTimeRef.current) / 1000;
-      setEntities(prevEntities =>
-        prevEntities.map(entity => {
-          const updatedEntity = { ...entity, renderContent: null };
-          entity.behaviors.forEach(behavior => {
-            if (behavior.update) {
-              behavior.update(updatedEntity, deltaTime);
-            }
-            if (behavior.render) {
-              behavior.render(updatedEntity);
-            }
-          });
-          return updatedEntity;
-        })
-      );
+
+      for (const entity of entities) {
+        for (const behavior of entity.behaviors) {
+          behavior.update?.(entity as any, deltaTime);
+        }
+      }
+
+      const newEntityRenderContents: typeof entityRenderContents = [];
+      for (const entity of entities) {
+        let renderContent: React.ReactNode = null;
+        for (const behavior of entity.behaviors) {
+          renderContent = behavior.render?.(entity, renderContent);
+        }
+        if (renderContent !== null) {
+          newEntityRenderContents.push([entity as any, renderContent] as const);
+        }
+      }
+      setEntityRenderContents(newEntityRenderContents);
     }
+
     previousTimeRef.current = time;
     requestRef.current = requestAnimationFrame(updateEntities);
   }, []);
 
   useEffect(() => {
-    initializeEntities();
     requestRef.current = requestAnimationFrame(updateEntities);
     return () => {
       if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, [initializeEntities, updateEntities]);
+  }, [updateEntities]);
 
   const handleEntityClick = useCallback((entity: Entity, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -175,40 +80,40 @@ export default function GameSandbox() {
     setPrompt('');
   };
 
-  const addBehaviorToSelectedEntity = useCallback(
-    (behavior: Behavior | CustomBehaviorOptions) => {
-      if (selectedEntity) {
-        setEntities(prevEntities =>
-          prevEntities.map(entity => {
-            if (entity.id === selectedEntity.id) {
-              return {
-                ...entity,
-                behaviors: [
-                  ...entity.behaviors,
-                  behavior instanceof Object && 'name' in behavior
-                    ? CustomBehavior(behavior)
-                    : behavior,
-                ],
-              };
-            }
-            return entity;
-          })
-        );
-      }
-    },
-    [selectedEntity]
-  );
+  // const addBehaviorToSelectedEntity = useCallback(
+  //   (behavior: Behavior | CustomBehaviorOptions) => {
+  //     if (selectedEntity) {
+  //       setEntities(prevEntities =>
+  //         prevEntities.map(entity => {
+  //           if (entity.id === selectedEntity.id) {
+  //             return {
+  //               ...entity,
+  //               behaviors: [
+  //                 ...entity.behaviors,
+  //                 behavior instanceof Object && 'name' in behavior
+  //                   ? CustomBehavior(behavior)
+  //                   : behavior,
+  //               ],
+  //             };
+  //           }
+  //           return entity;
+  //         })
+  //       );
+  //     }
+  //   },
+  //   [selectedEntity]
+  // );
 
-  // Expose the API to the window object
-  useEffect(() => {
-    (window as any).gameSandboxAPI = {
-      addBehaviorToSelectedEntity: addBehaviorToSelectedEntity,
-    };
+  // // Expose the API to the window object
+  // useEffect(() => {
+  //   (window as any).gameSandboxAPI = {
+  //     addBehaviorToSelectedEntity: addBehaviorToSelectedEntity,
+  //   };
 
-    return () => {
-      delete (window as any).gameSandboxAPI;
-    };
-  }, [addBehaviorToSelectedEntity]);
+  //   return () => {
+  //     delete (window as any).gameSandboxAPI;
+  //   };
+  // }, [addBehaviorToSelectedEntity]);
 
   return (
     <div className='w-full h-screen relative overflow-hidden'>
@@ -226,13 +131,13 @@ export default function GameSandbox() {
           </pattern>
         </defs>
         <rect width='100%' height='100%' fill='url(#plusPattern)' />
-        {entities.map(entity => (
+        {entityRenderContents.map(([entity, content]) => (
           <g
             key={entity.id}
             onClick={e => handleEntityClick(entity, e)}
             style={{ cursor: 'pointer' }}
           >
-            {entity.renderContent}
+            {content}
           </g>
         ))}
         {selectedEntity && <SelectionBox entity={selectedEntity} />}
