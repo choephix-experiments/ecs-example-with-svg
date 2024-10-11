@@ -42,6 +42,7 @@ export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {
 export const behaviorResolvers = {
   RenderCircle: {
     render(entity) {
+      console.log([this.radius, entity.scale])
       return (
         <circle
           cx={entity.x}

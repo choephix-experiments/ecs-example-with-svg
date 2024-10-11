@@ -9,7 +9,9 @@ export function populateSampleWorld() {
 
   const { width, height } = worldDataState.stage;
 
-  for (let i = 0; i < 20; i++) {
+  const COUNT = 3;
+
+  for (let i = 0; i < COUNT; i++) {
     const entity: StageEntityProps = {
       id: i,
       x: (Math.random() - 0.5) * width,
@@ -21,7 +23,7 @@ export function populateSampleWorld() {
     worldDataStateActions.addEntity(entity);
     worldDataStateActions.addBehaviorToEntity(i, {
       type: "RenderCircle",
-      radius: 10,
+      radius: 10 + Math.random() * 40,
     });
     worldDataStateActions.addBehaviorToEntity(i, {
       type: "FillColor",
