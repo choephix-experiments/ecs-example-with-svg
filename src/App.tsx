@@ -3,6 +3,7 @@ import GameSandbox from './GameSandbox';
 import { populateSampleWorld } from './misc/sampleWorld';
 import { worldDataStateActions } from './stores/worldDataState';
 
+import './globalActions';
 import './App.css'
 ;
 function App() {
