@@ -1,8 +1,8 @@
 import { worldDataStateActions } from './stores/worldDataState';
 import { ideState } from './stores/ideStore';
-import { AnyBehaviorProps } from './behaviors/behaviors';
+import { BehaviorProps } from './types/data-types';
 
-const addBehaviorToSelectedEntity = (behaviorProps: AnyBehaviorProps) => {
+const addBehaviorToSelectedEntity = (behaviorProps: BehaviorProps) => {
   const selectedEntityId = ideState.selectedEntityId;
   if (selectedEntityId !== null) {
     worldDataStateActions.addBehaviorToEntity(selectedEntityId, behaviorProps);

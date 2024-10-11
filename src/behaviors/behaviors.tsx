@@ -9,12 +9,22 @@ type BuiltInBehaviorsExtraPropsDictionary = {
   RenderCircle: { radius?: number };
   FillColor: { color?: string };
   SimplifyMesh: { sides?: number };
+  CustomBehavior: {
+    name: string;
+    start?: string | (() => void);
+    update?: string | ((entity: StageEntityProps, deltaTime: number) => void);
+    render?: string | ((entity: StageEntityProps, currentContent: React.ReactNode | null) => React.ReactNode | null);
+    destroy?: string | (() => void);
+    [key: string]: unknown;
+  };
 };
+
 type BuiltInBehaviorsPropsDictionary = {
   [key in keyof BuiltInBehaviorsExtraPropsDictionary]: {
     type: key;
   } & BuiltInBehaviorsExtraPropsDictionary[key];
 };
+
 export type BuiltInBehaviorsProps =
   BuiltInBehaviorsPropsDictionary[keyof BuiltInBehaviorsPropsDictionary];
 
@@ -63,6 +73,23 @@ export const behaviorResolvers = {
         "black";
       const points = generatePolygonPoints(entity.x, entity.y, radius, sides);
       return <polygon points={points} fill={color} />;
+    },
+  },
+  CustomBehavior: {
+    update(entity, deltaTime) {
+      if (typeof this.update === 'function') {
+        this.update(entity, deltaTime);
+      } else if (typeof this.update === 'string') {
+        new Function('entity', 'deltaTime', this.update)(entity, deltaTime);
+      }
+    },
+    render(entity, content) {
+      if (typeof this.render === 'function') {
+        return this.render(entity as any, content);
+      } else if (typeof this.render === 'string') {
+        return new Function('entity', 'content', `return (${this.render})`)(entity, content);
+      }
+      return content;
     },
   },
 } as {
