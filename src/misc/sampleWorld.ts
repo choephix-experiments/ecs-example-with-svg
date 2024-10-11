@@ -1,5 +1,8 @@
-import { worldDataState, worldDataStateActions } from '../stores/worldDataState';
-import { StageEntityProps } from '../types/data-types';
+import {
+  worldDataState,
+  worldDataStateActions,
+} from "../stores/worldDataState";
+import { StageEntityProps } from "../types/data-types";
 
 export function populateSampleWorld() {
   worldDataStateActions.clearWorld();
@@ -12,22 +15,23 @@ export function populateSampleWorld() {
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,
       rotation: Math.random() * 360,
-      scale: 1 + Math.random() * 5,
-      behaviors: []
+      scale: 1,
+      behaviors: [],
     };
     worldDataStateActions.addEntity(entity);
     worldDataStateActions.addBehaviorToEntity(i, {
-      type: 'RenderCircle',
+      type: "RenderCircle",
+      radius: 10,
     });
     worldDataStateActions.addBehaviorToEntity(i, {
-      type: 'FillColor',
+      type: "FillColor",
       color: `hsl(${Math.random() * 360}, 70%, 50%)`,
     });
-    
+
     // Add SimplifyMesh behavior to some entities
     if (i % 3 === 0) {
       worldDataStateActions.addBehaviorToEntity(i, {
-        type: 'SimplifyMesh',
+        type: "SimplifyMesh",
         sides: 5, // Random number of sides between 3 and 7
       });
     }

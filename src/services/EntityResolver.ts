@@ -3,13 +3,13 @@ import {
   BehaviorProps,
   ReadonlyDeep,
 } from "../types/data-types";
-import { behaviorResolvers } from "../behaviors/behaviors";
+import { BehaviorResolver, behaviorResolvers } from "../behaviors/behaviors";
 
 export const EntityResolver = {
   update: (entity: StageEntityProps, deltaTime: number) => {
     entity.behaviors.forEach((behavior) => {
       const resolverKey = behavior.type as keyof typeof behaviorResolvers;
-      const resolver = behaviorResolvers[resolverKey];
+      const resolver = behaviorResolvers[resolverKey] as BehaviorResolver<typeof behavior>;
       resolver?.update?.apply(behavior, [entity, deltaTime]);
     });
   },
@@ -18,7 +18,7 @@ export const EntityResolver = {
     let content: React.ReactNode = null;
     entity.behaviors.forEach((behavior) => {
       const resolverKey = behavior.type as keyof typeof behaviorResolvers;
-      const resolver = behaviorResolvers[resolverKey];
+      const resolver = behaviorResolvers[resolverKey] as BehaviorResolver<typeof behavior>;
       content = resolver?.render?.apply(behavior, [entity, content]);
     });
     return content;

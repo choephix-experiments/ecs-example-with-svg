@@ -5,8 +5,21 @@ import {
   StageEntityProps,
 } from "../types/data-types";
 
+type BuiltInBehaviorsExtraPropsDictionary = {
+  RenderCircle: { radius?: number };
+  FillColor: { color?: string };
+  SimplifyMesh: { sides?: number };
+};
+type BuiltInBehaviorsPropsDictionary = {
+  [key in keyof BuiltInBehaviorsExtraPropsDictionary]: {
+    type: key;
+  } & BuiltInBehaviorsExtraPropsDictionary[key];
+};
+export type BuiltInBehaviorsProps =
+  BuiltInBehaviorsPropsDictionary[keyof BuiltInBehaviorsPropsDictionary];
+
 // Define the structure for behavior resolvers
-type BehaviorResolver<T extends BehaviorProps> = {
+export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {
   update?: (this: T, entity: StageEntityProps, deltaTime: number) => void;
   render?: (
     this: T,
@@ -23,22 +36,10 @@ export const behaviorResolvers = {
         <circle
           cx={entity.x}
           cy={entity.y}
-          r={
-            (entity.behaviors.find((b) => b.type === "RenderCircle") as any)
-              ?.radius * entity.scale || 10
-          }
+          r={this.radius! * entity.scale}
           transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
         />
       );
-    },
-  },
-  Movement: {
-    update(entity, deltaTime) {
-      const speed =
-        (entity.behaviors.find((b) => b.type === "Movement") as any)?.speed ||
-        0.5;
-      entity.x += Math.sin(Date.now() * 0.001) * speed * deltaTime;
-      entity.y += Math.cos(Date.now() * 0.001) * speed * deltaTime;
     },
   },
   FillColor: {
@@ -64,7 +65,11 @@ export const behaviorResolvers = {
       return <polygon points={points} fill={color} />;
     },
   },
-} as Record<string, BehaviorResolver<BehaviorProps>>;
+} as {
+  [key in keyof BuiltInBehaviorsPropsDictionary]: BehaviorResolver<
+    BuiltInBehaviorsPropsDictionary[key]
+  >;
+};
 
 // Helper function for SimplifyMesh
 function generatePolygonPoints(
@@ -82,6 +87,3 @@ function generatePolygonPoints(
   }
   return points.trim();
 }
-
-// Export types
-export type { BehaviorResolver };
