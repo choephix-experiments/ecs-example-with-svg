@@ -13,13 +13,19 @@ type BuiltInBehaviorsExtraPropsDictionary = {
     name: string;
     start?: string | (() => void);
     update?: string | ((entity: StageEntityProps, deltaTime: number) => void);
-    render?: string | ((entity: StageEntityProps, currentContent: React.ReactNode | null) => React.ReactNode | null);
+    render?:
+      | string
+      | ((
+          entity: StageEntityProps,
+          currentContent: React.ReactNode | null
+        ) => React.ReactNode | null);
     destroy?: string | (() => void);
     [key: string]: unknown;
   };
+  RenderEmoji: { emoji: string; fontSize?: number };
 };
 
-type BuiltInBehaviorsPropsDictionary = {
+export type BuiltInBehaviorsPropsDictionary = {
   [key in keyof BuiltInBehaviorsExtraPropsDictionary]: {
     type: key;
   } & BuiltInBehaviorsExtraPropsDictionary[key];
@@ -71,25 +77,56 @@ export const behaviorResolvers = {
       const color =
         (entity.behaviors.find((b) => b.type === "FillColor") as any)?.color ||
         "black";
-      const points = generatePolygonPoints(entity.x, entity.y, entity.rotation, radius, sides);
+      const points = generatePolygonPoints(
+        entity.x,
+        entity.y,
+        entity.rotation,
+        radius,
+        sides
+      );
       return <polygon points={points} fill={color} />;
     },
   },
   CustomBehavior: {
     update(entity, deltaTime) {
-      if (typeof this.update === 'function') {
+      if (typeof this.update === "function") {
         this.update(entity, deltaTime);
-      } else if (typeof this.update === 'string') {
-        new Function('entity', 'deltaTime', this.update)(entity, deltaTime);
+      } else if (typeof this.update === "string") {
+        new Function("entity", "deltaTime", this.update)(entity, deltaTime);
       }
     },
     render(entity, content) {
-      if (typeof this.render === 'function') {
+      if (typeof this.render === "function") {
         return this.render(entity as any, content);
-      } else if (typeof this.render === 'string') {
-        return new Function('entity', 'content', `return (${this.render})`)(entity, content);
+      } else if (typeof this.render === "string") {
+        return new Function("entity", "content", `return (${this.render})`)(
+          entity,
+          content
+        );
       }
       return content;
+    },
+  },
+  RenderEmoji: {
+    render(entity, content) {
+      const emoji = this.emoji;
+      const fontSize = this.fontSize || 20 * entity.scale;
+      return (
+        <>
+          {content}
+          <text
+            x={entity.x}
+            y={entity.y}
+            fontSize={fontSize}
+            textAnchor="middle"
+            dominantBaseline="central"
+            transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
+            style={{ userSelect: "none" }}
+          >
+            {emoji}
+          </text>
+        </>
+      );
     },
   },
 } as {
