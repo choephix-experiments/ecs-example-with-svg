@@ -1,16 +1,16 @@
 import React from 'react';
 import { useSnapshot } from 'valtio';
-import { Entity } from '../../types';
+import { StageEntity } from '../../types';
 import { worldState } from '../../stores/worldStore';
 
 interface RenderedEntityProps {
   entityId: number;
-  onClick: (entity: Entity, event: React.MouseEvent) => void;
+  onClick: (entity: StageEntity, event: React.MouseEvent) => void;
 }
 
 export const RenderedEntity: React.FC<RenderedEntityProps> = React.memo(({ entityId, onClick }) => {
   const { entities } = useSnapshot(worldState);
-  const entity = entities.find(e => e.id === entityId) as Entity;
+  const entity = entities.find(e => e.id === entityId) as StageEntity;
 
   if (!entity) return null;
 
