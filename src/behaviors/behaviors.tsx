@@ -7,7 +7,7 @@ import {
 
 type BuiltInBehaviorsExtraPropsDictionary = {
   RenderCircle: { radius?: number };
-  FillColor: { color?: string };
+  ChangeColor: { color?: string };
   SimplifyMesh: { sides?: number };
   CustomBehavior: {
     name: string;
@@ -58,10 +58,10 @@ export const behaviorResolvers = {
       );
     },
   },
-  FillColor: {
+  ChangeColor: {
     render(entity, content) {
       const color =
-        (entity.behaviors.find((b) => b.type === "FillColor") as any)?.color ||
+        (entity.behaviors.find((b) => b.type === "ChangeColor") as any)?.color ||
         "black";
       return <g fill={color}>{content}</g>;
     },
@@ -75,7 +75,7 @@ export const behaviorResolvers = {
         (entity.behaviors.find((b) => b.type === "RenderCircle") as any)
           ?.radius || 10;
       const color =
-        (entity.behaviors.find((b) => b.type === "FillColor") as any)?.color ||
+        (entity.behaviors.find((b) => b.type === "ChangeColor") as any)?.color ||
         "black";
       const points = generatePolygonPoints(
         entity.x,

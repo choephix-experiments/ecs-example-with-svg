@@ -29,7 +29,7 @@ export function populateSampleWorld() {
       radius: 10 + Math.random() * 40,
     });
     worldDataStateActions.addBehaviorToEntity(i, {
-      type: "FillColor",
+      type: "ChangeColor",
       color: `hsl(${Math.random() * 360}, 70%, 50%)`,
     });
 
