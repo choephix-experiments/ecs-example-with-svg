@@ -8,7 +8,7 @@ interface RenderCircleProps extends BehaviorProps {
 
 class RenderCircle implements Behavior<RenderCircleProps> {
   name = 'RenderCircle';
-  private radius: number = 10;
+  radius: number = 10;
 
   render(entity: StageEntity) {
     return (
@@ -119,7 +119,8 @@ class SimplifyMesh implements Behavior<SimplifyMeshProps> {
   private sides: number = 6;
 
   render(entity: StageEntity, content: React.ReactNode | null) {
-    const radius = content?.props?.r || 10;
+    const circle = entity.getBehavior<RenderCircle>('RenderCircle');
+    const radius = circle?.radius || 10;
     const points = this.generatePolygonPoints(entity.x, entity.y, radius, this.sides);
 
     console.log(points);

@@ -1,4 +1,4 @@
-import { AnyBehaviorProps, createBehavior } from "./behaviors/behaviors";
+import { AnyBehavior, AnyBehaviorProps, createBehavior } from "./behaviors/behaviors";
 import { StageEntityProps } from "./stores/worldDataState";
 
 export class StageEntity {
@@ -39,6 +39,10 @@ export class StageEntity {
         behavior.update(this, deltaTime);
       }
     });
+  }
+
+  getBehavior<T extends AnyBehavior>(type: AnyBehaviorProps['type']) {
+    return this.behaviors.find(b => b.name === type) as T | undefined;
   }
 }
 
