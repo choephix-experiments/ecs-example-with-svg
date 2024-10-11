@@ -71,7 +71,7 @@ export const behaviorResolvers = {
       const color =
         (entity.behaviors.find((b) => b.type === "FillColor") as any)?.color ||
         "black";
-      const points = generatePolygonPoints(entity.x, entity.y, radius, sides);
+      const points = generatePolygonPoints(entity.x, entity.y, entity.rotation, radius, sides);
       return <polygon points={points} fill={color} />;
     },
   },
@@ -102,14 +102,15 @@ export const behaviorResolvers = {
 function generatePolygonPoints(
   cx: number,
   cy: number,
+  rotation: number,
   radius: number,
   sides: number
 ): string {
   let points = "";
   for (let i = 0; i < sides; i++) {
     const angle = (i / sides) * 2 * Math.PI;
-    const x = cx + radius * Math.cos(angle);
-    const y = cy + radius * Math.sin(angle);
+    const x = cx + radius * Math.cos(angle + rotation);
+    const y = cy + radius * Math.sin(angle + rotation);
     points += `${x},${y} `;
   }
   return points.trim();

@@ -34,7 +34,7 @@ const God = {
       type: "CustomBehavior",
       name: "Spin",
       update: `
-        entity.rotation += 2;
+        entity.rotation += 4 * deltaTime;
       `,
     });
     console.log("🌀 Added spin animation to selected entity");
