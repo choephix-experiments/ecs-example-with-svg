@@ -1,10 +1,6 @@
 import { proxy } from "valtio";
-import {
-  BehaviorProps,
-  StageEntityProps,
-  WorldDataState,
-} from "../types/data-types";
 import { BuiltInBehaviorsProps } from "../behaviors/behaviors";
+import { StageEntityProps, WorldDataState } from "../types/data-types";
 
 export const worldDataState = proxy<WorldDataState>({
   entities: [],
@@ -29,7 +25,10 @@ export const worldDataStateActions = {
       Object.assign(entity, updates);
     }
   },
-  addBehaviorToEntity: <T extends BuiltInBehaviorsProps>(entityId: number, behavior: T) => {
+  addBehaviorToEntity: <T extends BuiltInBehaviorsProps>(
+    entityId: number,
+    behavior: T
+  ) => {
     const entity = worldDataState.entities.find((e) => e.id === entityId);
     if (entity) {
       entity.behaviors.push(behavior);
