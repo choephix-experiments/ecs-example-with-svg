@@ -16,7 +16,7 @@ export function EntityInspector({ entity }: EntityInspectorProps) {
       <h3 className='font-bold mt-2'>Behaviors:</h3>
       <ul>
         {entity.behaviors.map((behavior, index) => (
-          <li key={index}>{behavior.name}</li>
+          <li key={index}>{behavior.type}</li>
         ))}
       </ul>
     </div>

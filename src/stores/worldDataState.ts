@@ -1,6 +1,9 @@
-import { proxy } from 'valtio';
-import { AnyBehaviorProps } from '../behaviors/behaviors';
-import { StageEntityProps, WorldDataState } from '../types/data-types';
+import { proxy } from "valtio";
+import {
+  BehaviorProps,
+  StageEntityProps,
+  WorldDataState,
+} from "../types/data-types";
 
 export const worldDataState = proxy<WorldDataState>({
   entities: [],
@@ -15,24 +18,28 @@ export const worldDataStateActions = {
     worldDataState.entities.push(entity);
   },
   removeEntity: (id: number) => {
-    worldDataState.entities = worldDataState.entities.filter(e => e.id !== id);
+    worldDataState.entities = worldDataState.entities.filter(
+      (e) => e.id !== id
+    );
   },
   updateEntity: (id: number, updates: Partial<StageEntityProps>) => {
-    const entity = worldDataState.entities.find(e => e.id === id);
+    const entity = worldDataState.entities.find((e) => e.id === id);
     if (entity) {
       Object.assign(entity, updates);
     }
   },
-  addBehaviorToEntity: (entityId: number, behavior: AnyBehaviorProps) => {
-    const entity = worldDataState.entities.find(e => e.id === entityId);
+  addBehaviorToEntity: (entityId: number, behavior: BehaviorProps) => {
+    const entity = worldDataState.entities.find((e) => e.id === entityId);
     if (entity) {
       entity.behaviors.push(behavior);
     }
   },
   removeBehaviorFromEntity: (entityId: number, behaviorType: string) => {
-    const entity = worldDataState.entities.find(e => e.id === entityId);
+    const entity = worldDataState.entities.find((e) => e.id === entityId);
     if (entity) {
-      entity.behaviors = entity.behaviors.filter(b => b.type !== behaviorType);
+      entity.behaviors = entity.behaviors.filter(
+        (b) => b.type !== behaviorType
+      );
     }
   },
   clearWorld: () => {

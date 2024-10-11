@@ -8,7 +8,7 @@ interface RenderCircleProps extends BehaviorProps {
 }
 
 class RenderCircle implements Behavior<RenderCircleProps> {
-  name = 'RenderCircle';
+  type = 'RenderCircle';
   radius: number = 10;
 
   render(entity: StageEntity) {
@@ -35,7 +35,7 @@ interface MovementBehaviorProps extends BehaviorProps {
 }
 
 class MovementBehavior implements Behavior<MovementBehaviorProps> {
-  name = 'Movement';
+  type = 'Movement';
   private speed: number = 0.5;
 
   update(entity: StageEntity, deltaTime: number) {
@@ -56,7 +56,7 @@ interface FillColorProps extends BehaviorProps {
 }
 
 class FillColor implements Behavior<FillColorProps> {
-  name = 'FillColor';
+  type = 'FillColor';
   color: string;
 
   constructor(color: string) {
@@ -84,19 +84,19 @@ interface CustomBehaviorProps extends BehaviorProps {
 }
 
 class CustomBehavior implements Behavior<CustomBehaviorProps> {
-  name: string;
+  type: string;
   start?: () => void;
   update?: (entity: StageEntity, deltaTime: number) => void;
   destroy?: () => void;
   render?: (entity: StageEntity, currentContent: React.ReactNode | null) => React.ReactNode | null;
 
   constructor(options: CustomBehaviorProps) {
-    this.name = options.name || 'CustomBehavior';
+    this.type = options.name || 'CustomBehavior';
     this.applyProps(options);
   }
 
   applyProps(props: CustomBehaviorProps) {
-    this.name = props.name;
+    this.type = props.name;
     const funcKeys = ['start', 'update', 'destroy', 'render'] as const;
     for (const key of funcKeys) {
       if (props[key]) {
@@ -116,7 +116,7 @@ interface SimplifyMeshProps extends BehaviorProps {
 }
 
 class SimplifyMesh implements Behavior<SimplifyMeshProps> {
-  name = 'SimplifyMesh';
+  type = 'SimplifyMesh';
   private sides: number = 6;
 
   render(entity: StageEntity) {
@@ -150,6 +150,7 @@ class SimplifyMesh implements Behavior<SimplifyMeshProps> {
 }
 
 export const createBehavior = (props: BehaviorProps): Behavior<any> => {
+  console.log(props)
   switch (props.type) {
     case 'RenderCircle':
       const renderCircle = new RenderCircle();

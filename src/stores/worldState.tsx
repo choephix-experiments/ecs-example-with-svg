@@ -64,7 +64,7 @@ const updateEntityProps = (stageEntity: StageEntity, dataEntity: StageEntityProp
     const dataBehavior = dataEntity.behaviors[i];
     let stageBehavior = stageEntity.behaviors[i];
 
-    if (!stageBehavior || stageBehavior.name !== dataBehavior.type) {
+    if (!stageBehavior || stageBehavior.type !== dataBehavior.type) {
       // New or changed behavior, create it
       stageBehavior = createBehavior(dataBehavior);
       newBehaviors.push(stageBehavior);

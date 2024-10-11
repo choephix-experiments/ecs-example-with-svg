@@ -34,7 +34,7 @@ export class StageEntity {
       rotation: this.rotation,
       scale: this.scale,
       behaviors: this.behaviors.map(
-        (b) => ({ type: b.name, ...b } as AnyBehaviorProps)
+        (b) => ({ type: b.type, ...b } as AnyBehaviorProps)
       ),
     };
   }
@@ -48,12 +48,12 @@ export class StageEntity {
   }
 
   getBehavior<T extends AnyBehavior>(type: AnyBehaviorProps["type"]) {
-    return this.behaviors.find((b) => b.name === type) as T | undefined;
+    return this.behaviors.find((b) => b.type === type) as T | undefined;
   }
 }
 
 export interface Behavior<T extends BehaviorProps = BehaviorProps> {
-  name: string;
+  type: string;
   start?: () => void;
   update?: (entity: StageEntity, deltaTime: number) => void;
   destroy?: () => void;

@@ -28,7 +28,7 @@ export default function GameSandbox() {
     }
 
     previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(onEnterFrame);
+    // requestRef.current = requestAnimationFrame(onEnterFrame);
   }, []);
 
   useEffect(() => {
