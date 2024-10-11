@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["dev"],
+      "label": "pnpm: dev",
+      "detail": "Run development server",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "rocket"
+      }
+    }
+  ]
+}
