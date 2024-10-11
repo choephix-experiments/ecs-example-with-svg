@@ -12,7 +12,7 @@ export function populateSampleWorld() {
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,
       rotation: Math.random() * 360,
-      scale: 0.5 + Math.random() * 1.5,
+      scale: 1 + Math.random(),
       behaviors: []
     };
     worldDataStateActions.addEntity(entity);
@@ -28,7 +28,7 @@ export function populateSampleWorld() {
     if (i % 3 === 0) {
       worldDataStateActions.addBehaviorToEntity(i, {
         type: 'SimplifyMesh',
-        sides: Math.floor(Math.random() * 5) + 3, // Random number of sides between 3 and 7
+        sides: 5, // Random number of sides between 3 and 7
       });
     }
   }

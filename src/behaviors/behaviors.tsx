@@ -56,7 +56,7 @@ interface FillColorProps extends BehaviorProps {
 
 class FillColor implements Behavior<FillColorProps> {
   name = 'FillColor';
-  private color: string;
+  color: string;
 
   constructor(color: string) {
     this.color = color;
@@ -118,20 +118,16 @@ class SimplifyMesh implements Behavior<SimplifyMeshProps> {
   name = 'SimplifyMesh';
   private sides: number = 6;
 
-  render(entity: StageEntity, content: React.ReactNode | null) {
+  render(entity: StageEntity) {
     const circle = entity.getBehavior<RenderCircle>('RenderCircle');
     const radius = circle?.radius || 10;
+
+    const fill = entity.getBehavior<FillColor>('FillColor');
+    const color = fill?.color || 'black';
+
     const points = this.generatePolygonPoints(entity.x, entity.y, radius, this.sides);
 
-    console.log(points);
-
-    return (
-      <polygon
-        points={points}
-        // transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
-      />
-    );
-    return content;
+    return <polygon points={points} fill={color} />;
   }
 
   applyProps(props: SimplifyMeshProps) {
