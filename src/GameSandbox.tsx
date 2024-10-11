@@ -16,7 +16,7 @@ export default function GameSandbox() {
   const { entities, stage } = useSnapshot(worldState);
   const { selectedEntityId } = useSnapshot(ideState);
 
-  const updateEntities = useCallback((time: number) => {
+  const onEnterFrame = useCallback((time: number) => {
     if (previousTimeRef.current != undefined) {
       const deltaTime = (time - previousTimeRef.current) / 1000;
 
@@ -28,17 +28,17 @@ export default function GameSandbox() {
     }
 
     previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(updateEntities);
+    requestRef.current = requestAnimationFrame(onEnterFrame);
   }, []);
 
   useEffect(() => {
-    requestRef.current = requestAnimationFrame(updateEntities);
+    requestRef.current = requestAnimationFrame(onEnterFrame);
     return () => {
       if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, [updateEntities]);
+  }, [onEnterFrame]);
 
   const handleEntityClick = useCallback((entity: StageEntity, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -80,7 +80,8 @@ export default function GameSandbox() {
           height={stage.height}
           fill='none'
           stroke='gray'
-          strokeWidth='4'
+          strokeWidth='1'
+          strokeDasharray='18,4,18,0'
         />
         {entities.map(entity => (
           <RenderedEntity key={entity.id} entityId={entity.id} onClick={handleEntityClick} />
