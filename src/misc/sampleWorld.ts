@@ -23,5 +23,13 @@ export function populateSampleWorld() {
       type: 'FillColor',
       color: `hsl(${Math.random() * 360}, 70%, 50%)`,
     });
+    
+    // Add SimplifyMesh behavior to some entities
+    if (i % 3 === 0) {
+      worldDataStateActions.addBehaviorToEntity(i, {
+        type: 'SimplifyMesh',
+        sides: Math.floor(Math.random() * 5) + 3, // Random number of sides between 3 and 7
+      });
+    }
   }
 }

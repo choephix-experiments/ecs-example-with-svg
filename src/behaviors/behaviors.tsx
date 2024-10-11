@@ -77,7 +77,9 @@ interface CustomBehaviorProps extends BehaviorProps {
   start?: string | (() => void);
   update?: string | ((entity: StageEntity, deltaTime: number) => void);
   destroy?: string | (() => void);
-  render?: string | ((entity: StageEntity, currentContent: React.ReactNode | null) => React.ReactNode | null);
+  render?:
+    | string
+    | ((entity: StageEntity, currentContent: React.ReactNode | null) => React.ReactNode | null);
 }
 
 class CustomBehavior implements Behavior<CustomBehaviorProps> {
@@ -107,6 +109,48 @@ class CustomBehavior implements Behavior<CustomBehaviorProps> {
   }
 }
 
+interface SimplifyMeshProps extends BehaviorProps {
+  type: 'SimplifyMesh';
+  sides?: number;
+}
+
+class SimplifyMesh implements Behavior<SimplifyMeshProps> {
+  name = 'SimplifyMesh';
+  private sides: number = 6;
+
+  render(entity: StageEntity, content: React.ReactNode | null) {
+    const radius = content?.props?.r || 10;
+    const points = this.generatePolygonPoints(entity.x, entity.y, radius, this.sides);
+
+    console.log(points);
+
+    return (
+      <polygon
+        points={points}
+        // transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
+      />
+    );
+    return content;
+  }
+
+  applyProps(props: SimplifyMeshProps) {
+    if (props.sides !== undefined && props.sides > 2) {
+      this.sides = props.sides;
+    }
+  }
+
+  private generatePolygonPoints(cx: number, cy: number, radius: number, sides: number): string {
+    let points = '';
+    for (let i = 0; i < sides; i++) {
+      const angle = (i / sides) * 2 * Math.PI;
+      const x = cx + radius * Math.cos(angle);
+      const y = cy + radius * Math.sin(angle);
+      points += `${x},${y} `;
+    }
+    return points.trim();
+  }
+}
+
 export const createBehavior = (props: BehaviorProps): Behavior<any> => {
   switch (props.type) {
     case 'RenderCircle':
@@ -123,12 +167,33 @@ export const createBehavior = (props: BehaviorProps): Behavior<any> => {
       return fillColor;
     case 'CustomBehavior':
       return new CustomBehavior(props as CustomBehaviorProps);
+    case 'SimplifyMesh':
+      const simplifyMesh = new SimplifyMesh();
+      simplifyMesh.applyProps(props as SimplifyMeshProps);
+      console.log(simplifyMesh);
+      return simplifyMesh;
     default:
       throw new Error(`Unknown behavior type: ${props.type}`);
   }
 };
 
-export type { RenderCircleProps, MovementBehaviorProps, FillColorProps, CustomBehaviorProps };
+export type {
+  RenderCircleProps,
+  MovementBehaviorProps,
+  FillColorProps,
+  CustomBehaviorProps,
+  SimplifyMeshProps,
+};
 
-export type AnyBehaviorProps = RenderCircleProps | MovementBehaviorProps | FillColorProps | CustomBehaviorProps;
-export type AnyBehavior = RenderCircle | MovementBehavior | FillColor | CustomBehavior;
+export type AnyBehaviorProps =
+  | RenderCircleProps
+  | MovementBehaviorProps
+  | FillColorProps
+  | CustomBehaviorProps
+  | SimplifyMeshProps;
+export type AnyBehavior =
+  | RenderCircle
+  | MovementBehavior
+  | FillColor
+  | CustomBehavior
+  | SimplifyMesh;
