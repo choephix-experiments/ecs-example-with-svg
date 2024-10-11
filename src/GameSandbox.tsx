@@ -7,7 +7,7 @@ import { RenderedEntity } from './components/svg/RenderedEntity';
 import { SelectionBox } from './components/svg/SelectionBox';
 import { worldState } from './stores/worldState';
 import { ideState, ideStateActions } from './stores/ideStore';
-import { StageEntity } from './types';
+import { StageEntity } from './types/facade-types';
 
 export default function GameSandbox() {
   const requestRef = useRef<number>();

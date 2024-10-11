@@ -1,22 +1,6 @@
 import { proxy } from 'valtio';
 import { AnyBehaviorProps } from '../behaviors/behaviors';
-
-export interface StageEntityProps {
-  id: number;
-  x: number;
-  y: number;
-  rotation: number;
-  scale: number;
-  behaviors: AnyBehaviorProps[];
-}
-
-export interface WorldDataState {
-  entities: StageEntityProps[];
-  stage: {
-    width: number;
-    height: number;
-  };
-}
+import { StageEntityProps, WorldDataState } from '../types/data-types';
 
 export const worldDataState = proxy<WorldDataState>({
   entities: [],

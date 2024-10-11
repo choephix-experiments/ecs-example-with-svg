@@ -1,8 +1,7 @@
-import React from 'react';
-import { Entity } from '../../types';
+import { StageEntity } from '../../types/facade-types';
 
 interface EntityInspectorProps {
-  entity: Entity;
+  entity: StageEntity;
 }
 
 export function EntityInspector({ entity }: EntityInspectorProps) {

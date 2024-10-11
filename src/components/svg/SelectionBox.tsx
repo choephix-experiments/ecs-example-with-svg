@@ -1,6 +1,6 @@
-import { Entity } from "../types";
+import { StageEntity } from "../../types/facade-types";
 
-export const SelectionBox: React.FC<{ entity: Entity }> = ({ entity }) => {
+export const SelectionBox: React.FC<{ entity: StageEntity }> = ({ entity }) => {
   const boxSize = 20 * entity.scale + 4;
   return (
     <rect

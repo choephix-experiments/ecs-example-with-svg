@@ -1,5 +1,6 @@
 import React from 'react';
-import { Behavior, StageEntity, BehaviorProps } from '../types';
+import { BehaviorProps } from '../types/data-types';
+import { Behavior, StageEntity } from '../types/facade-types';
 
 interface RenderCircleProps extends BehaviorProps {
   type: 'RenderCircle';

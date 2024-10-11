@@ -1,7 +1,8 @@
 import { proxy, subscribe } from 'valtio';
 import { createBehavior } from '../behaviors/behaviors';
-import { StageEntity } from '../types';
-import { StageEntityProps, worldDataState, worldDataStateActions } from './worldDataState';
+import { StageEntityProps } from '../types/data-types';
+import { StageEntity } from '../types/facade-types';
+import { worldDataState, worldDataStateActions } from './worldDataState';
 
 interface GameState {
   entities: StageEntity[];

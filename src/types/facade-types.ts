@@ -1,5 +1,9 @@
-import { AnyBehavior, AnyBehaviorProps, createBehavior } from "./behaviors/behaviors";
-import { StageEntityProps } from "./stores/worldDataState";
+import {
+  createBehavior,
+  AnyBehaviorProps,
+  AnyBehavior,
+} from "../behaviors/behaviors";
+import { StageEntityProps, BehaviorProps } from "./data-types";
 
 export class StageEntity {
   id: number;
@@ -29,20 +33,22 @@ export class StageEntity {
       y: this.y,
       rotation: this.rotation,
       scale: this.scale,
-      behaviors: this.behaviors.map(b => ({ type: b.name, ...b } as AnyBehaviorProps)),
+      behaviors: this.behaviors.map(
+        (b) => ({ type: b.name, ...b } as AnyBehaviorProps)
+      ),
     };
   }
 
   update(deltaTime: number) {
-    this.behaviors.forEach(behavior => {
+    this.behaviors.forEach((behavior) => {
       if (behavior.update) {
         behavior.update(this, deltaTime);
       }
     });
   }
 
-  getBehavior<T extends AnyBehavior>(type: AnyBehaviorProps['type']) {
-    return this.behaviors.find(b => b.name === type) as T | undefined;
+  getBehavior<T extends AnyBehavior>(type: AnyBehaviorProps["type"]) {
+    return this.behaviors.find((b) => b.name === type) as T | undefined;
   }
 }
 
@@ -56,8 +62,4 @@ export interface Behavior<T extends BehaviorProps = BehaviorProps> {
     currentContent: React.ReactNode | null
   ) => React.ReactNode | null;
   applyProps: (props: T) => void;
-}
-
-export interface BehaviorProps {
-  type: string;
 }
