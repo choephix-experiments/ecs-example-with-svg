@@ -4,6 +4,7 @@ import {
   worldDataStateActions,
 } from "../stores/worldDataState";
 import { StageEntityProps } from "../types/data-types";
+import { findBehavior } from "../utils/findBehavior";
 
 const emojiList = ["😊", "🚀", "🌈", "🎉", "🦄", "🍕", "🌟", "🐱", "🌺", "🎸"];
 
@@ -37,15 +38,13 @@ export function populateSampleWorld() {
     if (i % 3 === 0) {
       worldDataStateActions.addBehaviorToEntity(i, {
         type: "SimplifyMesh",
-        sides: Math.floor(Math.random() * 5) + 3, // Random number of sides between 3 and 7
+        sides: 6,
       });
     }
 
     // Add RenderEmoji behavior to every second entity
     if (i % 2 === 0) {
-      const circle = entity.behaviors.find(
-        (b) => b.type === "RenderCircle"
-      ) as BuiltInBehaviorsPropsDictionary["RenderCircle"] | undefined;
+      const circle = findBehavior(entity, "RenderCircle");
  
       const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
       worldDataStateActions.addBehaviorToEntity(i, {
