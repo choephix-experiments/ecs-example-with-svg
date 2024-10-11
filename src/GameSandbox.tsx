@@ -7,7 +7,7 @@ import { RenderedEntity } from './components/svg/RenderedEntity';
 import { SelectionBox } from './components/svg/SelectionBox';
 import { worldState } from './stores/worldStore';
 import { ideState, ideStateActions } from './stores/ideStore';
-import { Entity } from './types';
+import { StageEntity } from './types';
 
 export default function GameSandbox() {
   const requestRef = useRef<number>();
@@ -40,7 +40,7 @@ export default function GameSandbox() {
     };
   }, [updateEntities]);
 
-  const handleEntityClick = useCallback((entity: Entity, event: React.MouseEvent) => {
+  const handleEntityClick = useCallback((entity: StageEntity, event: React.MouseEvent) => {
     event.stopPropagation();
     ideStateActions.setSelectedEntityId(entity.id);
   }, []);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Behavior, Entity, BehaviorProps } from '../types';
+import { Behavior, StageEntity, BehaviorProps } from '../types';
 
 interface RenderCircleProps extends BehaviorProps {
   type: 'RenderCircle';
@@ -10,7 +10,7 @@ class RenderCircle implements Behavior<RenderCircleProps> {
   name = 'RenderCircle';
   private radius: number = 10;
 
-  render(entity: Entity) {
+  render(entity: StageEntity) {
     return (
       <circle
         cx={entity.x}
@@ -37,7 +37,7 @@ class MovementBehavior implements Behavior<MovementBehaviorProps> {
   name = 'Movement';
   private speed: number = 0.5;
 
-  update(entity: Entity, deltaTime: number) {
+  update(entity: StageEntity, deltaTime: number) {
     entity.x += Math.sin(Date.now() * 0.001) * this.speed * deltaTime;
     entity.y += Math.cos(Date.now() * 0.001) * this.speed * deltaTime;
   }
@@ -62,7 +62,7 @@ class FillColor implements Behavior<FillColorProps> {
     this.color = color;
   }
 
-  render(_: Entity, content: React.ReactNode | null) {
+  render(_: StageEntity, content: React.ReactNode | null) {
     return <g fill={this.color}>{content}</g>;
   }
 
@@ -75,17 +75,17 @@ interface CustomBehaviorProps extends BehaviorProps {
   type: 'CustomBehavior';
   name: string;
   start?: string | (() => void);
-  update?: string | ((entity: Entity, deltaTime: number) => void);
+  update?: string | ((entity: StageEntity, deltaTime: number) => void);
   destroy?: string | (() => void);
-  render?: string | ((entity: Entity, currentContent: React.ReactNode | null) => React.ReactNode | null);
+  render?: string | ((entity: StageEntity, currentContent: React.ReactNode | null) => React.ReactNode | null);
 }
 
 class CustomBehavior implements Behavior<CustomBehaviorProps> {
   name: string;
   start?: () => void;
-  update?: (entity: Entity, deltaTime: number) => void;
+  update?: (entity: StageEntity, deltaTime: number) => void;
   destroy?: () => void;
-  render?: (entity: Entity, currentContent: React.ReactNode | null) => React.ReactNode | null;
+  render?: (entity: StageEntity, currentContent: React.ReactNode | null) => React.ReactNode | null;
 
   constructor(options: CustomBehaviorProps) {
     this.name = options.name || 'CustomBehavior';

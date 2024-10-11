@@ -1,9 +1,9 @@
-import { proxy } from 'valtio';
-import { AnyBehaviorProps, createBehavior } from '../behaviors/behaviors';
-import { Entity } from '../types';
+import { proxy, subscribe } from 'valtio';
+import { StageEntity } from '../types';
+import { worldDataState, worldDataStateActions } from './worldDataState';
 
 interface GameState {
-  entities: Entity[];
+  entities: StageEntity[];
   stage: {
     width: number;
     height: number;
@@ -18,41 +18,17 @@ const worldState = proxy<GameState>({
   },
 });
 
-const worldStateActions = {
-  addEntity: (entity: Entity) => {
-    worldState.entities.push(entity);
-    console.debug('Added entity', entity);
-  },
-  removeEntity: (id: number) => {
-    worldState.entities = worldState.entities.filter(e => e.id !== id);
-  },
-  addBehaviorToEntity: (entityId: number, behaviorProps: AnyBehaviorProps) => {
-    const entity = worldState.entities.find(e => e.id === entityId);
-    if (entity) {
-      const behavior = createBehavior(behaviorProps);
-      entity.behaviors.push(behavior);
-    }
-  },
-  removeBehaviorFromEntity: (entityId: number, behaviorName: string) => {
-    const entity = worldState.entities.find(e => e.id === entityId);
-    if (entity) {
-      entity.behaviors = entity.behaviors.filter(b => b.name !== behaviorName);
-    }
-  },
-  updateEntities: (deltaTime: number) => {
-    worldState.entities.forEach(entity => {
-      entity.behaviors.forEach(behavior => {
-        if (behavior.update) {
-          behavior.update(entity, deltaTime);
-        }
-      });
-    });
-  },
-  clearWorld: () => {
-    worldState.entities = [];
-  },
+const syncWorldState = () => {
+  worldState.entities = worldDataState.entities.map(StageEntity.fromProps);
+  worldState.stage = { ...worldDataState.stage };
 };
 
-Object.assign(globalThis, { state: worldState });
+subscribe(worldDataState, syncWorldState);
 
-export { worldState, worldStateActions };
+const updateEntities = (deltaTime: number) => {
+  worldState.entities.forEach(entity => entity.update(deltaTime));
+};
+
+Object.assign(globalThis, { state: worldState, dataState: worldDataState });
+
+export { worldState, worldDataStateActions, updateEntities };

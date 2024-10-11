@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import GameSandbox from './GameSandbox';
 import { populateSampleWorld } from './misc/sampleWorld';
-import { worldStateActions } from './stores/worldStore';
+import { worldDataStateActions } from './stores/worldDataState';
 
 import './App.css'
 ;
@@ -9,7 +9,7 @@ function App() {
   useEffect(() => {
     populateSampleWorld();
 
-    return () => worldStateActions.clearWorld();
+    return () => worldDataStateActions.clearWorld();
   });
 
   return <GameSandbox />;
