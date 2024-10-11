@@ -150,7 +150,6 @@ class SimplifyMesh implements Behavior<SimplifyMeshProps> {
 }
 
 export const createBehavior = (props: BehaviorProps): Behavior<any> => {
-  console.log(props)
   switch (props.type) {
     case 'RenderCircle':
       const renderCircle = new RenderCircle();
@@ -169,7 +168,6 @@ export const createBehavior = (props: BehaviorProps): Behavior<any> => {
     case 'SimplifyMesh':
       const simplifyMesh = new SimplifyMesh();
       simplifyMesh.applyProps(props as SimplifyMeshProps);
-      console.log(simplifyMesh);
       return simplifyMesh;
     default:
       throw new Error(`Unknown behavior type: ${props.type}`);
