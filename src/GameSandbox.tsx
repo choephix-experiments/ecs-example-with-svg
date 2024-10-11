@@ -5,7 +5,7 @@ import { PromptBar } from './components/gui/PromptBar';
 import { Grid } from './components/svg/Grid';
 import { RenderedEntity } from './components/svg/RenderedEntity';
 import { SelectionBox } from './components/svg/SelectionBox';
-import { worldState } from './stores/worldStore';
+import { worldState } from './stores/worldState';
 import { ideState, ideStateActions } from './stores/ideStore';
 import { StageEntity } from './types';
 

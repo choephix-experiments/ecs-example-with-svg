@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSnapshot } from 'valtio';
 import { StageEntity } from '../../types';
-import { worldState } from '../../stores/worldStore';
+import { worldState } from '../../stores/worldState';
 
 interface RenderedEntityProps {
   entityId: number;

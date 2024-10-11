@@ -1,5 +1,5 @@
 import { StageEntityProps, worldDataStateActions } from '../stores/worldDataState';
-import { worldState } from '../stores/worldStore';
+import { worldState } from '../stores/worldState';
 
 export function populateSampleWorld() {
   worldDataStateActions.clearWorld();

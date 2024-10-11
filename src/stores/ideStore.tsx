@@ -1,5 +1,5 @@
 import { proxy } from 'valtio';
-import { worldState } from './worldStore';
+import { worldState } from './worldState';
 
 interface IDEState {
   selectedEntityId: number | null;
