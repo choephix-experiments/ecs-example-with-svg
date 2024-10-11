@@ -1,4 +1,3 @@
-import { BuiltInBehaviorsPropsDictionary } from "../behaviors/behaviors";
 import {
   worldDataState,
   worldDataStateActions,
@@ -45,8 +44,9 @@ export function populateSampleWorld() {
     // Add RenderEmoji behavior to every second entity
     if (i % 2 === 0) {
       const circle = findBehavior(entity, "RenderCircle");
- 
-      const randomEmoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+
+      const randomEmoji =
+        emojiList[Math.floor(Math.random() * emojiList.length)];
       worldDataStateActions.addBehaviorToEntity(i, {
         type: "RenderEmoji",
         emoji: randomEmoji,
