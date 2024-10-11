@@ -1,27 +1,20 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 import { EntityInspector } from "./components/gui/EntityInspector";
 import { PromptBar } from "./components/gui/PromptBar";
 import { Grid } from "./components/svg/Grid";
 import { RenderedEntity } from "./components/svg/RenderedEntity";
 import { SelectionBox } from "./components/svg/SelectionBox";
-import { ideState, ideStateActions } from "./stores/ideStore";
-import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
-import { worldDataState } from "./stores/worldDataState";
 import { EntityResolver } from "./services/EntityResolver";
+import { ideStateActions, useGetSelectedEntity } from "./stores/ideStore";
+import { worldDataState } from "./stores/worldDataState";
+import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
 
 export default function GameSandbox() {
   const requestRef = useRef<number>();
   const previousTimeRef = useRef<number>();
 
   const { entities, stage } = useSnapshot(worldDataState);
-  const { selectedEntityId } = useSnapshot(ideState);
 
   const onEnterFrame = useCallback((time: number) => {
     if (previousTimeRef.current != undefined) {
@@ -77,10 +70,6 @@ export default function GameSandbox() {
     return () => window.removeEventListener("resize", updateViewBox);
   }, [stage.width, stage.height]);
 
-  const selectedEntity = useMemo(() => {
-    return entities.find((entity) => entity.id === selectedEntityId);
-  }, [entities, selectedEntityId]);
-
   return (
     <div className="w-full h-screen relative overflow-hidden">
       <svg
@@ -106,12 +95,29 @@ export default function GameSandbox() {
             onClick={handleEntityClick}
           />
         ))}
-        {selectedEntity && <SelectionBox entity={selectedEntity} />}
+        <SelectionBoxes />
       </svg>
 
-      {selectedEntity && <EntityInspector entity={selectedEntity} />}
-
-      <PromptBar />
+      <GUILayer />
     </div>
   );
 }
+
+const SelectionBoxes = () => {
+  const selectedEntity = useGetSelectedEntity();
+  if (!selectedEntity) return null;
+
+  return <SelectionBox entity={selectedEntity} />;
+};
+
+const GUILayer = () => {
+  const selectedEntity = useGetSelectedEntity();
+
+  return (
+    <>
+      {selectedEntity && <EntityInspector entity={selectedEntity} />}
+
+      <PromptBar />
+    </>
+  );
+};
