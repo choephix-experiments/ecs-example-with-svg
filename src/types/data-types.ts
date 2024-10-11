@@ -18,3 +18,11 @@ export interface WorldDataState {
 export interface BehaviorProps {
   type: string;
 }
+
+///////////////
+
+export type ReadonlyDeep<T> = T extends (infer R)[]
+  ? ReadonlyArray<ReadonlyDeep<R>>
+  : T extends object
+    ? { readonly [K in keyof T]: ReadonlyDeep<T[K]> }
+    : T;

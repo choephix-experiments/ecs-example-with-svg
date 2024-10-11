@@ -1,30 +1,20 @@
 import React from 'react';
-import { useSnapshot } from 'valtio';
-import { StageEntity } from '../../types';
-import { worldState } from '../../stores/worldState';
+import { ReadonlyDeep, StageEntityProps } from '../../types/data-types';
+import { EntityResolver } from '../../services/EntityResolver';
 
 interface RenderedEntityProps {
-  entityId: number;
-  onClick: (entity: StageEntity, event: React.MouseEvent) => void;
+  entity: ReadonlyDeep<StageEntityProps>;
+  onClick: (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => void;
 }
 
-export const RenderedEntity: React.FC<RenderedEntityProps> = React.memo(({ entityId, onClick }) => {
-  const { entities } = useSnapshot(worldState);
-  const entity = entities.find(e => e.id === entityId) as StageEntity;
-
-  if (!entity) return null;
-
-  const renderEntity = (): React.ReactNode => {
-    let renderContent: React.ReactNode = null;
-    for (const behavior of entity.behaviors) {
-      renderContent = behavior.render?.(entity, renderContent);
-    }
-    return renderContent;
+export const RenderedEntity: React.FC<RenderedEntityProps> = ({ entity, onClick }) => {
+  const handleClick = (event: React.MouseEvent) => {
+    onClick(entity, event);
   };
 
   return (
-    <g onClick={e => onClick(entity, e)} style={{ cursor: 'pointer' }}>
-      {renderEntity()}
+    <g onClick={handleClick}>
+      {EntityResolver.render(entity)}
     </g>
   );
-});
+};

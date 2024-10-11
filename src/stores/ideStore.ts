@@ -1,5 +1,5 @@
 import { proxy } from 'valtio';
-import { worldState } from './worldState';
+import { worldDataState } from './worldDataState';
 
 interface IDEState {
   selectedEntityId: number | null;
@@ -14,7 +14,7 @@ const ideStateActions = {
     ideState.selectedEntityId = id;
   },
   getSelectedEntity: () => {
-    return worldState.entities.find(e => e.id === ideState.selectedEntityId);
+    return worldDataState.entities.find(e => e.id === ideState.selectedEntityId);
   },
 };
 

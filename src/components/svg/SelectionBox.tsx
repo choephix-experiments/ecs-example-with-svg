@@ -1,6 +1,8 @@
-import { StageEntity } from "../../types/facade-types";
+import { ReadonlyDeep, StageEntityProps } from "../../types/data-types";
 
-export const SelectionBox: React.FC<{ entity: StageEntity }> = ({ entity }) => {
+export const SelectionBox: React.FC<{
+  entity: ReadonlyDeep<StageEntityProps>;
+}> = ({ entity }) => {
   const boxSize = 20 * entity.scale + 4;
   return (
     <rect
@@ -8,10 +10,10 @@ export const SelectionBox: React.FC<{ entity: StageEntity }> = ({ entity }) => {
       y={entity.y - boxSize / 2}
       width={boxSize}
       height={boxSize}
-      fill='none'
-      stroke='blue'
-      strokeWidth='1'
-      strokeDasharray='2, 2'
+      fill="none"
+      stroke="blue"
+      strokeWidth="1"
+      strokeDasharray="2, 2"
     />
   );
 };

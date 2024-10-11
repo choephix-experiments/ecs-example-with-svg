@@ -1,10 +1,10 @@
-import { StageEntityProps, worldDataStateActions } from '../stores/worldDataState';
-import { worldState } from '../stores/worldState';
+import { worldDataState, worldDataStateActions } from '../stores/worldDataState';
+import { StageEntityProps } from '../types/data-types';
 
 export function populateSampleWorld() {
   worldDataStateActions.clearWorld();
 
-  const { width, height } = worldState.stage;
+  const { width, height } = worldDataState.stage;
 
   for (let i = 0; i < 20; i++) {
     const entity: StageEntityProps = {
@@ -12,7 +12,7 @@ export function populateSampleWorld() {
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,
       rotation: Math.random() * 360,
-      scale: 1 + Math.random(),
+      scale: 1 + Math.random() * 5,
       behaviors: []
     };
     worldDataStateActions.addEntity(entity);

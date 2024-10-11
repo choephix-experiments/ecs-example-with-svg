@@ -28,7 +28,7 @@ export const worldDataStateActions = {
       Object.assign(entity, updates);
     }
   },
-  addBehaviorToEntity: (entityId: number, behavior: BehaviorProps) => {
+  addBehaviorToEntity: <T extends BehaviorProps>(entityId: number, behavior: T) => {
     const entity = worldDataState.entities.find((e) => e.id === entityId);
     if (entity) {
       entity.behaviors.push(behavior);

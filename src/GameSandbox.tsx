@@ -1,34 +1,38 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSnapshot } from 'valtio';
-import { EntityInspector } from './components/gui/EntityInspector';
-import { PromptBar } from './components/gui/PromptBar';
-import { Grid } from './components/svg/Grid';
-import { RenderedEntity } from './components/svg/RenderedEntity';
-import { SelectionBox } from './components/svg/SelectionBox';
-import { worldState } from './stores/worldState';
-import { ideState, ideStateActions } from './stores/ideStore';
-import { StageEntity } from './types/facade-types';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useSnapshot } from "valtio";
+import { EntityInspector } from "./components/gui/EntityInspector";
+import { PromptBar } from "./components/gui/PromptBar";
+import { Grid } from "./components/svg/Grid";
+import { RenderedEntity } from "./components/svg/RenderedEntity";
+import { SelectionBox } from "./components/svg/SelectionBox";
+import { ideState, ideStateActions } from "./stores/ideStore";
+import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
+import { worldDataState } from "./stores/worldDataState";
+import { EntityResolver } from "./services/EntityResolver";
 
 export default function GameSandbox() {
   const requestRef = useRef<number>();
   const previousTimeRef = useRef<number>();
 
-  const { entities, stage } = useSnapshot(worldState);
+  const { entities, stage } = useSnapshot(worldDataState);
   const { selectedEntityId } = useSnapshot(ideState);
 
   const onEnterFrame = useCallback((time: number) => {
     if (previousTimeRef.current != undefined) {
       const deltaTime = (time - previousTimeRef.current) / 1000;
-
-      for (const entity of worldState.entities) {
-        for (const behavior of entity.behaviors) {
-          behavior.update?.(entity as any, deltaTime);
-        }
+      for (const entity of worldDataState.entities) {
+        EntityResolver.update(entity, deltaTime);
       }
     }
 
     previousTimeRef.current = time;
-    // requestRef.current = requestAnimationFrame(onEnterFrame);
+    requestRef.current = requestAnimationFrame(onEnterFrame);
   }, []);
 
   useEffect(() => {
@@ -40,51 +44,67 @@ export default function GameSandbox() {
     };
   }, [onEnterFrame]);
 
-  const handleEntityClick = useCallback((entity: StageEntity, event: React.MouseEvent) => {
-    event.stopPropagation();
-    ideStateActions.setSelectedEntityId(entity.id);
-  }, []);
+  const handleEntityClick = useCallback(
+    (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
+      event.stopPropagation();
+      ideStateActions.setSelectedEntityId(entity.id);
+    },
+    []
+  );
 
   const handleBackgroundClick = useCallback(() => {
     ideStateActions.setSelectedEntityId(null);
   }, []);
 
-  const [viewBox, setViewBox] = useState('0 0 1000 1000');
+  const [viewBox, setViewBox] = useState("0 0 1000 1000");
 
   useEffect(() => {
     const updateViewBox = () => {
       const { innerWidth, innerHeight } = window;
-      const scale = Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.9;
+      const scale =
+        Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.9;
       const viewBoxWidth = innerWidth / scale;
       const viewBoxHeight = innerHeight / scale;
-      setViewBox(`${-viewBoxWidth / 2} ${-viewBoxHeight / 2} ${viewBoxWidth} ${viewBoxHeight}`);
+      setViewBox(
+        `${-viewBoxWidth / 2} ${
+          -viewBoxHeight / 2
+        } ${viewBoxWidth} ${viewBoxHeight}`
+      );
     };
 
     updateViewBox();
-    window.addEventListener('resize', updateViewBox);
-    return () => window.removeEventListener('resize', updateViewBox);
+    window.addEventListener("resize", updateViewBox);
+    return () => window.removeEventListener("resize", updateViewBox);
   }, [stage.width, stage.height]);
 
   const selectedEntity = useMemo(() => {
-    return ideStateActions.getSelectedEntity();
-  }, [selectedEntityId]);
+    return entities.find((entity) => entity.id === selectedEntityId);
+  }, [entities, selectedEntityId]);
 
   return (
-    <div className='w-full h-screen relative overflow-hidden'>
-      <svg className='w-full h-full' viewBox={viewBox} onClick={handleBackgroundClick}>
+    <div className="w-full h-screen relative overflow-hidden">
+      <svg
+        className="w-full h-full"
+        viewBox={viewBox}
+        onClick={handleBackgroundClick}
+      >
         <Grid />
         <rect
           x={-stage.width / 2}
           y={-stage.height / 2}
           width={stage.width}
           height={stage.height}
-          fill='none'
-          stroke='gray'
-          strokeWidth='1'
-          strokeDasharray='18,4,18,0'
+          fill="none"
+          stroke="gray"
+          strokeWidth="1"
+          strokeDasharray="18,4,18,0"
         />
-        {entities.map(entity => (
-          <RenderedEntity key={entity.id} entityId={entity.id} onClick={handleEntityClick} />
+        {entities.map((entity) => (
+          <RenderedEntity
+            key={entity.id}
+            entity={entity}
+            onClick={handleEntityClick}
+          />
         ))}
         {selectedEntity && <SelectionBox entity={selectedEntity} />}
       </svg>
