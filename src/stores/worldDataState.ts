@@ -49,6 +49,9 @@ export const worldDataStateActions = {
   clearWorld: () => {
     worldDataState.entities = [];
   },
+  getEntity: (id: string): StageEntityProps | undefined => {
+    return worldDataState.entities.find((e) => e.id === id);
+  },
 };
 
 Object.assign(globalThis, {
