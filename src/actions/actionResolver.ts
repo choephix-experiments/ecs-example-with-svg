@@ -1,86 +1,97 @@
 import { worldDataStateActions } from "../stores/worldDataState";
 import { ideStateActions } from "../stores/ideStore";
-import { GameAction } from "./actionTypes";
+import { ActionProps } from "./actionTypes";
 
-export const resolveAction = (action: GameAction): void => {
+export const resolveAction = (action: ActionProps): void => {
   console.log("🎬 Resolving action:", action.type);
 
   switch (action.type) {
-    case "ADD_ENTITY":
-      console.log("➕ Adding entity:", action.payload.id);
-      worldDataStateActions.addEntity(action.payload);
+    case "addEntity": {
+      console.log("➕ Adding entity:", action.entityProps.id);
+      worldDataStateActions.addEntity(action.entityProps);
       break;
+    }
 
-    case "REMOVE_ENTITY":
-      console.log("➖ Removing entity:", action.payload);
-      worldDataStateActions.removeEntity(action.payload);
+    case "removeEntity": {
+      console.log("➖ Removing entity:", action.entityId);
+      worldDataStateActions.removeEntity(action.entityId);
       break;
+    }
 
-    case "UPDATE_ENTITY":
-      console.log("🔄 Updating entity:", action.payload.id);
-      worldDataStateActions.updateEntity(
-        action.payload.id,
-        action.payload.updates
-      );
+    case "updateEntity": {
+      console.log("🔄 Updating entity:", action.entityId);
+      const entity = worldDataStateActions.getEntity(action.entityId);
+      if (!entity) throw new Error("Entity not found");
+
+      Object.assign(entity, action.updates);
       break;
+    }
 
-    case "ADD_BEHAVIOR":
-      console.log("🧠 Adding behavior to entity:", action.payload.entityId);
+    case "addBehavior": {
+      console.log("🧠 Adding behavior to entity:", action.entityId);
       worldDataStateActions.addBehaviorToEntity(
-        action.payload.entityId,
-        action.payload.behavior
+        action.entityId,
+        action.behaviorProps
       );
       break;
+    }
 
-    case "REMOVE_BEHAVIOR":
-      console.log("🗑️ Removing behavior from entity:", action.payload.entityId);
+    case "removeBehavior": {
+      console.log("🗑️ Removing behavior from entity:", action.entityId);
       worldDataStateActions.removeBehaviorFromEntity(
-        action.payload.entityId,
-        action.payload.behaviorType
+        action.entityId,
+        action.behaviorType
       );
       break;
+    }
 
-    case "UPDATE_BEHAVIOR":
-      console.log("🔧 Updating behavior for entity:", action.payload.entityId);
-      const entity = worldDataStateActions.getEntity(action.payload.entityId);
-      if (entity) {
-        const behaviorIndex = entity.behaviors.findIndex(
-          (b) => b.type === action.payload.behaviorType
-        );
-        if (behaviorIndex !== -1) {
-          const updatedBehavior = {
-            ...entity.behaviors[behaviorIndex],
-            ...action.payload.updates,
-          };
-          entity.behaviors[behaviorIndex] = updatedBehavior;
-          worldDataStateActions.updateEntity(action.payload.entityId, {
-            behaviors: [...entity.behaviors],
-          });
-        }
-      }
+    case "updateBehavior": {
+      console.log("🔧 Updating behavior for entity:", action.entityId);
+      const entity = worldDataStateActions.getEntity(action.entityId);
+      if (!entity) throw new Error("Entity not found");
+
+      const behaviorIndex = entity.behaviors.findIndex(
+        (b) => b.type === action.behaviorType
+      );
+      if (behaviorIndex < 0) throw new Error("Behavior not found");
+
+      const updatedBehavior = {
+        ...entity.behaviors[behaviorIndex],
+        ...action.updates,
+      };
+      entity.behaviors[behaviorIndex] = updatedBehavior;
+      worldDataStateActions.updateEntity(action.entityId, {
+        behaviors: [...entity.behaviors],
+      });
       break;
+    }
 
-    case "CLEAR_WORLD":
+    case "clearWorld": {
       console.log("🧹 Clearing the world");
       worldDataStateActions.clearWorld();
       break;
+    }
 
-    case "SELECT_ENTITIES":
-      console.log("🔍 Selecting entities:", action.payload.ids);
-      ideStateActions.setSelectedEntityIds(action.payload.ids);
+    case "selectEntities": {
+      console.log("🔍 Selecting entities:", action.entityIds);
+      ideStateActions.setSelectedEntityIds(action.entityIds);
       break;
+    }
 
-    case "DESELECT_ENTITIES":
-      console.log("👋 Deselecting entities:", action.payload);
-      ideStateActions.removeSelectedEntityIds(action.payload);
+    case "deselectEntities": {
+      console.log("👋 Deselecting entities:", action.entityIds);
+      ideStateActions.removeSelectedEntityIds(action.entityIds);
       break;
+    }
 
-    case "CLEAR_SELECTION":
+    case "clearSelection": {
       console.log("🧹 Clearing entity selection");
       ideStateActions.clearSelection();
       break;
+    }
 
-    default:
-      console.error("❌ Unknown action type:", (action as GameAction).type);
+    default: {
+      console.error("❌ Unknown action type:", (action as ActionProps).type);
+    }
   }
 };
