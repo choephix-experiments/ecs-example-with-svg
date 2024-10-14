@@ -27,12 +27,18 @@ type BuiltInBehaviorsExtraPropsDictionary = {
 
 export type BuiltInBehaviorsPropsDictionary = {
   [key in keyof BuiltInBehaviorsExtraPropsDictionary]: {
+    uuid: string;
     type: key;
   } & BuiltInBehaviorsExtraPropsDictionary[key];
 };
 
-export type BuiltInBehaviorsProps =
+export type BuiltInBehaviorProps =
   BuiltInBehaviorsPropsDictionary[keyof BuiltInBehaviorsPropsDictionary];
+
+export type BuiltInBehaviorBlueprint = Omit<
+  BuiltInBehaviorsPropsDictionary[keyof BuiltInBehaviorsPropsDictionary],
+  "uuid"
+>;
 
 // Define the structure for behavior resolvers
 export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {

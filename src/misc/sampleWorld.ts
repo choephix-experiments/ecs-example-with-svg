@@ -2,12 +2,11 @@ import {
   worldDataState,
   worldDataStateActions,
 } from "../stores/worldDataState";
-import { StageEntityProps } from "../types/data-types";
 import { findBehavior } from "../utils/findBehavior";
 
 const emojiList = ["😊", "🚀", "🌈", "🎉", "🦄", "🍕", "🌟", "🐱", "🌺", "🎸"];
 
-const randomId = () => Math.random().toString(36).substring(2, 15);
+// const randomId = () => Math.random().toString(36).substring(2, 15);
 // const forCount = (count: number) => Array.from({ length: count }, (_, i) => i);
 function* iterateTimes(count: number) {
   for (let i = 0; i < count; i++) {
@@ -23,15 +22,13 @@ export function populateSampleWorld() {
   const COUNT = 10;
 
   function createCircleWithRandomRadius() {
-    const entity: StageEntityProps = {
-      uuid: randomId(),
+    const entity = worldDataStateActions.addEntity({
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,
       rotation: Math.random() * 360,
       scale: 1,
       behaviors: [],
-    };
-    worldDataStateActions.addEntity(entity);
+    });
     worldDataStateActions.addBehaviorToEntity(entity.uuid, {
       type: "RenderCircle",
       radius: 10 + Math.random() * 40,
@@ -40,15 +37,13 @@ export function populateSampleWorld() {
   }
 
   function createCircleWithRandomScale() {
-    const entity: StageEntityProps = {
-      uuid: randomId(),
+    const entity = worldDataStateActions.addEntity({
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,
       rotation: Math.random() * 360,
       scale: 1 + Math.random() * 4,
       behaviors: [],
-    };
-    worldDataStateActions.addEntity(entity);
+    });
     worldDataStateActions.addBehaviorToEntity(entity.uuid, {
       type: "RenderCircle",
       radius: 10,

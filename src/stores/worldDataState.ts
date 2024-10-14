@@ -1,10 +1,12 @@
 import { proxy } from "valtio";
-import { BuiltInBehaviorsProps } from "../behaviors/behaviors";
+import { BuiltInBehaviorBlueprint } from "../behaviors/behaviors";
 import {
   BehaviorProps,
+  EntityBlueprint,
   StageEntityProps,
   WorldDataState,
 } from "../types/data-types";
+import { cloneDeep } from "../utils/core/cloneDeep";
 
 export const worldDataState = proxy<WorldDataState>({
   entities: [],
@@ -15,8 +17,13 @@ export const worldDataState = proxy<WorldDataState>({
 });
 
 export const worldDataStateActions = {
-  addEntity: (entity: StageEntityProps) => {
-    worldDataState.entities.push(entity);
+  addEntity: (entityBlueprint: EntityBlueprint) => {
+    const entityProps: StageEntityProps = {
+      ...cloneDeep(entityBlueprint),
+      uuid: crypto.randomUUID(),
+    };
+    worldDataState.entities.push(entityProps);
+    return entityProps;
   },
   removeEntity: (id: string) => {
     worldDataState.entities = worldDataState.entities.filter(
@@ -29,14 +36,19 @@ export const worldDataStateActions = {
       Object.assign(entity, updates);
     }
   },
-  addBehaviorToEntity: <T extends BuiltInBehaviorsProps | BehaviorProps>(
+  addBehaviorToEntity: <T extends BuiltInBehaviorBlueprint>(
     entityId: string,
-    behavior: T
+    behaviorBlueprint: T
   ) => {
     const entity = worldDataState.entities.find((e) => e.uuid === entityId);
-    if (entity) {
-      entity.behaviors.push(behavior);
-    }
+    if (!entity) throw new Error("Entity not found");
+
+    const behaviorProps: BehaviorProps = {
+      ...cloneDeep(behaviorBlueprint),
+      uuid: crypto.randomUUID(),
+    };
+    entity.behaviors.push(behaviorProps);
+    return behaviorProps;
   },
   removeBehaviorFromEntity: (entityId: string, behaviorType: string) => {
     const entity = worldDataState.entities.find((e) => e.uuid === entityId);

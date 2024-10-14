@@ -1,9 +1,11 @@
-import { BuiltInBehaviorsProps } from "./behaviors/behaviors";
+import { BuiltInBehaviorBlueprint } from "./behaviors/behaviors";
 import { ideState } from "./stores/ideStore";
 import { worldDataStateActions } from "./stores/worldDataState";
 
 const God = {
-  addBehaviorToSelectedEntity: (behaviorProps: BuiltInBehaviorsProps) => {
+  addBehaviorToSelectedEntity: <T extends BuiltInBehaviorBlueprint>(
+    behaviorProps: T
+  ) => {
     const selectedEntityId = ideState.selectedEntityIds[0];
     if (selectedEntityId !== null) {
       worldDataStateActions.addBehaviorToEntity(
