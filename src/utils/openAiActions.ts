@@ -20,7 +20,7 @@ const getOpenAIInstance = (): OpenAI => {
       }
     }
 
-    openai = new OpenAI({ apiKey });
+    openai = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
     console.log('🚀 OpenAI instance created');
   }
 
@@ -32,7 +32,7 @@ export async function getActionsFromOpenAI(prompt: string) {
 
   console.log('🤖 Sending request to OpenAI');
   const completion = await openaiInstance.chat.completions.create({
-    model: "gpt-4-0613", // Replace with the appropriate model
+    model: "gpt-4o", // Replace with the appropriate model
     messages: [
       { role: "system", content: "You are an AI assistant that generates actions for a game engine. Respond with a list of actions based on the user's request." },
       { role: "user", content: prompt },
