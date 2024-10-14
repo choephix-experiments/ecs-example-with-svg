@@ -59,10 +59,8 @@ export const behaviorResolvers = {
     },
   },
   ChangeColor: {
-    render(entity, content) {
-      const color =
-        (entity.behaviors.find((b) => b.type === "ChangeColor") as any)
-          ?.color || "black";
+    render(_, content) {
+      const color = this.color || "white";
       return <g fill={color}>{content}</g>;
     },
   },
