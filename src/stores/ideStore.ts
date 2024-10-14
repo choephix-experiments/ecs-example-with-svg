@@ -3,7 +3,7 @@ import { worldDataState } from './worldDataState';
 import { useSnapshot } from 'valtio';
 
 interface IDEState {
-  selectedEntityId: number | null;
+  selectedEntityId: string | null;
 }
 
 const ideState = proxy<IDEState>({
@@ -11,7 +11,7 @@ const ideState = proxy<IDEState>({
 });
 
 const ideStateActions = {
-  setSelectedEntityId: (id: number | null) => {
+  setSelectedEntityId: (id: string | null) => {
     ideState.selectedEntityId = id;
   },
 };

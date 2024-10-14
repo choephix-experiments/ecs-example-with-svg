@@ -7,16 +7,19 @@ import { findBehavior } from "../utils/findBehavior";
 
 const emojiList = ["😊", "🚀", "🌈", "🎉", "🦄", "🍕", "🌟", "🐱", "🌺", "🎸"];
 
+// const forCount = (count: number) => Array.from({ length: count }, (_, i) => i);
+const randomId = () => Math.random().toString(36).substring(2, 15);
+
 export function populateSampleWorld() {
   worldDataStateActions.clearWorld();
 
   const { width, height } = worldDataState.stage;
 
-  const COUNT = 100;
+  const COUNT = 10;
 
   for (let i = 0; i < COUNT; i++) {
     const entity: StageEntityProps = {
-      id: i,
+      id: randomId(),
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,
       rotation: Math.random() * 360,
@@ -24,14 +27,14 @@ export function populateSampleWorld() {
       behaviors: [],
     };
     worldDataStateActions.addEntity(entity);
-    worldDataStateActions.addBehaviorToEntity(i, {
+    worldDataStateActions.addBehaviorToEntity(entity.id, {
       type: "RenderCircle",
       radius: 10 + Math.random() * 40,
     });
 
     // Add SimplifyMesh behavior to some entities
     if (i % 3 === 0) {
-      worldDataStateActions.addBehaviorToEntity(i, {
+      worldDataStateActions.addBehaviorToEntity(entity.id, {
         type: "SimplifyMesh",
         sides: 6,
       });
@@ -45,13 +48,13 @@ export function populateSampleWorld() {
       const randomEmoji =
         emojiList[Math.floor(Math.random() * emojiList.length)];
 
-      worldDataStateActions.addBehaviorToEntity(i, {
+      worldDataStateActions.addBehaviorToEntity(entity.id, {
         type: "RenderEmoji",
         emoji: randomEmoji,
         fontSize: fontSize,
       });
     } else {
-      worldDataStateActions.addBehaviorToEntity(i, {
+      worldDataStateActions.addBehaviorToEntity(entity.id, {
         type: "ChangeColor",
         color: `hsl(${Math.random() * 360}, 70%, 50%)`,
       });
