@@ -14,8 +14,6 @@ export default function GameSandbox() {
   const requestRef = useRef<number>();
   const previousTimeRef = useRef<number>();
 
-  const { entities, stage } = useSnapshot(worldDataState);
-
   const onEnterFrame = useCallback((time: number) => {
     if (previousTimeRef.current != undefined) {
       const deltaTime = (time - previousTimeRef.current) / 1000;
@@ -36,6 +34,17 @@ export default function GameSandbox() {
       }
     };
   }, [onEnterFrame]);
+
+  return (
+    <div className="w-full h-screen relative overflow-hidden">
+      <StageLayer />
+      <GUILayer />
+    </div>
+  );
+}
+
+const StageLayer = () => {
+  const { entities, stage } = useSnapshot(worldDataState);
 
   const handleEntityClick = useCallback(
     (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
@@ -71,41 +80,37 @@ export default function GameSandbox() {
   }, [stage.width, stage.height]);
 
   return (
-    <div className="w-full h-screen relative overflow-hidden">
-      <svg
-        className="w-full h-full"
-        viewBox={viewBox}
-        onClick={handleBackgroundClick}
-      >
-        <Grid />
-        <rect
-          x={-stage.width / 2}
-          y={-stage.height / 2}
-          width={stage.width}
-          height={stage.height}
-          fill="none"
-          stroke="gray"
-          strokeWidth="1"
-          strokeDasharray="18,4,18,0"
-        />
-        <g fill="#ddd" stroke="black" strokeWidth={2.5}>
-          {entities.map((entity) => (
-            <g className="with-shadow">
-              <RenderedEntity
-                key={entity.id}
-                entity={entity}
-                onClick={handleEntityClick}
-              />
-            </g>
-          ))}
-        </g>
-        <SelectionBoxes />
-      </svg>
-
-      <GUILayer />
-    </div>
+    <svg
+      className="w-full h-full"
+      viewBox={viewBox}
+      onClick={handleBackgroundClick}
+    >
+      <Grid />
+      <rect
+        x={-stage.width / 2}
+        y={-stage.height / 2}
+        width={stage.width}
+        height={stage.height}
+        fill="none"
+        stroke="gray"
+        strokeWidth="1"
+        strokeDasharray="18,4,18,0"
+      />
+      <g fill="#ddd" stroke="black" strokeWidth={2.5}>
+        {entities.map((entity) => (
+          <g className="with-shadow">
+            <RenderedEntity
+              key={entity.id}
+              entity={entity}
+              onClick={handleEntityClick}
+            />
+          </g>
+        ))}
+      </g>
+      <SelectionBoxes />
+    </svg>
   );
-}
+};
 
 const SelectionBoxes = () => {
   const selectedEntity = useGetSelectedEntity();
