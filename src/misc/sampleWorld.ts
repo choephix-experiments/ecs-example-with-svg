@@ -12,7 +12,7 @@ export function populateSampleWorld() {
 
   const { width, height } = worldDataState.stage;
 
-  const COUNT = 10;
+  const COUNT = 100;
 
   for (let i = 0; i < COUNT; i++) {
     const entity: StageEntityProps = {
@@ -40,13 +40,15 @@ export function populateSampleWorld() {
     // Add RenderEmoji behavior to every second entity
     if (i % 2 === 0) {
       const circle = findBehavior(entity, "RenderCircle");
-
+      const fontSizeMultiplier = 1.33;
+      const fontSize = fontSizeMultiplier * (circle?.radius ?? 20);
       const randomEmoji =
         emojiList[Math.floor(Math.random() * emojiList.length)];
+
       worldDataStateActions.addBehaviorToEntity(i, {
         type: "RenderEmoji",
         emoji: randomEmoji,
-        fontSize: circle?.radius ?? 20, // You can adjust this or make it random if you prefer
+        fontSize: fontSize,
       });
     } else {
       worldDataStateActions.addBehaviorToEntity(i, {

@@ -108,17 +108,17 @@ export const behaviorResolvers = {
   RenderEmoji: {
     render(entity, content) {
       const emoji = this.emoji;
-      const fontSize = this.fontSize || 25 * entity.scale;
+      const fontSize = ~~(this.fontSize || 40 * entity.scale);
       return (
         <>
           {content}
           <text
             x={entity.x}
             y={entity.y}
+            transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
             fontSize={fontSize}
             textAnchor="middle"
             dominantBaseline="central"
-            transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
             style={{ userSelect: "none" }}
           >
             {emoji}
