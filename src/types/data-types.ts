@@ -1,5 +1,5 @@
 export interface StageEntityProps {
-  id: string;
+  uuid: string;
   x: number;
   y: number;
   rotation: number;

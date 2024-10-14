@@ -32,7 +32,7 @@ const StageLayer = () => {
   const handleEntityClick = useCallback(
     (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
       event.stopPropagation();
-      ideStateActions.toggleEntitySelection(entity.id, event.ctrlKey);
+      ideStateActions.toggleEntitySelection(entity.uuid, event.ctrlKey);
     },
     []
   );
@@ -81,7 +81,7 @@ const StageLayer = () => {
       />
       <g fill="#ddd" stroke="black" strokeWidth={1}>
         {entities.map((entity) => (
-          <g className="with-shadow" key={entity.id}>
+          <g className="with-shadow" key={entity.uuid}>
             <RenderedEntity entity={entity} onClick={handleEntityClick} />
           </g>
         ))}
@@ -96,7 +96,7 @@ const SelectionBoxes = () => {
   return (
     <>
       {selectedEntities.map((entity) => (
-        <SelectionBox key={entity.id} entity={entity} />
+        <SelectionBox key={entity.uuid} entity={entity} />
       ))}
     </>
   );
@@ -108,7 +108,7 @@ const GUILayer = () => {
   return (
     <>
       {selectedEntities.map((entity) => (
-        <EntityInspector entity={entity} key={"selection-" + entity.id} />
+        <EntityInspector entity={entity} key={"selection-" + entity.uuid} />
       ))}
       <PromptBar />
     </>

@@ -20,11 +20,11 @@ export const worldDataStateActions = {
   },
   removeEntity: (id: string) => {
     worldDataState.entities = worldDataState.entities.filter(
-      (e) => e.id !== id
+      (e) => e.uuid !== id
     );
   },
   updateEntity: (id: string, updates: Partial<StageEntityProps>) => {
-    const entity = worldDataState.entities.find((e) => e.id === id);
+    const entity = worldDataState.entities.find((e) => e.uuid === id);
     if (entity) {
       Object.assign(entity, updates);
     }
@@ -33,13 +33,13 @@ export const worldDataStateActions = {
     entityId: string,
     behavior: T
   ) => {
-    const entity = worldDataState.entities.find((e) => e.id === entityId);
+    const entity = worldDataState.entities.find((e) => e.uuid === entityId);
     if (entity) {
       entity.behaviors.push(behavior);
     }
   },
   removeBehaviorFromEntity: (entityId: string, behaviorType: string) => {
-    const entity = worldDataState.entities.find((e) => e.id === entityId);
+    const entity = worldDataState.entities.find((e) => e.uuid === entityId);
     if (entity) {
       entity.behaviors = entity.behaviors.filter(
         (b) => b.type !== behaviorType
@@ -50,7 +50,7 @@ export const worldDataStateActions = {
     worldDataState.entities = [];
   },
   getEntity: (id: string): StageEntityProps | undefined => {
-    return worldDataState.entities.find((e) => e.id === id);
+    return worldDataState.entities.find((e) => e.uuid === id);
   },
 };
 

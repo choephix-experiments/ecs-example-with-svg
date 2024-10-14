@@ -7,7 +7,7 @@ export const resolveAction = (action: ActionProps): void => {
 
   switch (action.type) {
     case "addEntity": {
-      console.log("➕ Adding entity:", action.entityProps.id);
+      console.log("➕ Adding entity:", action.entityProps.uuid);
       worldDataStateActions.addEntity(action.entityProps);
       break;
     }

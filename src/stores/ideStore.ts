@@ -41,7 +41,7 @@ export const useGetSelectedEntities = () => {
   const { selectedEntityIds } = useSnapshot(ideState);
   const { entities } = useSnapshot(worldDataState);
   
-  return entities.filter(e => selectedEntityIds.includes(e.id));
+  return entities.filter(e => selectedEntityIds.includes(e.uuid));
 };
 
 export { ideState };

@@ -11,7 +11,7 @@ export const magicApi = {
 
   // Find an entity by ID
   findEntityById: (id: string): StageEntityProps | undefined => {
-    return worldDataState.entities.find((entity) => entity.id === id);
+    return worldDataState.entities.find((entity) => entity.uuid === id);
   },
 
   // Find the first entity that matches the condition

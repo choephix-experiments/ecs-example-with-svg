@@ -24,7 +24,7 @@ export function populateSampleWorld() {
 
   function createCircleWithRandomRadius() {
     const entity: StageEntityProps = {
-      id: randomId(),
+      uuid: randomId(),
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,
       rotation: Math.random() * 360,
@@ -32,7 +32,7 @@ export function populateSampleWorld() {
       behaviors: [],
     };
     worldDataStateActions.addEntity(entity);
-    worldDataStateActions.addBehaviorToEntity(entity.id, {
+    worldDataStateActions.addBehaviorToEntity(entity.uuid, {
       type: "RenderCircle",
       radius: 10 + Math.random() * 40,
     });
@@ -41,7 +41,7 @@ export function populateSampleWorld() {
 
   function createCircleWithRandomScale() {
     const entity: StageEntityProps = {
-      id: randomId(),
+      uuid: randomId(),
       x: (Math.random() - 0.5) * width,
       y: (Math.random() - 0.5) * height,
       rotation: Math.random() * 360,
@@ -49,7 +49,7 @@ export function populateSampleWorld() {
       behaviors: [],
     };
     worldDataStateActions.addEntity(entity);
-    worldDataStateActions.addBehaviorToEntity(entity.id, {
+    worldDataStateActions.addBehaviorToEntity(entity.uuid, {
       type: "RenderCircle",
       radius: 10,
     });
@@ -64,7 +64,7 @@ export function populateSampleWorld() {
 
     // Add SimplifyMesh behavior to some entities
     if (index % 3 === 0) {
-      worldDataStateActions.addBehaviorToEntity(entity.id, {
+      worldDataStateActions.addBehaviorToEntity(entity.uuid, {
         type: "SimplifyMesh",
         sides: 6,
       });
@@ -78,13 +78,13 @@ export function populateSampleWorld() {
       const randomEmoji =
         emojiList[Math.floor(Math.random() * emojiList.length)];
 
-      worldDataStateActions.addBehaviorToEntity(entity.id, {
+      worldDataStateActions.addBehaviorToEntity(entity.uuid, {
         type: "RenderEmoji",
         emoji: randomEmoji,
         fontSize: fontSize,
       });
     } else {
-      worldDataStateActions.addBehaviorToEntity(entity.id, {
+      worldDataStateActions.addBehaviorToEntity(entity.uuid, {
         type: "ChangeColor",
         color: `hsl(${Math.random() * 360}, 70%, 50%)`,
       });
