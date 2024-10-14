@@ -18,7 +18,7 @@ export const RenderedEntity: React.FC<RenderedEntityProps> = ({
     onClick(entity, event);
   };
 
-  const transform = `translate(${entity.x}, ${entity.y}) rotate(${entity.rotation})`;
+  const transform = `translate(${entity.x}, ${entity.y}) rotate(${entity.rotation}) scale(${entity.scale})`;
 
   return (
     <g onClick={handleClick} transform={transform}>

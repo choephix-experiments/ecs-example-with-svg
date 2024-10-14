@@ -47,8 +47,8 @@ export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {
 // Global dictionary of behavior resolvers
 export const behaviorResolvers = {
   RenderCircle: {
-    render(entity) {
-      return <circle r={this.radius! * entity.scale} />;
+    render() {
+      return <circle r={this.radius!} />;
     },
   },
   ChangeColor: {
@@ -93,9 +93,9 @@ export const behaviorResolvers = {
     },
   },
   RenderEmoji: {
-    render(entity, content) {
+    render(_, content) {
       const emoji = this.emoji;
-      const fontSize = ~~(this.fontSize || 40 * entity.scale);
+      const fontSize = ~~(this.fontSize || 40);
       return (
         <>
           {content}

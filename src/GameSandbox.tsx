@@ -79,7 +79,7 @@ const StageLayer = () => {
         strokeWidth="1"
         strokeDasharray="18,4,18,0"
       />
-      <g fill="#ddd" stroke="black" strokeWidth={2.5}>
+      <g fill="#ddd" stroke="black" strokeWidth={1}>
         {entities.map((entity) => (
           <g className="with-shadow" key={entity.id}>
             <RenderedEntity entity={entity} onClick={handleEntityClick} />
