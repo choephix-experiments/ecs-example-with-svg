@@ -1,6 +1,5 @@
-import { proxy } from 'valtio';
+import { proxy, useSnapshot } from 'valtio';
 import { worldDataState } from './worldDataState';
-import { useSnapshot } from 'valtio';
 
 interface IDEState {
   selectedEntityIds: string[];
@@ -10,9 +9,16 @@ const ideState = proxy<IDEState>({
   selectedEntityIds: [],
 });
 
-const ideStateActions = {
+export const ideStateActions = {
   setSelectedEntityIds: (ids: string[]) => {
     ideState.selectedEntityIds = ids;
+  },
+  addSelectedEntityIds: (ids: string[]) => {
+    const newIds = ids.filter(id => !ideState.selectedEntityIds.includes(id));
+    ideState.selectedEntityIds.push(...newIds);
+  },
+  removeSelectedEntityIds: (ids: string[]) => {
+    ideState.selectedEntityIds = ideState.selectedEntityIds.filter(id => !ids.includes(id));
   },
   toggleEntitySelection: (id: string, ctrlKey: boolean) => {
     if (ctrlKey) {
@@ -31,11 +37,11 @@ const ideStateActions = {
   },
 };
 
-const useGetSelectedEntities = () => {
+export const useGetSelectedEntities = () => {
   const { selectedEntityIds } = useSnapshot(ideState);
   const { entities } = useSnapshot(worldDataState);
   
   return entities.filter(e => selectedEntityIds.includes(e.id));
 };
 
-export { ideStateActions, ideState, useGetSelectedEntities };
+export { ideState };

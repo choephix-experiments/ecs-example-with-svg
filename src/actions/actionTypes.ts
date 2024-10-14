@@ -7,7 +7,10 @@ export type ActionType =
   | "ADD_BEHAVIOR"
   | "REMOVE_BEHAVIOR"
   | "UPDATE_BEHAVIOR"
-  | "CLEAR_WORLD";
+  | "CLEAR_WORLD"
+  | "SELECT_ENTITIES"
+  | "DESELECT_ENTITIES"
+  | "CLEAR_SELECTION";
 
 export interface Action {
   type: ActionType;
@@ -61,6 +64,22 @@ export interface ClearWorldAction extends Action {
   type: "CLEAR_WORLD";
 }
 
+export interface SelectEntitiesAction extends Action {
+  type: "SELECT_ENTITIES";
+  payload: {
+    ids: string[];
+  };
+}
+
+export interface DeselectEntitiesAction extends Action {
+  type: "DESELECT_ENTITIES";
+  payload: string[]; // entity ids to deselect
+}
+
+export interface ClearSelectionAction extends Action {
+  type: "CLEAR_SELECTION";
+}
+
 export type GameAction =
   | AddEntityAction
   | RemoveEntityAction
@@ -68,4 +87,7 @@ export type GameAction =
   | AddBehaviorAction
   | RemoveBehaviorAction
   | UpdateBehaviorAction
-  | ClearWorldAction;
+  | ClearWorldAction
+  | SelectEntitiesAction
+  | DeselectEntitiesAction
+  | ClearSelectionAction;
