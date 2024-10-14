@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSnapshot } from "valtio";
 import { EntityInspector } from "./components/gui/EntityInspector";
 import { PromptBar } from "./components/gui/PromptBar";
@@ -9,31 +9,14 @@ import { EntityResolver } from "./services/EntityResolver";
 import { ideStateActions, useGetSelectedEntity } from "./stores/ideStore";
 import { worldDataState } from "./stores/worldDataState";
 import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
+import { useAnimationFrame } from "./utils/hooks/useAnimationFrame";
 
 export default function GameSandbox() {
-  const requestRef = useRef<number>();
-  const previousTimeRef = useRef<number>();
-
-  const onEnterFrame = useCallback((time: number) => {
-    if (previousTimeRef.current != undefined) {
-      const deltaTime = (time - previousTimeRef.current) / 1000;
-      for (const entity of worldDataState.entities) {
-        EntityResolver.update(entity, deltaTime);
-      }
+  useAnimationFrame((deltaTime) => {
+    for (const entity of worldDataState.entities) {
+      EntityResolver.update(entity, deltaTime);
     }
-
-    previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(onEnterFrame);
-  }, []);
-
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(onEnterFrame);
-    return () => {
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, [onEnterFrame]);
+  });
 
   return (
     <div className="w-full h-screen relative overflow-hidden">
