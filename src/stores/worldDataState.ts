@@ -65,8 +65,3 @@ export const worldDataStateActions = {
     return worldDataState.entities.find((e) => e.uuid === id);
   },
 };
-
-Object.assign(globalThis, {
-  worldDataState,
-  worldDataStateActions,
-});
