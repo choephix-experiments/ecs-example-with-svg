@@ -88,13 +88,15 @@ export default function GameSandbox() {
           strokeWidth="1"
           strokeDasharray="18,4,18,0"
         />
-        <g fill="gray" stroke="black" strokeWidth={1}>
+        <g fill="#ddd" stroke="black" strokeWidth={2.5}>
           {entities.map((entity) => (
-            <RenderedEntity
-              key={entity.id}
-              entity={entity}
-              onClick={handleEntityClick}
-            />
+            <g className="with-shadow">
+              <RenderedEntity
+                key={entity.id}
+                entity={entity}
+                onClick={handleEntityClick}
+              />
+            </g>
           ))}
         </g>
         <SelectionBoxes />
