@@ -1,6 +1,5 @@
 import OpenAI from "openai";
-import { zodResponseFormat } from "openai/helpers/zod";
-import { ActionsResponseSchema } from "../schemas/actionSchemas";
+import { ActionsResponseSchemaType } from "../schemas/actionSchemas";
 
 let openai: OpenAI | null = null;
 
@@ -27,19 +26,75 @@ const getOpenAIInstance = (): OpenAI => {
   return openai;
 };
 
-export async function getActionsFromOpenAI(prompt: string) {
+const actionsResponseSchema = {
+  type: "object",
+  properties: {
+    actions: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          type: { type: "string" },
+          entityProps: {
+            type: "object",
+            properties: {
+              x: { type: "number" },
+              y: { type: "number" },
+              rotation: { type: "number" },
+              scale: { type: "number" },
+              behaviors: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    type: { type: "string" },
+                    name: { type: "string" },
+                  },
+                  required: ["uuid", "type"],
+                },
+              },
+            },
+            required: ["uuid", "x", "y", "rotation", "scale", "behaviors"],
+          },
+          entityId: { type: "string" },
+          updates: { type: "object" },
+          behaviorProps: { type: "object" },
+          behaviorType: { type: "string" },
+          entityIds: { type: "array", items: { type: "string" } },
+        },
+        required: ["type"],
+      },
+    },
+  },
+  required: ["actions"],
+};
+
+export async function getActionsFromOpenAI(prompt: string): Promise<ActionsResponseSchemaType> {
   const openaiInstance = getOpenAIInstance();
 
   console.log('🤖 Sending request to OpenAI');
   const completion = await openaiInstance.chat.completions.create({
-    model: "gpt-4o", // Replace with the appropriate model
+    model: "gpt-4o", // Use an available model
     messages: [
       { role: "system", content: "You are an AI assistant that generates actions for a game engine. Respond with a list of actions based on the user's request." },
       { role: "user", content: prompt },
     ],
-    response_format: zodResponseFormat(ActionsResponseSchema, "actions_response"),
+    response_format: { type: "json_object" },
+    functions: [
+      {
+        name: "generate_actions",
+        description: "Generate a list of actions based on the user's request",
+        parameters: actionsResponseSchema,
+      },
+    ],
+    function_call: { name: "generate_actions" },
   });
 
   console.log('✅ Received response from OpenAI');
-  return completion.choices[0].message.content;
+  const functionCall = completion.choices[0].message.function_call;
+  if (functionCall && functionCall.name === "generate_actions") {
+    return JSON.parse(functionCall.arguments || "{}") as ActionsResponseSchemaType;
+  } else {
+    throw new Error("Unexpected response format from OpenAI");
+  }
 }
