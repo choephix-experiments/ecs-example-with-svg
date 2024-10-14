@@ -6,7 +6,7 @@ import { Grid } from "./components/svg/Grid";
 import { RenderedEntity } from "./components/svg/RenderedEntity";
 import { SelectionBox } from "./components/svg/SelectionBox";
 import { EntityResolver } from "./services/EntityResolver";
-import { ideStateActions, useGetSelectedEntity } from "./stores/ideStore";
+import { ideStateActions, useGetSelectedEntities } from "./stores/ideStore";
 import { worldDataState } from "./stores/worldDataState";
 import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
 import { useAnimationFrame } from "./utils/hooks/useAnimationFrame";
@@ -32,13 +32,13 @@ const StageLayer = () => {
   const handleEntityClick = useCallback(
     (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
       event.stopPropagation();
-      ideStateActions.setSelectedEntityId(entity.id);
+      ideStateActions.toggleEntitySelection(entity.id, event.ctrlKey);
     },
     []
   );
 
   const handleBackgroundClick = useCallback(() => {
-    ideStateActions.setSelectedEntityId(null);
+    ideStateActions.clearSelection();
   }, []);
 
   const [viewBox, setViewBox] = useState("0 0 1000 1000");
@@ -92,19 +92,24 @@ const StageLayer = () => {
 };
 
 const SelectionBoxes = () => {
-  const selectedEntity = useGetSelectedEntity();
-  if (!selectedEntity) return null;
-
-  return <SelectionBox entity={selectedEntity} />;
+  const selectedEntities = useGetSelectedEntities();
+  return (
+    <>
+      {selectedEntities.map((entity) => (
+        <SelectionBox key={entity.id} entity={entity} />
+      ))}
+    </>
+  );
 };
 
 const GUILayer = () => {
-  const selectedEntity = useGetSelectedEntity();
+  const selectedEntities = useGetSelectedEntities();
 
   return (
     <>
-      {selectedEntity && <EntityInspector entity={selectedEntity} />}
-
+      {selectedEntities.map((entity) => (
+        <EntityInspector entity={entity} key={"selection-" + entity.id} />
+      ))}
       <PromptBar />
     </>
   );

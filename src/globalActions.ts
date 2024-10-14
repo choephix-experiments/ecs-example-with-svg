@@ -4,7 +4,7 @@ import { worldDataStateActions } from "./stores/worldDataState";
 
 const God = {
   addBehaviorToSelectedEntity: (behaviorProps: BuiltInBehaviorsProps) => {
-    const selectedEntityId = ideState.selectedEntityId;
+    const selectedEntityId = ideState.selectedEntityIds[0];
     if (selectedEntityId !== null) {
       worldDataStateActions.addBehaviorToEntity(
         selectedEntityId,

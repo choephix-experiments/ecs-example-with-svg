@@ -13,7 +13,7 @@ function App() {
 
     return () => {
       worldDataStateActions.clearWorld();
-      ideStateActions.setSelectedEntityId(null);
+      ideStateActions.clearSelection();
     };
   }, []); // Added empty dependency array to run effect only once
 
