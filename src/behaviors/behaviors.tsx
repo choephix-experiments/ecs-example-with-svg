@@ -48,14 +48,7 @@ export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {
 export const behaviorResolvers = {
   RenderCircle: {
     render(entity) {
-      return (
-        <circle
-          cx={entity.x}
-          cy={entity.y}
-          r={this.radius! * entity.scale}
-          transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
-        />
-      );
+      return <circle r={this.radius! * entity.scale} />;
     },
   },
   ChangeColor: {
@@ -75,13 +68,7 @@ export const behaviorResolvers = {
       const color =
         (entity.behaviors.find((b) => b.type === "ChangeColor") as any)
           ?.color || undefined;
-      const points = generatePolygonPoints(
-        entity.x,
-        entity.y,
-        entity.rotation,
-        radius,
-        sides
-      );
+      const points = generatePolygonPoints(radius, sides);
       return <polygon points={points} fill={color} />;
     },
   },
@@ -113,9 +100,6 @@ export const behaviorResolvers = {
         <>
           {content}
           <text
-            x={entity.x}
-            y={entity.y}
-            transform={`rotate(${entity.rotation} ${entity.x} ${entity.y})`}
             fontSize={fontSize}
             textAnchor="middle"
             dominantBaseline="central"
@@ -134,18 +118,12 @@ export const behaviorResolvers = {
 };
 
 // Helper function for SimplifyMesh
-function generatePolygonPoints(
-  cx: number,
-  cy: number,
-  rotation: number,
-  radius: number,
-  sides: number
-): string {
+function generatePolygonPoints(radius: number, sides: number): string {
   let points = "";
   for (let i = 0; i < sides; i++) {
     const angle = (i / sides) * 2 * Math.PI;
-    const x = cx + radius * Math.cos(angle + rotation);
-    const y = cy + radius * Math.sin(angle + rotation);
+    const x = radius * Math.cos(angle);
+    const y = radius * Math.sin(angle);
     points += `${x},${y} `;
   }
   return points.trim();

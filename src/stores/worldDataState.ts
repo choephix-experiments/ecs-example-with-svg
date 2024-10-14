@@ -50,3 +50,8 @@ export const worldDataStateActions = {
     worldDataState.entities = [];
   },
 };
+
+Object.assign(globalThis, {
+  worldDataState,
+  worldDataStateActions,
+});
