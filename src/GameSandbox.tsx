@@ -81,12 +81,8 @@ const StageLayer = () => {
       />
       <g fill="#ddd" stroke="black" strokeWidth={2.5}>
         {entities.map((entity) => (
-          <g className="with-shadow">
-            <RenderedEntity
-              key={entity.id}
-              entity={entity}
-              onClick={handleEntityClick}
-            />
+          <g className="with-shadow" key={entity.id}>
+            <RenderedEntity entity={entity} onClick={handleEntityClick} />
           </g>
         ))}
       </g>
