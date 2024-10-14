@@ -28,10 +28,6 @@ export function populateSampleWorld() {
       type: "RenderCircle",
       radius: 10 + Math.random() * 40,
     });
-    worldDataStateActions.addBehaviorToEntity(i, {
-      type: "ChangeColor",
-      color: `hsl(${Math.random() * 360}, 70%, 50%)`,
-    });
 
     // Add SimplifyMesh behavior to some entities
     if (i % 3 === 0) {
@@ -51,6 +47,11 @@ export function populateSampleWorld() {
         type: "RenderEmoji",
         emoji: randomEmoji,
         fontSize: circle?.radius ?? 20, // You can adjust this or make it random if you prefer
+      });
+    } else {
+      worldDataStateActions.addBehaviorToEntity(i, {
+        type: "ChangeColor",
+        color: `hsl(${Math.random() * 360}, 70%, 50%)`,
       });
     }
   }

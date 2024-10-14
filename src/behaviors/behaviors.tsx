@@ -61,8 +61,8 @@ export const behaviorResolvers = {
   ChangeColor: {
     render(entity, content) {
       const color =
-        (entity.behaviors.find((b) => b.type === "ChangeColor") as any)?.color ||
-        "black";
+        (entity.behaviors.find((b) => b.type === "ChangeColor") as any)
+          ?.color || "black";
       return <g fill={color}>{content}</g>;
     },
   },
@@ -75,8 +75,8 @@ export const behaviorResolvers = {
         (entity.behaviors.find((b) => b.type === "RenderCircle") as any)
           ?.radius || 10;
       const color =
-        (entity.behaviors.find((b) => b.type === "ChangeColor") as any)?.color ||
-        "black";
+        (entity.behaviors.find((b) => b.type === "ChangeColor") as any)
+          ?.color || undefined;
       const points = generatePolygonPoints(
         entity.x,
         entity.y,
@@ -110,7 +110,7 @@ export const behaviorResolvers = {
   RenderEmoji: {
     render(entity, content) {
       const emoji = this.emoji;
-      const fontSize = this.fontSize || 20 * entity.scale;
+      const fontSize = this.fontSize || 25 * entity.scale;
       return (
         <>
           {content}
