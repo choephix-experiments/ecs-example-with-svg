@@ -2,10 +2,12 @@ import { worldDataStateActions } from "../stores/worldDataState";
 import { ideStateActions } from "../stores/ideStore";
 import { ActionProps } from "./actionTypes";
 
-type ActionResolver<T extends ActionProps['type']> = (action: Extract<ActionProps, { type: T }>) => void;
+type ActionResolver<T extends ActionProps["type"]> = (
+  action: Extract<ActionProps, { type: T }>
+) => void;
 
 const actionResolvers: {
-  [K in ActionProps['type']]: ActionResolver<K>
+  [K in ActionProps["type"]]: ActionResolver<K>;
 } = {
   addEntity: (action) => {
     console.log("➕ Adding entity:", action.entityProps.uuid);
@@ -26,12 +28,18 @@ const actionResolvers: {
 
   addBehavior: (action) => {
     console.log("🧠 Adding behavior to entity:", action.entityId);
-    worldDataStateActions.addBehaviorToEntity(action.entityId, action.behaviorProps);
+    worldDataStateActions.addBehaviorToEntity(
+      action.entityId,
+      action.behaviorProps
+    );
   },
 
   removeBehavior: (action) => {
     console.log("🗑️ Removing behavior from entity:", action.entityId);
-    worldDataStateActions.removeBehaviorFromEntity(action.entityId, action.behaviorType);
+    worldDataStateActions.removeBehaviorFromEntity(
+      action.entityId,
+      action.behaviorType
+    );
   },
 
   updateBehavior: (action) => {
@@ -39,12 +47,22 @@ const actionResolvers: {
     const entity = worldDataStateActions.getEntity(action.entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const behaviorIndex = entity.behaviors.findIndex((b) => b.type === action.behaviorType);
-    if (behaviorIndex < 0) throw new Error("Behavior not found");
+    const existingBehaviorIndex = entity.behaviors.findIndex(
+      (b) => b.type === action.behaviorType
+    );
+    const behaviorIndex =
+      existingBehaviorIndex > -1
+        ? existingBehaviorIndex
+        : entity.behaviors.length;
 
-    const updatedBehavior = { ...entity.behaviors[behaviorIndex], ...action.updates };
+    const updatedBehavior = {
+      ...entity.behaviors[behaviorIndex],
+      ...action.updates,
+    };
     entity.behaviors[behaviorIndex] = updatedBehavior;
-    worldDataStateActions.updateEntity(action.entityId, { behaviors: [...entity.behaviors] });
+    worldDataStateActions.updateEntity(action.entityId, {
+      behaviors: [...entity.behaviors],
+    });
   },
 
   clearWorld: () => {
