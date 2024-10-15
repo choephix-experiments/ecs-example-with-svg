@@ -1,8 +1,6 @@
 import OpenAI from "openai";
 import { ActionsResponseSchemaType } from "../../schemas/actionSchemas";
-import { buildContextString, contextAndPrompting } from "./contextAndPrompting";
-import { worldDataState } from "../../stores/worldDataState";
-import { ideState } from "../../stores/ideStore";
+import { buildContextString } from "./contextAndPrompting";
 
 let openai: OpenAI | null = null;
 
