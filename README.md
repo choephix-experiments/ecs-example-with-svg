@@ -1,50 +1,68 @@
-# React + TypeScript + Vite
+# SVG Sandbox
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SVG Sandbox is a React-based application that allows users to create, manipulate, and animate SVG entities in a dynamic environment. It provides a flexible platform for experimenting with various SVG shapes, behaviors, and animations.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Create and manipulate SVG entities
+- Add custom behaviors and animations to entities
+- Real-time rendering and updates
+- Entity inspector for detailed view and editing
+- AI-powered actions using OpenAI or Groq
+- Responsive design with Tailwind CSS
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Prerequisites
 
-- Configure the top-level `parserOptions` property like this:
+- Node.js (v18 or later recommended)
+- pnpm
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### Installation
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+1. Clone the repository:
+   ```
+   git clone https://github.com/your-username/svg-sandbox.git
+   cd svg-sandbox
+   ```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+2. Install dependencies:
+   ```
+   pnpm install
+   ```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+3. Start the development server:
+   ```
+   pnpm dev
+   ```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+## Usage
+
+- Use the PromptBar at the bottom of the screen to input commands
+- Select entities by clicking on them
+- Inspect and modify entity properties using the EntityInspector
+- Use the WorldStateInspector (toggle with ` key) to view the current world state
+
+## AI Integration
+
+SVG Sandbox supports AI-powered actions using either OpenAI or Groq. To use these features:
+
+1. Obtain an API key from OpenAI or Groq
+2. When prompted, enter your API key (it will be stored in local storage)
+3. Use the `go` function in the console to send prompts to the AI service
+
+Example:
+`go("Create a red circle and make it bounce", "groq")`
+
+
+## Project Structure
+
+- `src/`: Source code
+  - `components/`: React components
+  - `behaviors/`: Entity behavior definitions
+  - `actions/`: Action definitions and AI integration
+  - `stores/`: State management using Valtio
+  - `utils/`: Utility functions
+  - `types/`: TypeScript type definitions
