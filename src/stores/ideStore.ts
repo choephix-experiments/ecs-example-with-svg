@@ -3,10 +3,12 @@ import { worldDataState } from './worldDataState';
 
 interface IDEState {
   selectedEntityIds: string[];
+  aiBusy: boolean;
 }
 
 const ideState = proxy<IDEState>({
   selectedEntityIds: [],
+  aiBusy: false,
 });
 
 export const ideStateActions = {
@@ -34,6 +36,9 @@ export const ideStateActions = {
   },
   clearSelection: () => {
     ideState.selectedEntityIds = [];
+  },
+  setAIBusy: (busy: boolean) => {
+    ideState.aiBusy = busy;
   },
 };
 
