@@ -61,41 +61,8 @@ export const contextAndPrompting = {
      */
     RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
   `,
-};
 
-export function buildContextString() {
-  const stageWidth = worldDataState.stage.width;
-  const stageHeight = worldDataState.stage.height;
-  const stageBounds = `
-    - top left corner: ${-stageWidth / 2}x${-stageHeight / 2}.
-    - bottom right corner: ${stageWidth / 2}x${stageHeight / 2}.
-`;
-
-  const entitiesInWorld = "\n" + YAML.stringify(worldDataState.entities, {});
-
-  const contextStr = `
-    You are an AI assistant that generates actions for a game engine.
-    You can add, remove, update entities, behaviors, and select/deselect entities.
-    You can also clear the world, clear the selection, and generate actions based on user's request.
-
-    An action resolver will parse your json response and execute the actions.
-
-    Here are the action types you can use:
-    ${contextAndPrompting.actionTypes}
-
-    Here are the built-in behaviors you can use:
-    ${contextAndPrompting.builtInBehaviors}
-
-    Current state of the world:
-    
-    Stage bounds: ${stageBounds}
-
-    Entities in the world: 
-    ${entitiesInWorld}
-
-    Current selection (entity ids): [${ideState.selectedEntityIds.join(", ")}]
-
-    ----
+  examples: `
 
     Example 1:
     User: "Add a red circle to the world."
@@ -229,6 +196,44 @@ export function buildContextString() {
         }
       ]
     }
+  `,
+};
+
+export function buildContextString() {
+  const stageWidth = worldDataState.stage.width;
+  const stageHeight = worldDataState.stage.height;
+  const stageBounds = `
+    - top left corner: ${-stageWidth / 2}x${-stageHeight / 2}.
+    - bottom right corner: ${stageWidth / 2}x${stageHeight / 2}.
+`;
+
+  const entitiesInWorld = "\n" + YAML.stringify(worldDataState.entities, {});
+
+  const contextStr = `
+    You are an AI assistant that generates actions for a game engine.
+    You can add, remove, update entities, behaviors, and select/deselect entities.
+    You can also clear the world, clear the selection, and generate actions based on user's request.
+
+    An action resolver will parse your json response and execute the actions.
+
+    Here are the action types you can use:
+    ${contextAndPrompting.actionTypes}
+
+    Here are the built-in behaviors you can use:
+    ${contextAndPrompting.builtInBehaviors}
+
+    Current state of the world:
+    
+    Stage bounds: ${stageBounds}
+
+    Entities in the world: 
+    ${entitiesInWorld}
+
+    Current selection (entity ids): [${ideState.selectedEntityIds.join(", ")}]
+
+    ----
+
+    ${contextAndPrompting.examples}
   `;
 
   return contextStr;
