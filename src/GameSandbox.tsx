@@ -30,7 +30,7 @@ const StageLayer = () => {
   const { entities, stage } = useSnapshot(worldDataState);
 
   const [viewBox, setViewBox] = useState("0 0 1000 1000");
-  const anchor = [0.5, 0.5]; // [x, y] where each value is between 0 and 1
+  const anchor = [.5, .38196601125]; // [x, y] where each value is between 0 and 1
 
   const handleEntityClick = useCallback(
     (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
@@ -51,8 +51,9 @@ const StageLayer = () => {
       const viewBoxWidth = innerWidth / scale;
       const viewBoxHeight = innerHeight / scale;
 
-      const offsetX = -viewBoxWidth * anchor[0];
-      const offsetY = -viewBoxHeight * anchor[1];
+      // Calculate offsets based on anchor points
+      const offsetX = -viewBoxWidth * anchor[0] + stage.width * (anchor[0] - 0.5);
+      const offsetY = -viewBoxHeight * anchor[1] + stage.height * (anchor[1] - 0.5);
 
       setViewBox(`${offsetX} ${offsetY} ${viewBoxWidth} ${viewBoxHeight}`);
       console.log('🔍 Updated viewBox:', `${offsetX} ${offsetY} ${viewBoxWidth} ${viewBoxHeight}`);
