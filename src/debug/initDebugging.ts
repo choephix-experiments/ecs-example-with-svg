@@ -6,7 +6,7 @@ import { getActionsFromOpenAI } from "../actions/ai/openAiActions";
 import { resolveAction } from "../actions/actionResolver";
 import { getActionsFromGroq } from "../actions/ai/groqActions";
 
-export async function initDebug() {
+export async function initDebugging() {
   console.log("🚀 Debug initialized");
 
   const services = {
@@ -25,9 +25,12 @@ export async function initDebug() {
       const actions = await getActions(prompt);
 
       for (const action of actions.actions) {
+        await nextFrame();
         resolveAction(action as any);
       }
       console.log("🤖 Received actions from OpenAI:", actions);
     },
   });
 }
+
+const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
