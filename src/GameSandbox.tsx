@@ -124,9 +124,11 @@ const GUILayer = () => {
 
   return (
     <>
-      {selectedEntities.map((entity) => (
-        <EntityInspector entity={entity} key={"selection-" + entity.uuid} />
-      ))}
+      <div className="absolute top-4 right-4 max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto">
+        {selectedEntities.map((entity) => (
+          <EntityInspector entity={entity} key={`selection-${entity.uuid}`} />
+        ))}
+      </div>
       <PromptBar />
     </>
   );

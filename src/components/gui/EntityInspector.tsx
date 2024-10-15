@@ -9,8 +9,7 @@ export function EntityInspector({ entity }: EntityInspectorProps) {
   const yamlString = YAML.stringify(entity);
 
   return (
-    <div className="absolute top-4 right-4 bg-white p-4 rounded-lg border border-gray-300 shadow-md">
-      <h2 className="text-lg font-bold mb-2">Selected Entity</h2>
+    <div className="bg-white p-4 rounded-lg border border-gray-300 shadow-md mb-2">
       <pre className="text-xs whitespace-pre-wrap">{yamlString}</pre>
     </div>
   );
