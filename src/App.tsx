@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import GameSandbox from "./GameSandbox";
-import { populateSampleWorld } from "./misc/sampleWorld";
+import { populateSampleWorld } from "./debug/sampleWorld";
 import { worldDataStateActions } from "./stores/worldDataState";
 import { ideStateActions } from "./stores/ideStore";
 

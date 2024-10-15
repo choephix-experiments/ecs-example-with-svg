@@ -115,6 +115,4 @@ function FlexibleBar({
   );
 }
 
-const nextFrame = () =>
-  new Promise((resolve) => requestAnimationFrame(resolve));
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
