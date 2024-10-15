@@ -135,7 +135,7 @@ export function buildContextString() {
             "name": "Pulse",
             "pulseSpeed": 1.1,
             "pulseAmplitude": 0.1,
-            "update": "entity.scale = <current scale> + Math.sin(totalTime * this.pulseSpeed) * this.pulseAmplitude;"
+            "update": "entity.scale = <the original scale value> + Math.sin(totalTime * this.pulseSpeed) * this.pulseAmplitude;"
           } 
         }
       ] 
