@@ -23,7 +23,7 @@ export const contextAndPrompting = {
     CustomBehavior: { 
       type: "CustomBehavior", 
       name: string, 
-      update?: string, // stringified function of type \`(entity, deltaTime) => void\`
+      update?: string, // stringified function of type \`(entity, deltaTime, totalTime) => void\`
       [extrakeys: string]: any
     }
     RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
@@ -102,7 +102,7 @@ export function buildContextString() {
             "name": "Pulse",
             "pulseSpeed": 1.1,
             "pulseAmplitude": 0.1,
-            "update": "entity.scale = <current scale> + Math.sin(deltaTime * this.pulseSpeed) * this.pulseAmplitude;"
+            "update": "entity.scale = <current scale> + Math.sin(totalTime * this.pulseSpeed) * this.pulseAmplitude;"
           } 
         }
       ] 

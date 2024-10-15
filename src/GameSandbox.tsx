@@ -12,9 +12,9 @@ import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
 import { useAnimationFrame } from "./utils/hooks/useAnimationFrame";
 
 export default function GameSandbox() {
-  useAnimationFrame((deltaTime) => {
+  useAnimationFrame((deltaTime, totalTime) => {
     for (const entity of worldDataState.entities) {
-      EntityResolver.update(entity, deltaTime);
+      EntityResolver.update(entity, deltaTime, totalTime);
     }
   });
 

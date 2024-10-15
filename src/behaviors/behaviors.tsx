@@ -12,7 +12,7 @@ type BuiltInBehaviorsExtraPropsDictionary = {
   CustomBehavior: {
     name: string;
     start?: string | (() => void);
-    update?: string | ((entity: StageEntityProps, deltaTime: number) => void);
+    update?: string | ((entity: StageEntityProps, deltaTime: number, totalTime: number) => void);
     render?:
       | string
       | ((
@@ -42,7 +42,7 @@ export type BuiltInBehaviorBlueprint = Omit<
 
 // Define the structure for behavior resolvers
 export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {
-  update?: (this: T, entity: StageEntityProps, deltaTime: number) => void;
+  update?: (this: T, entity: StageEntityProps, deltaTime: number, totalTime: number) => void;
   render?: (
     this: T,
     entity: ReadonlyDeep<StageEntityProps>,
@@ -79,9 +79,9 @@ export const behaviorResolvers = {
     },
   },
   CustomBehavior: {
-    update(entity, deltaTime) {
+    update(entity, deltaTime, totalTime) {
       if (typeof this.update === "function") {
-        return this.update.call(this, entity, deltaTime);
+        return this.update.call(this, entity, deltaTime, totalTime);
       }
 
       if (typeof this.update === "string") {
@@ -139,3 +139,4 @@ function generatePolygonPoints(radius: number, sides: number): string {
   }
   return points.trim();
 }
+

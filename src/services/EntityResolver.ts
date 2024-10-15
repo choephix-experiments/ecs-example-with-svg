@@ -6,11 +6,11 @@ import {
 import { BehaviorResolver, behaviorResolvers } from "../behaviors/behaviors";
 
 export const EntityResolver = {
-  update: (entity: StageEntityProps, deltaTime: number) => {
+  update: (entity: StageEntityProps, deltaTime: number, totalTime: number) => {
     entity.behaviors.forEach((behavior) => {
       const resolverKey = behavior.type as keyof typeof behaviorResolvers;
       const resolver = behaviorResolvers[resolverKey] as BehaviorResolver<typeof behavior>;
-      resolver?.update?.apply(behavior, [entity, deltaTime]);
+      resolver?.update?.apply(behavior, [entity, deltaTime, totalTime]);
     });
   },
 
