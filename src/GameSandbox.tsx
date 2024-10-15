@@ -29,6 +29,9 @@ export default function GameSandbox() {
 const StageLayer = () => {
   const { entities, stage } = useSnapshot(worldDataState);
 
+  const [viewBox, setViewBox] = useState("0 0 1000 1000");
+  const anchor = [0.5, 0.5]; // [x, y] where each value is between 0 and 1
+
   const handleEntityClick = useCallback(
     (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
       event.stopPropagation();
@@ -41,26 +44,24 @@ const StageLayer = () => {
     ideStateActions.clearSelection();
   }, []);
 
-  const [viewBox, setViewBox] = useState("0 0 1000 1000");
-
   useEffect(() => {
     const updateViewBox = () => {
       const { innerWidth, innerHeight } = window;
-      const scale =
-        Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.8;
+      const scale = Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.8;
       const viewBoxWidth = innerWidth / scale;
       const viewBoxHeight = innerHeight / scale;
-      setViewBox(
-        `${-viewBoxWidth / 2} ${
-          -viewBoxHeight / 2
-        } ${viewBoxWidth} ${viewBoxHeight}`
-      );
+
+      const offsetX = -viewBoxWidth * anchor[0];
+      const offsetY = -viewBoxHeight * anchor[1];
+
+      setViewBox(`${offsetX} ${offsetY} ${viewBoxWidth} ${viewBoxHeight}`);
+      console.log('🔍 Updated viewBox:', `${offsetX} ${offsetY} ${viewBoxWidth} ${viewBoxHeight}`);
     };
 
     updateViewBox();
     window.addEventListener("resize", updateViewBox);
     return () => window.removeEventListener("resize", updateViewBox);
-  }, [stage.width, stage.height]);
+  }, [stage.width, stage.height, anchor]);
 
   return (
     <svg
