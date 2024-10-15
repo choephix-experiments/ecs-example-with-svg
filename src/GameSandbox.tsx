@@ -11,6 +11,7 @@ import { worldDataState } from "./stores/worldDataState";
 import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
 import { useAnimationFrame } from "./utils/hooks/useAnimationFrame";
 import { WorldStateInspector } from "./components/gui/WorldStateInspector";
+import { StageBounds } from "./components/svg/StageBounds";
 
 export default function GameSandbox() {
   useAnimationFrame((deltaTime, totalTime) => {
@@ -70,16 +71,7 @@ const StageLayer = () => {
       onClick={handleBackgroundClick}
     >
       <Grid />
-      <rect
-        x={-stage.width / 2}
-        y={-stage.height / 2}
-        width={stage.width}
-        height={stage.height}
-        fill="none"
-        stroke="gray"
-        strokeWidth="1"
-        strokeDasharray="18,4,18,0"
-      />
+      <StageBounds />
       <EntitiesGroup />
       <SelectionBoxes />
     </svg>
