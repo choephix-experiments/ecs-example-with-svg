@@ -85,8 +85,8 @@ export const behaviorResolvers = {
       }
 
       if (typeof this.update === "string") {
-        const func = new Function("entity", "deltaTime", this.update);
-        func.call(this, entity, deltaTime);
+        const func = new Function("entity", "deltaTime", "totalTime", this.update);
+        func.call(this, entity, deltaTime, totalTime);
       }
     },
     render(entity, content) {

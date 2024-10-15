@@ -17,15 +17,48 @@ export const contextAndPrompting = {
   `,
 
   builtInBehaviors: `
+    /**
+     * Renders a circular shape for the entity.
+     * @property {string} type - Always "RenderCircle"
+     * @property {number} radius - The radius of the circle
+     */
     RenderCircle: { type: "RenderCircle", radius: number }
+
+    /**
+     * Changes the color of the entity.
+     * @property {string} type - Always "ChangeColor"
+     * @property {string} color - The new color to apply (e.g., "red", "#FF0000")
+     */
     ChangeColor: { type: "ChangeColor", color: string }
+
+    /**
+     * Simplifies the mesh of the entity to a polygon with specified number of sides.
+     * @property {string} type - Always "SimplifyMesh"
+     * @property {number} sides - The number of sides for the simplified polygon
+     */
     SimplifyMesh: { type: "SimplifyMesh", sides: number }
+
+    /**
+     * Allows for custom behavior implementation.
+     * @property {string} type - Always "CustomBehavior"
+     * @property {string} name - A unique name for this custom behavior
+     * @property {string} [update] - Optional. A stringified function to be executed each frame
+     * Type: \`(entity, deltaTime, totalTime) => void\`, where time is in seconds.
+     * @property {any} [extrakeys] - Any additional properties specific to this custom behavior
+     */
     CustomBehavior: { 
       type: "CustomBehavior", 
       name: string, 
-      update?: string, // stringified function of type \`(entity, deltaTime, totalTime) => void\`
+      update?: string,
       [extrakeys: string]: any
     }
+
+    /**
+     * Renders an emoji as the visual representation of the entity.
+     * @property {string} type - Always "RenderEmoji"
+     * @property {string} emoji - The emoji character to render
+     * @property {number} [fontSize] - Optional. The font size of the emoji
+     */
     RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
   `,
 };
