@@ -63,7 +63,6 @@ export const contextAndPrompting = {
   `,
 
   examples: `
-
     Example 1:
     User: "Add a red circle to the world."
     Assistant: 
@@ -232,7 +231,6 @@ export function buildContextString() {
     Current selection (entity ids): [${ideState.selectedEntityIds.join(", ")}]
 
     ----
-
     ${contextAndPrompting.examples}
   `;
 
