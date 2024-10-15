@@ -2,8 +2,8 @@ import { SparkleIcon, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSnapshot } from "valtio";
 import { ideState, ideStateActions } from "../../stores/ideStore";
-import { getActionsFromGroq } from "../../actions/ai/groqActions";
-import { resolveAction } from "../../actions/actionResolver";
+import { getCodeSnippetFromGroq } from "../../magic/ai/getCodeSnippet";
+import { magicApi } from "../../magic/magicApi";
 
 export function PromptBar() {
   const [prompt, setPrompt] = useState("");
@@ -17,17 +17,29 @@ export function PromptBar() {
     ideStateActions.setAIBusy(true);
 
     try {
-      const actions = await getActionsFromGroq(prompt);
-      console.log("🤖 Received actions from AI:", actions);
-
-      for (const action of actions.actions) {
-        await delay(100);
-        resolveAction(action as any);
+      const snippet = await getCodeSnippetFromGroq(prompt);
+      console.log("📜 Received code snippet:");
+      console.log(snippet);
+      
+      try {
+        // Create a new function with magicApi in its scope
+        const snippetFunction = new Function('magicApi', `
+          return (async () => {
+            ${snippet}
+          })();
+        `);
+        
+        // Execute the snippet function with magicApi as an argument
+        const result = await snippetFunction(magicApi);
+        console.log("✅ Snippet executed successfully");
+        console.log("Result:", result);
+      } catch (error) {
+        console.error("❌ Error executing snippet:", error);
       }
 
       setPrompt("");
     } catch (error) {
-      console.error("❌ Error processing AI actions:", error);
+      console.error("❌ Error processing AI snippet:", error);
     } finally {
       ideStateActions.setAIBusy(false);
     }
@@ -114,5 +126,3 @@ function FlexibleBar({
     </form>
   );
 }
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
