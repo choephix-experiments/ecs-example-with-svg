@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { ActionsResponseSchemaType } from "../../schemas/actionSchemas";
+import { contextAndPrompting } from "./contextAndPrompting";
 
 let openai: OpenAI | null = null;
 
@@ -72,11 +73,23 @@ const actionsResponseSchema = {
 export async function getActionsFromOpenAI(prompt: string): Promise<ActionsResponseSchemaType> {
   const openaiInstance = getOpenAIInstance();
 
+  const contextStr = `
+    You are an AI assistant that generates actions for a game engine.
+    You can add, remove, update entities, behaviors, and select/deselect entities.
+    You can also clear the world, clear the selection, and generate actions based on user's request.
+
+    Here are the action types you can use:
+    ${contextAndPrompting.actionTypes}
+
+    Here are the built-in behaviors you can use:
+    ${contextAndPrompting.builtInBehaviors}
+  `;
+
   console.log('🤖 Sending request to OpenAI');
   const completion = await openaiInstance.chat.completions.create({
     model: "gpt-4o", // Use an available model
     messages: [
-      { role: "system", content: "You are an AI assistant that generates actions for a game engine. Respond with a list of actions based on the user's request." },
+      { role: "system", content: contextStr },
       { role: "user", content: prompt },
     ],
     response_format: { type: "json_object" },
