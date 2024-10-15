@@ -5,16 +5,13 @@ import { worldDataState } from "../../stores/worldDataState";
 export const StageBounds: React.FC = () => {
   return (
     <>
-      {renderMainLayer()}
-      {renderSubLayer(20)}
-      {/* {renderSubLayer(10)}
-      {renderSubLayer(15)}
-      {renderSubLayer(5)} */}
+      <MainLayer />
+      <SubLayer gap={20} />
     </>
   );
 };
 
-const renderMainLayer = () => {
+const MainLayer: React.FC = () => {
   const { stage } = useSnapshot(worldDataState);
 
   return (
@@ -31,7 +28,7 @@ const renderMainLayer = () => {
   );
 };
 
-const renderSubLayer = (gap: number) => {
+const SubLayer: React.FC<{ gap: number }> = ({ gap }) => {
   const { stage } = useSnapshot(worldDataState);
 
   return (
