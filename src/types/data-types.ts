@@ -1,5 +1,6 @@
 export interface StageEntityProps {
   uuid: string;
+  name?: string;
   x: number;
   y: number;
   rotation: number;
@@ -19,8 +20,8 @@ export interface WorldDataState {
 
 export interface BehaviorProps {
   uuid: string;
-  type: string;
   name?: string;
+  type: string;
 }
 
 ///////////////

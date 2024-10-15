@@ -5,6 +5,15 @@ import {
 import { findBehavior } from "../utils/findBehavior";
 
 const emojiList = ["😊", "🚀", "🌈", "🎉", "🦄", "🍕", "🌟", "🐱", "🌺", "🎸"];
+const colorList = [
+  "dodgerblue",
+  "hotpink",
+  "gold",
+  "lime",
+  "purple",
+  "teal",
+  "tomato",
+];
 
 // const randomId = () => Math.random().toString(36).substring(2, 15);
 // const forCount = (count: number) => Array.from({ length: count }, (_, i) => i);
@@ -57,12 +66,15 @@ export function populateSampleWorld() {
       ? createCircleWithRandomScale()
       : createCircleWithRandomRadius();
 
+    entity.name = "circle";
+
     // Add SimplifyMesh behavior to some entities
     if (index % 3 === 0) {
       worldDataStateActions.addBehaviorToEntity(entity.uuid, {
         type: "SimplifyMesh",
         sides: 6,
       });
+      entity.name = "simplified " + entity.name;
     }
 
     // Add RenderEmoji behavior to every second entity
@@ -78,11 +90,16 @@ export function populateSampleWorld() {
         emoji: randomEmoji,
         fontSize: fontSize,
       });
+
+      entity.name = entity.name + " with " + randomEmoji;
     } else {
+      const color = colorList[Math.floor(Math.random() * colorList.length)];
       worldDataStateActions.addBehaviorToEntity(entity.uuid, {
         type: "ChangeColor",
-        color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+        // color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+        color,
       });
+      entity.name = color + " " + entity.name;
     }
   }
 

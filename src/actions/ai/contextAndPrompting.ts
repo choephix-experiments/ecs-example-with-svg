@@ -206,7 +206,10 @@ export function buildContextString() {
     - bottom right corner: ${stageWidth / 2}x${stageHeight / 2}.
 `;
 
-  const entitiesInWorld = "\n" + YAML.stringify(worldDataState.entities, {});
+  const entities = roundNumericProps(
+    JSON.parse(JSON.stringify(worldDataState.entities))
+  );
+  const entitiesInWorld = "\n" + YAML.stringify(entities, {});
 
   const contextStr = `
     You are an AI assistant that generates actions for a game engine.
@@ -235,4 +238,27 @@ export function buildContextString() {
   `;
 
   return contextStr;
+}
+
+function roundNumericProps(obj: any): any {
+  if (typeof obj !== "object" || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => roundNumericProps(item));
+  }
+
+  const roundedObj: any = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === "number") {
+      roundedObj[key] = Math.round(value);
+    } else if (typeof value === "object") {
+      roundedObj[key] = roundNumericProps(value);
+    } else {
+      roundedObj[key] = value;
+    }
+  }
+
+  return roundedObj;
 }
