@@ -21,14 +21,15 @@ export function PromptBar() {
       console.log("🤖 Received actions from AI:", actions);
 
       for (const action of actions.actions) {
-        await nextFrame();
+        await delay(100);
         resolveAction(action as any);
       }
+
+      setPrompt("");
     } catch (error) {
       console.error("❌ Error processing AI actions:", error);
     } finally {
       ideStateActions.setAIBusy(false);
-      setPrompt("");
     }
   };
 
@@ -42,7 +43,12 @@ export function PromptBar() {
   );
 }
 
-function FlexibleBar({ prompt, setPrompt, onSubmit, disabled }: {
+function FlexibleBar({
+  prompt,
+  setPrompt,
+  onSubmit,
+  disabled,
+}: {
   prompt: string;
   setPrompt: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -56,16 +62,16 @@ function FlexibleBar({ prompt, setPrompt, onSubmit, disabled }: {
     setIsExpanded(shouldExpand);
 
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      const newHeight = shouldExpand 
+      textareaRef.current.style.height = "auto";
+      const newHeight = shouldExpand
         ? `${Math.max(textareaRef.current.scrollHeight, 96)}px`
-        : '40px';
+        : "40px";
       textareaRef.current.style.height = newHeight;
     }
   }, [prompt]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault();
       onSubmit(e);
     }
@@ -93,7 +99,11 @@ function FlexibleBar({ prompt, setPrompt, onSubmit, disabled }: {
             isExpanded ? "h-auto min-h-[6rem] text-xs" : "h-10 overflow-hidden"
           } ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
         />
-        <button type="submit" className="absolute right-3 top-3" disabled={disabled}>
+        <button
+          type="submit"
+          className="absolute right-3 top-3"
+          disabled={disabled}
+        >
           {disabled ? (
             <Loader2 className="h-5 w-5 text-gray-500 animate-spin" />
           ) : (
@@ -105,4 +115,6 @@ function FlexibleBar({ prompt, setPrompt, onSubmit, disabled }: {
   );
 }
 
-const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+const nextFrame = () =>
+  new Promise((resolve) => requestAnimationFrame(resolve));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
