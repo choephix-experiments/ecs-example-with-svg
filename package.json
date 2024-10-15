@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://choephix-experiments.github.io/ecs-example-with-svg/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
