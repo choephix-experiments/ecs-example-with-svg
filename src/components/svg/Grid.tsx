@@ -25,10 +25,10 @@ export function Grid({ cellSize = 40 }: GridProps) {
         </pattern>
       </defs>
       <rect
-        x="-50%"
-        y="-50%"
-        width="100%"
-        height="100%"
+        x="-100%"
+        y="-100%"
+        width="200%"
+        height="200%"
         fill="url(#plusPattern)"
       />
     </>
