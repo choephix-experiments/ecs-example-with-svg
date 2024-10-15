@@ -1,6 +1,8 @@
 import OpenAI from "openai";
 import { ActionsResponseSchemaType } from "../../schemas/actionSchemas";
 import { contextAndPrompting } from "./contextAndPrompting";
+import { worldDataState } from "../../stores/worldDataState";
+import { ideState } from "../../stores/ideStore";
 
 let openai: OpenAI | null = null;
 
@@ -73,21 +75,47 @@ const actionsResponseSchema = {
 export async function getActionsFromOpenAI(prompt: string): Promise<ActionsResponseSchemaType> {
   const openaiInstance = getOpenAIInstance();
 
+  const stageWidth = worldDataState.stage.width;
+  const stageHeight = worldDataState.stage.height;
+  const stageBounds = `
+    - top left corner: ${-stageWidth / 2}x${-stageHeight / 2}.
+    - bottom right corner: ${stageWidth / 2}x${stageHeight / 2}.
+  `;
+
+  const entitiesInWorld = worldDataState.entities.map(entity => `
+    - ${entity.uuid}:
+      - x: ${entity.x}
+      - y: ${entity.y}
+      - rotation: ${entity.rotation}
+      - scale: ${entity.scale}
+      - behaviors: ${entity.behaviors.map(behavior => behavior.type).join(", ")}
+  `).join("\n");
+
   const contextStr = `
     You are an AI assistant that generates actions for a game engine.
     You can add, remove, update entities, behaviors, and select/deselect entities.
     You can also clear the world, clear the selection, and generate actions based on user's request.
+
+    An action resolver will parse your json response and execute the actions.
 
     Here are the action types you can use:
     ${contextAndPrompting.actionTypes}
 
     Here are the built-in behaviors you can use:
     ${contextAndPrompting.builtInBehaviors}
+
+    Current state of the world:
+    
+    Stage bounds: ${stageBounds}
+
+    Entities in the world: ${entitiesInWorld}
+
+    Current selection (entity ids): ${ideState.selectedEntityIds.join(", ")}
   `;
 
   console.log('🤖 Sending request to OpenAI');
   const completion = await openaiInstance.chat.completions.create({
-    model: "gpt-4o", // Use an available model
+    model: "gpt-4o-mini", // Use an available model
     messages: [
       { role: "system", content: contextStr },
       { role: "user", content: prompt },
