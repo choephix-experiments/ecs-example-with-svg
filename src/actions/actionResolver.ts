@@ -1,6 +1,7 @@
 import { worldDataStateActions } from "../stores/worldDataState";
 import { ideStateActions } from "../stores/ideStore";
 import { ActionProps } from "./actionTypes";
+import { BehaviorProps } from "../types/data-types";
 
 type ActionResolver<T extends ActionProps["type"]> = (
   action: Extract<ActionProps, { type: T }>
@@ -50,19 +51,24 @@ const actionResolvers: {
     const existingBehaviorIndex = entity.behaviors.findIndex(
       (b) => b.type === action.behaviorType
     );
-    const behaviorIndex =
-      existingBehaviorIndex > -1
-        ? existingBehaviorIndex
-        : entity.behaviors.length;
-
-    const updatedBehavior = {
-      ...entity.behaviors[behaviorIndex],
-      ...action.updates,
-    };
-    entity.behaviors[behaviorIndex] = updatedBehavior;
-    worldDataStateActions.updateEntity(action.entityId, {
-      behaviors: [...entity.behaviors],
-    });
+    const existingBehavior = entity.behaviors[existingBehaviorIndex] as
+      | BehaviorProps
+      | undefined;
+    if (existingBehavior) {
+      for (const keyStr in action.updates) {
+        const key = keyStr as keyof typeof action.updates;
+        if (existingBehavior[key] !== action.updates[key]) {
+          existingBehavior[key] = action.updates[key] as any;
+        }
+      }
+    } else {
+      const newBehavior = {
+        type: action.behaviorType,
+        ...action.updates,
+        uuid: crypto.randomUUID(),
+      };
+      entity.behaviors.push(newBehavior);
+    }
   },
 
   clearWorld: () => {

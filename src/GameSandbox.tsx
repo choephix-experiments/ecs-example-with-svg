@@ -27,18 +27,10 @@ export default function GameSandbox() {
 }
 
 const StageLayer = () => {
-  const { entities, stage } = useSnapshot(worldDataState);
+  const { stage } = useSnapshot(worldDataState);
 
   const [viewBox, setViewBox] = useState("0 0 1000 1000");
-  const anchor = [.5, .38196601125]; // [x, y] where each value is between 0 and 1
-
-  const handleEntityClick = useCallback(
-    (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
-      event.stopPropagation();
-      ideStateActions.toggleEntitySelection(entity.uuid, event.ctrlKey);
-    },
-    []
-  );
+  const anchor = [0.5, 0.38196601125]; // [x, y] where each value is between 0 and 1
 
   const handleBackgroundClick = useCallback(() => {
     ideStateActions.clearSelection();
@@ -47,16 +39,22 @@ const StageLayer = () => {
   useEffect(() => {
     const updateViewBox = () => {
       const { innerWidth, innerHeight } = window;
-      const scale = Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.8;
+      const scale =
+        Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.8;
       const viewBoxWidth = innerWidth / scale;
       const viewBoxHeight = innerHeight / scale;
 
       // Calculate offsets based on anchor points
-      const offsetX = -viewBoxWidth * anchor[0] + stage.width * (anchor[0] - 0.5);
-      const offsetY = -viewBoxHeight * anchor[1] + stage.height * (anchor[1] - 0.5);
+      const offsetX =
+        -viewBoxWidth * anchor[0] + stage.width * (anchor[0] - 0.5);
+      const offsetY =
+        -viewBoxHeight * anchor[1] + stage.height * (anchor[1] - 0.5);
 
       setViewBox(`${offsetX} ${offsetY} ${viewBoxWidth} ${viewBoxHeight}`);
-      console.log('🔍 Updated viewBox:', `${offsetX} ${offsetY} ${viewBoxWidth} ${viewBoxHeight}`);
+      console.log(
+        "🔍 Updated viewBox:",
+        `${offsetX} ${offsetY} ${viewBoxWidth} ${viewBoxHeight}`
+      );
     };
 
     updateViewBox();
@@ -81,15 +79,32 @@ const StageLayer = () => {
         strokeWidth="1"
         strokeDasharray="18,4,18,0"
       />
-      <g fill="#ddd" stroke="black" strokeWidth={1}>
-        {entities.map((entity) => (
-          <g className="with-shadow" key={entity.uuid}>
-            <RenderedEntity entity={entity} onClick={handleEntityClick} />
-          </g>
-        ))}
-      </g>
+      <EntitiesGroup />
       <SelectionBoxes />
     </svg>
+  );
+};
+
+export const EntitiesGroup: React.FC = () => {
+  const { entities } = useSnapshot(worldDataState);
+
+  const handleEntityClick = useCallback(
+    (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
+      event.stopPropagation();
+      ideStateActions.toggleEntitySelection(entity.uuid, event.ctrlKey);
+      console.log("🖱️ Entity clicked:", entity.uuid);
+    },
+    []
+  );
+
+  return (
+    <g fill="#ddd" stroke="black" strokeWidth={1}>
+      {entities.map((entity) => (
+        <g className="with-shadow" key={entity.uuid}>
+          <RenderedEntity entity={entity} onClick={handleEntityClick} />
+        </g>
+      ))}
+    </g>
   );
 };
 
