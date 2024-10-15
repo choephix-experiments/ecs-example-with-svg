@@ -23,8 +23,7 @@ export const contextAndPrompting = {
     CustomBehavior: { 
       type: "CustomBehavior", 
       name: string, 
-      update?: string | ((entity: StageEntityProps, deltaTime: number) => void),
-      render?: string | ((entity: StageEntityProps, currentContent: React.ReactNode | null) => React.ReactNode | null),
+      update?: string, // stringified function of type \`(entity, deltaTime) => void\`
       [extrakeys: string]: any
     }
     RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
@@ -39,7 +38,7 @@ export function buildContextString() {
     - bottom right corner: ${stageWidth / 2}x${stageHeight / 2}.
 `;
 
-  const entitiesInWorld = '\n' + YAML.stringify(worldDataState.entities, {});
+  const entitiesInWorld = "\n" + YAML.stringify(worldDataState.entities, {});
 
   const contextStr = `
     You are an AI assistant that generates actions for a game engine.
@@ -62,6 +61,52 @@ export function buildContextString() {
     ${entitiesInWorld}
 
     Current selection (entity ids): [${ideState.selectedEntityIds.join(", ")}]
+
+    ----
+
+    Example 1:
+    User: "Add a red circle to the world."
+    Assistant: 
+    { 
+      "actions": [
+        { 
+          "type": "addEntity", 
+          "entityProps": { 
+            "x": 0, "y": 0, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderCircle", "radius": 10, "color": "red" }] 
+          }
+        }
+      ] 
+    }
+
+    Example 2:
+    User: "Select the blue circle and make it bigger and darker."
+    Assistant:
+    { 
+      "actions": [
+        { "type": "selectEntities", "entityIds": ["<uuid of blue circle>"] },
+        { "type": "updateEntity", "entityId": "blue-circle", "updates": { "scale": <entity's current scale x 2> } },
+        { "type": "updateBehavior", "entityId": "blue-circle", "behaviorType": "RenderCircle", "updates": { "color": "<a darker shade of blue>" } }
+      ] 
+    }
+
+    Example 3:
+    User: "Make the heart pulse."
+    Assistant:
+    { 
+      "actions": [
+        {
+          "type": "addBehavior", 
+          "entityId": "<uuid of the entity with heart emoji>", 
+          "behaviorProps": { 
+            "type": "CustomBehavior", 
+            "name": "Pulse",
+            "pulseSpeed": 1.1,
+            "pulseAmplitude": 0.1,
+            "update": "entity.scale = <current scale> + Math.sin(deltaTime * this.pulseSpeed) * this.pulseAmplitude;"
+          } 
+        }
+      ] 
+    }
   `;
 
   return contextStr;

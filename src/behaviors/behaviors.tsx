@@ -16,7 +16,7 @@ type BuiltInBehaviorsExtraPropsDictionary = {
     render?:
       | string
       | ((
-          entity: StageEntityProps,
+          entity: ReadonlyDeep<StageEntityProps>,
           currentContent: React.ReactNode | null
         ) => React.ReactNode | null);
     destroy?: string | (() => void);
@@ -81,20 +81,25 @@ export const behaviorResolvers = {
   CustomBehavior: {
     update(entity, deltaTime) {
       if (typeof this.update === "function") {
-        this.update(entity, deltaTime);
-      } else if (typeof this.update === "string") {
-        new Function("entity", "deltaTime", this.update)(entity, deltaTime);
+        return this.update.call(this, entity, deltaTime);
+      }
+
+      if (typeof this.update === "string") {
+        const func = new Function("entity", "deltaTime", this.update);
+        func.call(this, entity, deltaTime);
       }
     },
     render(entity, content) {
       if (typeof this.render === "function") {
-        return this.render(entity as any, content);
-      } else if (typeof this.render === "string") {
-        return new Function("entity", "content", `return (${this.render})`)(
-          entity,
-          content
-        );
+        return this.render.call(this, entity, content);
       }
+
+      if (typeof this.render === "string") {
+        const funcStr = `return (${this.render})`;
+        const func = new Function("entity", "content", funcStr);
+        return func.call(this, entity, content);
+      }
+
       return content;
     },
   },
