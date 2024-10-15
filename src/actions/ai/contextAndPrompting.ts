@@ -195,6 +195,19 @@ export const contextAndPrompting = {
         }
       ]
     }
+
+    Example 8:
+    User: "Add 5 random animals."
+    Assistant:
+    {
+      "actions": [
+        { "type": "addEntity", "entityProps": { "x": -480, "y": 150, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderEmoji", "emoji": "🐶" }] } },
+        { "type": "addEntity", "entityProps": { "x": 0, "y": -280, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderEmoji", "emoji": "🐱" }] } },
+        { "type": "addEntity", "entityProps": { "x": 440, "y": 490, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderEmoji", "emoji": "🐭" }] } },
+        { "type": "addEntity", "entityProps": { "x": -200, "y": -220, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderEmoji", "emoji": "🐹" }] } },
+        { "type": "addEntity", "entityProps": { "x": 200, "y": -300, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderEmoji", "emoji": "🐰" }] } }
+      ]
+    }
   `,
 };
 

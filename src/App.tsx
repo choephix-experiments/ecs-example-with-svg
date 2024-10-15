@@ -9,7 +9,9 @@ import "./App.css";
 
 function App() {
   useEffect(() => {
-    populateSampleWorld();
+    if (window.location.search.includes("sample")) {
+      populateSampleWorld();
+    }
 
     return () => {
       worldDataStateActions.clearWorld();

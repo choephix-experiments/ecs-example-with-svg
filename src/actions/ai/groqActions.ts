@@ -1,6 +1,7 @@
 import Groq from "groq-sdk";
 import { ActionsResponseSchemaType } from "../../schemas/actionSchemas";
 import { buildContextString } from "./contextAndPrompting";
+import { simplifiedActionsResponseSchema } from "./simplifiedActionsResponseSchema";
 
 let groq: Groq | null = null;
 
@@ -34,14 +35,17 @@ export async function getActionsFromGroq(
 ): Promise<ActionsResponseSchemaType> {
   const groqInstance = getGroqInstance();
 
-//   const schema = JSON.stringify(simplifiedActionsResponseSchema);
-  const contextStr =
-    buildContextString() + "\n\nJson only, `{ actions: [...] }`"
-    // `\n\nThe json must use the following schema:\n${schema}`;
+  const schema = JSON.stringify(simplifiedActionsResponseSchema);
+  const contextStr = `${buildContextString()}
 
-  console.log("🤖 Sending request to GROQ", contextStr);
+Please generate a list of actions based on the user's request. Your response should be a JSON object that strictly adheres to the following schema:
+
+${schema}
+
+Respond only with the JSON object, without any additional text.`;
+
+  console.log("🤖 Sending request to GROQ");
   const completion = await groqInstance.chat.completions.create({
-    // model: "gemma2-9b-it",
     model: "mixtral-8x7b-32768",
     messages: [
       { role: "system", content: contextStr },
@@ -58,7 +62,6 @@ export async function getActionsFromGroq(
   }
 
   const contentParsed = JSON.parse(contentJson) as ActionsResponseSchemaType;
-  console.log("🤖 Received actions from GROQ:", contentParsed);
 
   if (Array.isArray(contentParsed.actions)) {
     return contentParsed as ActionsResponseSchemaType;
@@ -72,5 +75,6 @@ export async function getActionsFromGroq(
     return { actions: [contentParsed] } as ActionsResponseSchemaType;
   }
 
-  throw new Error("Unexpected response format from GROQ");
+  console.log("🧩 Parsed actions from GROQ:", contentParsed);
+  throw new Error("Failed to parse GROQ response");
 }
