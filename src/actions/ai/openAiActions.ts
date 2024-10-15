@@ -27,7 +27,7 @@ const getOpenAIInstance = (): OpenAI => {
   return openai;
 };
 
-const actionsResponseSchema = {
+const simplifiedActionsResponseSchema = {
   type: "object",
   properties: {
     actions: {
@@ -51,11 +51,11 @@ const actionsResponseSchema = {
                     type: { type: "string" },
                     name: { type: "string" },
                   },
-                  required: ["uuid", "type"],
+                  required: ["type"],
                 },
               },
             },
-            required: ["uuid", "x", "y", "rotation", "scale", "behaviors"],
+            required: ["x", "y", "rotation", "scale", "behaviors"],
           },
           entityId: { type: "string" },
           updates: { type: "object" },
@@ -89,7 +89,7 @@ export async function getActionsFromOpenAI(
       {
         name: "generate_actions",
         description: "Generate a list of actions based on the user's request",
-        parameters: actionsResponseSchema,
+        parameters: simplifiedActionsResponseSchema,
       },
     ],
     function_call: { name: "generate_actions" },

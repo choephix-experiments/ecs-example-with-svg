@@ -1,3 +1,5 @@
+import YAML from "yaml";
+
 import { ideState } from "../../stores/ideStore";
 import { worldDataState } from "../../stores/worldDataState";
 
@@ -12,7 +14,6 @@ export const contextAndPrompting = {
     { type: "clearWorld" }
     { type: "selectEntities", entityIds: string[] }
     { type: "deselectEntities", entityIds: string[] }
-    { type: "clearSelection" }
   `,
 
   builtInBehaviors: `
@@ -38,18 +39,7 @@ export function buildContextString() {
     - bottom right corner: ${stageWidth / 2}x${stageHeight / 2}.
 `;
 
-  const entitiesInWorld = worldDataState.entities
-    .map(
-      (entity) => `
-      - ${entity.uuid}:
-        - x: ${entity.x}
-        - y: ${entity.y}
-        - rotation: ${entity.rotation}
-        - scale: ${entity.scale}
-        - behaviors: ${JSON.stringify(entity.behaviors, null, 2)}
-    `
-    )
-    .join("\n");
+  const entitiesInWorld = '\n' + YAML.stringify(worldDataState.entities, {});
 
   const contextStr = `
     You are an AI assistant that generates actions for a game engine.
@@ -68,10 +58,11 @@ export function buildContextString() {
     
     Stage bounds: ${stageBounds}
 
-    Entities in the world: ${entitiesInWorld}
+    Entities in the world: 
+    ${entitiesInWorld}
 
-    Current selection (entity ids): ${ideState.selectedEntityIds.join(", ")}
-`;
+    Current selection (entity ids): [${ideState.selectedEntityIds.join(", ")}]
+  `;
 
   return contextStr;
 }

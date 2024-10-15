@@ -1,5 +1,8 @@
 import Groq from "groq-sdk";
-import { ActionsResponseSchemaType } from "../../schemas/actionSchemas";
+import {
+  ActionsResponseSchema,
+  ActionsResponseSchemaType,
+} from "../../schemas/actionSchemas";
 import { buildContextString } from "./contextAndPrompting";
 
 let groq: Groq | null = null;
@@ -34,11 +37,14 @@ export async function getActionsFromGroq(
 ): Promise<ActionsResponseSchemaType> {
   const groqInstance = getGroqInstance();
 
-  const contextStr = buildContextString();
+  const contextStr =
+    buildContextString() +
+    `\n\nThe json must use the following schema:\n${ActionsResponseSchema}`;
 
-  console.log("🤖 Sending request to GROQ");
+  console.log("🤖 Sending request to GROQ", contextStr);
   const completion = await groqInstance.chat.completions.create({
-    model: "gemma2-9b-it",
+    // model: "gemma2-9b-it",
+    model: "mixtral-8x7b-32768",
     messages: [
       { role: "system", content: contextStr },
       { role: "user", content: prompt },
@@ -59,7 +65,7 @@ export async function getActionsFromGroq(
   if (Array.isArray(contentParsed.actions)) {
     return contentParsed as ActionsResponseSchemaType;
   }
-  
+
   if (Array.isArray(contentParsed)) {
     return { actions: contentParsed } as ActionsResponseSchemaType;
   }
