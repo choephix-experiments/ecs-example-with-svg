@@ -2,7 +2,7 @@ import {
   worldDataState,
   worldDataStateActions,
 } from "../stores/worldDataState";
-import { getActionsFromOpenAI } from "../utils/openAiActions";
+import { getActionsFromOpenAI } from "../actions/ai/openAiActions";
 
 export function initDebug() {
   console.log("🚀 Debug initialized");

@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { ActionsResponseSchemaType } from "../schemas/actionSchemas";
+import { ActionsResponseSchemaType } from "../../schemas/actionSchemas";
 
 let openai: OpenAI | null = null;
 
