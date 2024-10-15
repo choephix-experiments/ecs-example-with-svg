@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSnapshot } from "valtio";
 import { EntityInspector } from "./components/gui/EntityInspector";
 import { PromptBar } from "./components/gui/PromptBar";
-import { Grid } from "./components/svg/Grid";
+import { StageGrid } from "./components/svg/StageGrid";
 import { RenderedEntity } from "./components/svg/RenderedEntity";
 import { SelectionBox } from "./components/svg/SelectionBox";
 import { EntityResolver } from "./services/EntityResolver";
@@ -70,7 +70,7 @@ const StageLayer = () => {
       viewBox={viewBox}
       onClick={handleBackgroundClick}
     >
-      <Grid />
+      <StageGrid />
       <StageBounds />
       <EntitiesGroup />
       <SelectionBoxes />

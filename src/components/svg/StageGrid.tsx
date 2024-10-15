@@ -1,8 +1,8 @@
-interface GridProps {
+interface StageGridProps {
   cellSize?: number;
 }
 
-export function Grid({ cellSize = 40 }: GridProps) {
+export function StageGrid({ cellSize = 40 }: StageGridProps) {
   return (
     <>
       <defs>
