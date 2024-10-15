@@ -88,7 +88,7 @@ export async function getActionsFromOpenAI(prompt: string): Promise<ActionsRespo
       - y: ${entity.y}
       - rotation: ${entity.rotation}
       - scale: ${entity.scale}
-      - behaviors: ${entity.behaviors.map(behavior => behavior.type).join(", ")}
+      - behaviors: ${JSON.stringify(entity.behaviors, null, 2)}
   `).join("\n");
 
   const contextStr = `
