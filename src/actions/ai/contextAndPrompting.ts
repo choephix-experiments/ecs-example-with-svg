@@ -140,6 +140,95 @@ export function buildContextString() {
         }
       ] 
     }
+
+    Example 4:
+    User: "Make the star orbit around the center."
+    Assistant:
+    {
+      "actions": [
+        {
+          "type": "addBehavior",
+          "entityId": "<uuid of the star entity>",
+          "behaviorProps": {
+            "type": "CustomBehavior",
+            "name": "Orbit",
+            "radius": 100,
+            "speed": 0.001,
+            "update": "entity.x = Math.cos(totalTime * this.speed) * this.radius; entity.y = Math.sin(totalTime * this.speed) * this.radius;"
+          }
+        }
+      ]
+    }
+
+    Example 5:
+    User: "Add a colorful square that cycles through colors."
+    Assistant:
+    {
+      "actions": [
+        {
+          "type": "addEntity",
+          "entityProps": {
+            "x": 0, "y": 0, "rotation": 0, "scale": 1,
+            "behaviors": [
+              { "type": "SimplifyMesh", "sides": 4 },
+              {
+                "type": "CustomBehavior",
+                "name": "ColorCycle",
+                "cycleSpeed": 0.1,
+                "update": "const hue = (totalTime * this.cycleSpeed) % 360; entity.color = \`hsl(\${hue}, 100%, 50%)\`;"
+              }
+            ]
+          }
+        }
+      ]
+    }
+
+    Example 6:
+    User: "Create a bouncing ball."
+    Assistant:
+    {
+      "actions": [
+        {
+          "type": "addEntity",
+          "entityProps": {
+            "x": 0, "y": 0, "rotation": 0, "scale": 1,
+            "behaviors": [
+              { "type": "RenderCircle", "radius": 20 },
+              {
+                "type": "CustomBehavior",
+                "name": "Bounce",
+                "bounceHeight": 100,
+                "bounceSpeed": 0.005,
+                "update": "entity.y = Math.abs(Math.sin(totalTime * this.bounceSpeed)) * this.bounceHeight;"
+              }
+            ]
+          }
+        }
+      ]
+    }
+
+    Example 7:
+    User: "Add a shaking emoji."
+    Assistant:
+    {
+      "actions": [
+        {
+          "type": "addEntity",
+          "entityProps": {
+            "x": 0, "y": 0, "rotation": 0, "scale": 1,
+            "behaviors": [
+              { "type": "RenderEmoji", "emoji": "🤪", "fontSize": 40 },
+              {
+                "type": "CustomBehavior",
+                "name": "Shake",
+                "intensity": 4,
+                "update": "entity.x += (Math.random() - 0.5) * this.intensity; entity.y += (Math.random() - 0.5) * this.intensity;"
+              }
+            ]
+          }
+        }
+      ]
+    }
   `;
 
   return contextStr;
