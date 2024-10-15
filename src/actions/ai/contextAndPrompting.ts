@@ -230,6 +230,7 @@ export function buildContextString() {
     You can also clear the world, clear the selection, and generate actions based on user's request.
 
     An action resolver will parse your json response and execute the actions.
+    It's important to remember that you're writing json actions, not code, so imporovise where you must.
 
     Here are the action types you can use:
     ${contextAndPrompting.actionTypes}
