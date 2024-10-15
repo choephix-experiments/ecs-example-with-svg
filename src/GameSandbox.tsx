@@ -47,7 +47,7 @@ const StageLayer = () => {
     const updateViewBox = () => {
       const { innerWidth, innerHeight } = window;
       const scale =
-        Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.9;
+        Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.8;
       const viewBoxWidth = innerWidth / scale;
       const viewBoxHeight = innerHeight / scale;
       setViewBox(
