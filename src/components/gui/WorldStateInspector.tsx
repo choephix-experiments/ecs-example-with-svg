@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 import YAML from 'yaml';
 import { worldDataState } from '../../stores/worldDataState';
+import { ideState } from '../../stores/ideStore';
 
 export const WorldStateInspector: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const worldData = useSnapshot(worldDataState);
-  const yamlString = YAML.stringify(worldData);
+  const worldDataYamlStr = YAML.stringify(worldData);
+  const ideData = useSnapshot(ideState);
+  const ideStateYamlStr = YAML.stringify(ideData);
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -23,10 +26,19 @@ export const WorldStateInspector: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="absolute top-0 left-0 h-full overflow-y-auto bg-white bg-opacity-50 border-r border-gray-300 shadow-md">
-      <div className="p-4 h-full">
-        <pre className="text-xs font-bold mb-2">World State Inspector</pre>
-        <pre className="text-xs whitespace-pre-wrap overflow-x-auto h-[calc(100%-1rem)]">{yamlString}</pre>
+    <div className="absolute top-0 left-0 h-full overflow-y-auto bg-white bg-opacity-90 border-r border-gray-300 shadow-md">
+      <div className="py-4 px-8 h-full overflow-x-auto">
+        <hr/>
+        <br/>
+        <pre className="text-xs font-bold mb-2">IDE</pre>
+        <pre className="text-xs whitespace-pre-wrap">{ideStateYamlStr}</pre>
+        <br/>
+        <hr/>
+        <br/>
+        <pre className="text-xs font-bold mb-2">World</pre>
+        <pre className="text-xs whitespace-pre-wrap">{worldDataYamlStr}</pre>
+        <br/>
+        <hr/>
       </div>
     </div>
   );
