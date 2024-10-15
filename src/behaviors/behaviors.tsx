@@ -115,6 +115,7 @@ export const behaviorResolvers = {
             textAnchor="middle"
             dominantBaseline="central"
             style={{ userSelect: "none" }}
+            y="-2"
           >
             {emoji}
           </text>
