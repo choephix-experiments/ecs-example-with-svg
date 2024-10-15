@@ -7,7 +7,9 @@ export const StageBounds: React.FC = () => {
     <>
       {renderMainLayer()}
       {renderSubLayer(20)}
-      {renderSubLayer(10)}
+      {/* {renderSubLayer(10)}
+      {renderSubLayer(15)}
+      {renderSubLayer(5)} */}
     </>
   );
 };
