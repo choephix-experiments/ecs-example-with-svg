@@ -23,14 +23,7 @@ jobs:
           version: 8
 
       - name: Install dependencies 📦
-        run: |
-          if [ -f pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
-          else
-            pnpm install
-          fi
-        env:
-          PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+        run: pnpm install --frozen-lockfile
 
       - name: Build 🏗️
         run: pnpm run build
