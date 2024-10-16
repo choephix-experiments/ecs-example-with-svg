@@ -1,68 +1,11 @@
-import React from "react";
 import {
-  BehaviorProps,
-  ReadonlyDeep,
   StageEntityProps,
+  ReadonlyDeep,
+  BehaviorProps,
 } from "../types/data-types";
+import { BehaviorResolver } from "./BehaviorResolver.type";
 
-type BuiltInBehaviorsExtraPropsDictionary = {
-  RenderCircle: { radius?: number };
-  ChangeColor: { color?: string };
-  SimplifyMesh: { sides?: number };
-  CustomBehavior: {
-    name: string;
-    start?: string | (() => void);
-    update?:
-      | string
-      | ((
-          entity: StageEntityProps,
-          deltaTime: number,
-          totalTime: number
-        ) => void);
-    render?:
-      | string
-      | ((
-          entity: ReadonlyDeep<StageEntityProps>,
-          currentContent: React.ReactNode | null
-        ) => React.ReactNode | null);
-    destroy?: string | (() => void);
-    [key: string]: unknown;
-  };
-  RenderEmoji: { emoji: string; fontSize?: number };
-};
-
-export type BuiltInBehaviorsPropsDictionary = {
-  [key in keyof BuiltInBehaviorsExtraPropsDictionary]: {
-    uuid: string;
-    type: key;
-  } & BuiltInBehaviorsExtraPropsDictionary[key];
-};
-
-export type BuiltInBehaviorProps =
-  BuiltInBehaviorsPropsDictionary[keyof BuiltInBehaviorsPropsDictionary];
-
-export type BuiltInBehaviorBlueprint = Omit<
-  BuiltInBehaviorsPropsDictionary[keyof BuiltInBehaviorsPropsDictionary],
-  "uuid"
->;
-
-// Define the structure for behavior resolvers
-export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {
-  update?: (
-    this: T,
-    entity: StageEntityProps,
-    deltaTime: number,
-    totalTime: number
-  ) => void;
-  render?: (
-    this: T,
-    entity: ReadonlyDeep<StageEntityProps>,
-    content: React.ReactNode | null
-  ) => React.ReactNode | null;
-};
-
-// Global dictionary of behavior resolvers
-const behaviorResolvers = {
+export const builtInBehaviorResolversDictionary = {
   RenderCircle: {
     render() {
       return <circle r={this.radius!} />;
@@ -90,9 +33,9 @@ const behaviorResolvers = {
     },
   },
   CustomBehavior: {
-    update(entity, deltaTimeSeconds, totalTimeSeconds) {
-      if (typeof this.update === "function") {
-        return this.update.call(
+    onTick(entity, deltaTimeSeconds, totalTimeSeconds) {
+      if (typeof this.onTick === "function") {
+        return this.onTick.call(
           this,
           entity,
           deltaTimeSeconds,
@@ -100,12 +43,12 @@ const behaviorResolvers = {
         );
       }
 
-      if (typeof this.update === "string") {
+      if (typeof this.onTick === "string") {
         const func = new Function(
           "entity",
           "deltaTimeSeconds",
           "totalTimeSeconds",
-          this.update
+          this.onTick
         );
         func.call(this, entity, deltaTimeSeconds, totalTimeSeconds);
       }
@@ -150,27 +93,41 @@ const behaviorResolvers = {
   >;
 };
 
-export function getBehaviorResolver(
-  behaviorProps: BehaviorProps & { update?: unknown; render?: unknown }
-) {
-  const type = behaviorProps.type;
-  const resolver = behaviorResolvers[type as keyof typeof behaviorResolvers];
-  if (resolver) {
-    return resolver as BehaviorResolver<typeof behaviorProps>;
-  }
+type BuiltInBehaviorsExtraPropsDictionary = {
+  RenderCircle: { radius?: number };
+  ChangeColor: { color?: string };
+  SimplifyMesh: { sides?: number };
+  CustomBehavior: {
+    name: string;
+    start?: string | (() => void);
+    onTick?:
+      | string
+      | ((
+          entity: StageEntityProps,
+          deltaTime: number,
+          totalTime: number
+        ) => void);
+    render?:
+      | string
+      | ((
+          entity: ReadonlyDeep<StageEntityProps>,
+          currentContent: React.ReactNode | null
+        ) => React.ReactNode | null);
+    destroy?: string | (() => void);
+    [key: string]: unknown;
+  };
+  RenderEmoji: { emoji: string; fontSize?: number };
+};
 
-  //// Default to CustomBehavior if 'update' or 'render' are string
-  if (
-    typeof behaviorProps.update === "string" ||
-    typeof behaviorProps.render === "string"
-  ) {
-    return behaviorResolvers.CustomBehavior as BehaviorResolver<
-      typeof behaviorProps
-    >;
-  }
+type BuiltInBehaviorsPropsDictionary = {
+  [key in keyof BuiltInBehaviorsExtraPropsDictionary]: /******/
+  BehaviorProps & BuiltInBehaviorsExtraPropsDictionary[key] & { type: key };
+};
 
-  return null;
-}
+export type BuiltInBehaviorType = keyof BuiltInBehaviorsPropsDictionary;
+export type BuiltInBehaviorProps<
+  K extends BuiltInBehaviorType = BuiltInBehaviorType
+> = BuiltInBehaviorsPropsDictionary[K];
 
 // Helper function for SimplifyMesh
 function generatePolygonPoints(radius: number, sides: number): string {

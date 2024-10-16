@@ -8,9 +8,7 @@ export interface StageEntityProps {
   behaviors: BehaviorProps[];
 }
 
-export type EntityBlueprint = Omit<StageEntityProps, "uuid">;
-
-export interface WorldDataState {
+export interface WorldStateProps {
   entities: StageEntityProps[];
   stage: {
     width: number;

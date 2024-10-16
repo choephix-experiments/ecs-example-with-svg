@@ -36,7 +36,7 @@ Built-in behaviors:
 - RenderCircle: { type: "RenderCircle", radius: number }
 - ChangeColor: { type: "ChangeColor", color: string }
 - SimplifyMesh: { type: "SimplifyMesh", sides: number }
-- CustomBehavior: { type: "CustomBehavior", name: string, update?: string, [extrakeys: string]: any }
+- CustomBehavior: { type: "CustomBehavior", name: string, onTick?: string, [extrakeys: string]: any }
 - RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
 
 Current state of the world:
@@ -94,7 +94,7 @@ if (heart) {
     name: "Pulse",
     pulseSpeed: 1.1,
     pulseAmplitude: 0.1,
-    update: \`
+    onTick: \`
       const originalScale = 1;
       entity.scale = originalScale + Math.sin(totalTimeSeconds * this.pulseSpeed) * this.pulseAmplitude;
     \`
@@ -122,7 +122,7 @@ magicApi.addEntity({
       name: "Bounce",
       bounceHeight: 100,
       bounceSpeed: 0.005,
-      update: \`
+      onTick: \`
         entity.y = Math.abs(Math.sin(totalTimeSeconds * this.bounceSpeed)) * this.bounceHeight;
       \`
     }
@@ -146,7 +146,7 @@ magicApi.addEntity({
       type: "CustomBehavior",
       name: "Shake",
       intensity: 4,
-      update: \`
+      onTick: \`
         entity.x += (Math.random() - 0.5) * this.intensity;
         entity.y += (Math.random() - 0.5) * this.intensity;
       \`
@@ -171,7 +171,7 @@ magicApi.addEntity({
       type: "CustomBehavior",
       name: "ColorCycle",
       cycleSpeed: 0.1,
-      update: \`
+      onTick: \`
         const hue = (totalTimeSeconds * this.cycleSpeed) % 360;
         magicApi.updateBehavior(entity.uuid, "ChangeColor", { color: \`hsl(\${hue}, 100%, 50%)\` });
       \`
@@ -190,7 +190,7 @@ entities.forEach(entity => {
     type: "CustomBehavior",
     name: "Rotate",
     rotationSpeed: 0.01,
-    update: \`
+    onTick: \`
       entity.rotation += this.rotationSpeed;
     \`
   });

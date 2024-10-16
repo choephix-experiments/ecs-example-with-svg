@@ -1,5 +1,5 @@
 import React from "react";
-import { EntityResolver } from "../../services/EntityResolver";
+import { entityResolver } from "../../resolvers/entityResolver";
 import { ReadonlyDeep, StageEntityProps } from "../../types/data-types";
 
 interface RenderedEntityProps {
@@ -38,7 +38,7 @@ export const RenderedEntity: React.FC<RenderedEntityProps> = ({
 
   return (
     <g onClick={handleClick} transform={transform}>
-      {EntityResolver.render(entity)}
+      {entityResolver.render(entity)}
     </g>
   );
 };

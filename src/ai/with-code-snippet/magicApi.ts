@@ -1,6 +1,13 @@
-import { BuiltInBehaviorBlueprint, BuiltInBehaviorsPropsDictionary } from "../../behaviors/behaviors";
+import {
+  BuiltInBehaviorProps,
+  BuiltInBehaviorType,
+} from "../../resolvers/builtInBehaviorResolversDictionary";
 import { ideStateActions } from "../../stores/ideStore";
-import { worldDataState, worldDataStateActions } from "../../stores/worldDataState";
+import {
+  worldDataState,
+  worldDataStateActions,
+} from "../../stores/worldDataState";
+import { BuiltInBehaviorBlueprint } from "../../types/blueprint-types";
 import { BehaviorProps, StageEntityProps } from "../../types/data-types";
 import { findBehavior } from "../../utils/findBehavior";
 
@@ -21,7 +28,7 @@ export const magicApi = {
   ): StageEntityProps | undefined => {
     return worldDataState.entities.find(condition);
   },
-  
+
   findEntities: (
     condition: (entity: StageEntityProps) => boolean
   ): StageEntityProps[] => {
@@ -29,10 +36,10 @@ export const magicApi = {
   },
 
   // Get a behavior from an entity by type (kept as is)
-  getEntityBehavior: <T extends keyof BuiltInBehaviorsPropsDictionary>(
+  getEntityBehavior: <K extends BuiltInBehaviorType>(
     entityOrId: StageEntityProps | string,
-    behaviorType: T
-  ): BuiltInBehaviorsPropsDictionary[T] | undefined => {
+    behaviorType: K
+  ): BuiltInBehaviorProps<K> | undefined => {
     const entity =
       typeof entityOrId === "string"
         ? magicApi.findEntityById(entityOrId)
@@ -44,34 +51,44 @@ export const magicApi = {
 
   // New methods for actions
   addEntity: (entityProps: StageEntityProps): void => {
-    console.log('➕ Adding entity:', entityProps.uuid);
+    console.log("➕ Adding entity:", entityProps.uuid);
     worldDataStateActions.addEntity(entityProps);
   },
 
   removeEntity: (entityId: string): void => {
-    console.log('➖ Removing entity:', entityId);
+    console.log("➖ Removing entity:", entityId);
     worldDataStateActions.removeEntity(entityId);
   },
 
-  updateEntity: (entityId: string, updates: Partial<StageEntityProps>): void => {
-    console.log('🔄 Updating entity:', entityId);
+  updateEntity: (
+    entityId: string,
+    updates: Partial<StageEntityProps>
+  ): void => {
+    console.log("🔄 Updating entity:", entityId);
     const entity = worldDataStateActions.getEntity(entityId);
     if (!entity) throw new Error("Entity not found");
     Object.assign(entity, updates);
   },
 
-  addBehavior: (entityId: string, behaviorProps: BuiltInBehaviorBlueprint): void => {
-    console.log('🧠 Adding behavior to entity:', entityId);
+  addBehavior: (
+    entityId: string,
+    behaviorProps: BuiltInBehaviorBlueprint
+  ): void => {
+    console.log("🧠 Adding behavior to entity:", entityId);
     worldDataStateActions.addBehaviorToEntity(entityId, behaviorProps);
   },
 
   removeBehavior: (entityId: string, behaviorType: string): void => {
-    console.log('🗑️ Removing behavior from entity:', entityId);
+    console.log("🗑️ Removing behavior from entity:", entityId);
     worldDataStateActions.removeBehaviorFromEntity(entityId, behaviorType);
   },
 
-  updateBehavior: (entityId: string, behaviorType: string, updates: Partial<BehaviorProps>): void => {
-    console.log('🔧 Updating behavior for entity:', entityId);
+  updateBehavior: (
+    entityId: string,
+    behaviorType: string,
+    updates: Partial<BehaviorProps>
+  ): void => {
+    console.log("🔧 Updating behavior for entity:", entityId);
     const entity = worldDataStateActions.getEntity(entityId);
     if (!entity) throw new Error("Entity not found");
 
@@ -94,22 +111,22 @@ export const magicApi = {
   },
 
   clearWorld: (): void => {
-    console.log('🧹 Clearing the world');
+    console.log("🧹 Clearing the world");
     worldDataStateActions.clearWorld();
   },
 
   selectEntities: (entityIds: string[]): void => {
-    console.log('🔍 Selecting entities:', entityIds);
+    console.log("🔍 Selecting entities:", entityIds);
     ideStateActions.setSelectedEntityIds(entityIds);
   },
 
   deselectEntities: (entityIds: string[]): void => {
-    console.log('👋 Deselecting entities:', entityIds);
+    console.log("👋 Deselecting entities:", entityIds);
     ideStateActions.removeSelectedEntityIds(entityIds);
   },
 
   clearSelection: (): void => {
-    console.log('🧹 Clearing entity selection');
+    console.log("🧹 Clearing entity selection");
     ideStateActions.clearSelection();
   },
 };

@@ -1,6 +1,7 @@
-import { BuiltInBehaviorBlueprint } from "./behaviors/behaviors";
 import { ideState } from "./stores/ideStore";
 import { worldDataStateActions } from "./stores/worldDataState";
+
+import type { BuiltInBehaviorBlueprint } from "./types/blueprint-types";
 
 const God = {
   addBehaviorToSelectedEntity: <T extends BuiltInBehaviorBlueprint>(
@@ -24,7 +25,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Pulse",
-      update: `
+      onTick: `
         entity.scale = 1 + Math.sin(Date.now() * 0.005) * 0.5;
       `,
     });
@@ -35,7 +36,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Spin",
-      update: `
+      onTick: `
         entity.rotation += 4 * deltaTime;
       `,
     });
@@ -46,7 +47,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Orbit",
-      update: `
+      onTick: `
         const radius = 100;
         const speed = 0.001;
         entity.x = Math.cos(Date.now() * speed) * radius;
@@ -60,7 +61,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Bounce",
-      update: `
+      onTick: `
         entity.y = Math.abs(Math.sin(Date.now() * 0.005)) * 100;
       `,
     });
@@ -71,7 +72,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Wiggle",
-      update: `
+      onTick: `
         entity.rotation = Math.sin(Date.now() * 0.01) * 15;
       `,
     });
@@ -82,7 +83,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Fade",
-      update: `
+      onTick: `
         entity.opacity = (Math.sin(Date.now() * 0.003) + 1) / 2;
       `,
     });
@@ -93,7 +94,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "ZigZag",
-      update: `
+      onTick: `
         entity.x += Math.sin(Date.now() * 0.01) * 2;
         entity.y += 0.5;
         if (entity.y > 300) entity.y = -300;
@@ -106,7 +107,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Grow",
-      update: `
+      onTick: `
         entity.scale = Math.min(entity.scale * 1.01, 3);
       `,
     });
@@ -117,7 +118,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Shrink",
-      update: `
+      onTick: `
         entity.scale = Math.max(entity.scale * 0.99, 0.1);
       `,
     });
@@ -128,7 +129,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "Shake",
-      update: `
+      onTick: `
         entity.x += (Math.random() - 0.5) * 4;
         entity.y += (Math.random() - 0.5) * 4;
       `,
@@ -140,7 +141,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "ColorCycle",
-      update: `
+      onTick: `
         const hue = (Date.now() * 0.1) % 360;
         entity.color = \`hsl(\${hue}, 100%, 50%)\`;
       `,
@@ -152,7 +153,7 @@ const God = {
     God.addBehaviorToSelectedEntity({
       type: "CustomBehavior",
       name: "PingPong",
-      update: `
+      onTick: `
         entity.x = Math.sin(Date.now() * 0.003) * 200;
       `,
     });

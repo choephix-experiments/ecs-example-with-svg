@@ -12,7 +12,7 @@ const actionResolvers: {
   [K in ActionProps["type"]]: ActionResolver<K>;
 } = {
   addEntity: (action) => {
-    console.log("➕ Adding entity:", action.entityProps.uuid);
+    console.log("➕ Adding entity:", action.entityProps);
     worldDataStateActions.addEntity(action.entityProps);
   },
 
@@ -32,7 +32,7 @@ const actionResolvers: {
     console.log("🧠 Adding behavior to entity:", action.entityId);
     worldDataStateActions.addBehaviorToEntity(
       action.entityId,
-      action.behaviorProps
+      action.behaviorProps as any
     );
   },
 

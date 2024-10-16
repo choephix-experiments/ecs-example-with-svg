@@ -1,14 +1,16 @@
 import { proxy } from "valtio";
-import { BuiltInBehaviorBlueprint } from "../behaviors/behaviors";
+import {
+  BuiltInBehaviorBlueprint,
+  StageEntityBlueprint,
+} from "../types/blueprint-types";
 import {
   BehaviorProps,
-  EntityBlueprint,
   StageEntityProps,
-  WorldDataState,
+  WorldStateProps,
 } from "../types/data-types";
 import { cloneDeep } from "../utils/core/cloneDeep";
 
-export const worldDataState = proxy<WorldDataState>({
+export const worldDataState = proxy<WorldStateProps>({
   entities: [],
   stage: {
     width: 1000,
@@ -17,7 +19,7 @@ export const worldDataState = proxy<WorldDataState>({
 });
 
 export const worldDataStateActions = {
-  addEntity: (entityBlueprint: EntityBlueprint) => {
+  addEntity: (entityBlueprint: StageEntityBlueprint) => {
     const entityProps: StageEntityProps = {
       ...cloneDeep(entityBlueprint),
       uuid: crypto.randomUUID(),

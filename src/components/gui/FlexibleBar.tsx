@@ -1,4 +1,4 @@
-import { Loader2, SparkleIcon, AlertCircle } from "lucide-react";
+import { Loader2, SparkleIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function FlexibleBar({

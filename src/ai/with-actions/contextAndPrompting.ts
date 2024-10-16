@@ -42,14 +42,14 @@ export const contextAndPrompting = {
      * Allows for custom behavior implementation.
      * @property {string} type - Always "CustomBehavior"
      * @property {string} name - A unique name for this custom behavior
-     * @property {string} [update] - Optional. A stringified function to be executed each frame
+     * @property {string} [onTick] - Optional. A stringified function to be executed each frame
      * Type: \`(entity, deltaTime, totalTime) => void\`, where time is in seconds.
      * @property {any} [extrakeys] - Any additional properties specific to this custom behavior
      */
     CustomBehavior: { 
       type: "CustomBehavior", 
       name: string, 
-      update?: string,
+      onTick?: string,
       [extrakeys: string]: any
     }
 
@@ -101,7 +101,7 @@ export const contextAndPrompting = {
             "name": "Pulse",
             "pulseSpeed": 1.1,
             "pulseAmplitude": 0.1,
-            "update": "entity.scale = <the original scale value> + Math.sin(totalTime * this.pulseSpeed) * this.pulseAmplitude;"
+            "onTick": "entity.scale = <the original scale value> + Math.sin(totalTime * this.pulseSpeed) * this.pulseAmplitude;"
           } 
         }
       ] 
@@ -120,7 +120,7 @@ export const contextAndPrompting = {
             "name": "Orbit",
             "radius": 100,
             "speed": 0.001,
-            "update": "entity.x = Math.cos(totalTime * this.speed) * this.radius; entity.y = Math.sin(totalTime * this.speed) * this.radius;"
+            "onTick": "entity.x = Math.cos(totalTime * this.speed) * this.radius; entity.y = Math.sin(totalTime * this.speed) * this.radius;"
           }
         }
       ]
@@ -141,7 +141,7 @@ export const contextAndPrompting = {
                 "type": "CustomBehavior",
                 "name": "ColorCycle",
                 "cycleSpeed": 0.1,
-                "update": "const hue = (totalTime * this.cycleSpeed) % 360; entity.color = \`hsl(\${hue}, 100%, 50%)\`;"
+                "onTick": "const hue = (totalTime * this.cycleSpeed) % 360; entity.color = \`hsl(\${hue}, 100%, 50%)\`;"
               }
             ]
           }
@@ -165,7 +165,7 @@ export const contextAndPrompting = {
                 "name": "Bounce",
                 "bounceHeight": 100,
                 "bounceSpeed": 0.005,
-                "update": "entity.y = Math.abs(Math.sin(totalTime * this.bounceSpeed)) * this.bounceHeight;"
+                "onTick": "entity.y = Math.abs(Math.sin(totalTime * this.bounceSpeed)) * this.bounceHeight;"
               }
             ]
           }
@@ -188,7 +188,7 @@ export const contextAndPrompting = {
                 "type": "CustomBehavior",
                 "name": "Shake",
                 "intensity": 4,
-                "update": "entity.x += (Math.random() - 0.5) * this.intensity; entity.y += (Math.random() - 0.5) * this.intensity;"
+                "onTick": "entity.x += (Math.random() - 0.5) * this.intensity; entity.y += (Math.random() - 0.5) * this.intensity;"
               }
             ]
           }
@@ -226,7 +226,7 @@ export function buildContextString() {
 
   const contextStr = `
     You are an AI assistant that generates actions for a game engine.
-    You can add, remove, update entities, behaviors, and select/deselect entities.
+    You can add, remove, onTick entities, behaviors, and select/deselect entities.
     You can also clear the world, clear the selection, and generate actions based on user's request.
 
     An action resolver will parse your json response and execute the actions.

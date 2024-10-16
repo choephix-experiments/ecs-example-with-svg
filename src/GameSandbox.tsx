@@ -8,7 +8,7 @@ import { RenderedEntity } from "./components/svg/RenderedEntity";
 import { SelectionBox } from "./components/svg/SelectionBox";
 import { StageBounds } from "./components/svg/StageBounds";
 import { StageGrid } from "./components/svg/StageGrid";
-import { EntityResolver } from "./services/EntityResolver";
+import { entityResolver } from "./resolvers/entityResolver";
 import { ideStateActions, useGetSelectedEntities } from "./stores/ideStore";
 import { worldDataState } from "./stores/worldDataState";
 import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
@@ -17,7 +17,7 @@ import { useAnimationFrame } from "./utils/hooks/useAnimationFrame";
 export default function GameSandbox() {
   useAnimationFrame((deltaTime, totalTime) => {
     for (const entity of worldDataState.entities) {
-      EntityResolver.update(entity, deltaTime, totalTime);
+      entityResolver.onTick(entity, deltaTime, totalTime);
     }
   });
 
