@@ -1,5 +1,6 @@
 import { magicApi } from "../ai/with-code-snippet/magicApi";
 import { createInputTracker } from "../input/createInputTracker";
+import { createEasyBreezyContext } from "../misc/createEasyBreezyContext";
 import { debugDataState } from "../stores/debugDataStore";
 import {
   worldDataState,
@@ -9,10 +10,12 @@ import {
 export async function initDebugging() {
   console.log("🚀 Debug initialized");
 
+  const easyBreezyContext = createEasyBreezyContext();
   Object.assign(window, {
     worldDataState,
     worldDataStateActions,
     magicApi,
+    easyBreezyContext,
   });
 
   const input = createInputTracker();
