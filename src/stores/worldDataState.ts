@@ -18,6 +18,9 @@ export const worldDataState = proxy<WorldStateProps>({
     width: 1000,
     height: 1000,
   },
+  global: {
+    timeScale: 0,
+  },
 });
 
 export const defaultEntityProps: Required<StageEntityBlueprint> = {

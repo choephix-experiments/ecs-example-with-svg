@@ -14,6 +14,9 @@ export interface WorldStateProps {
     width: number;
     height: number;
   };
+  global: {
+    timeScale: number;
+  };
 }
 
 export interface BehaviorProps {

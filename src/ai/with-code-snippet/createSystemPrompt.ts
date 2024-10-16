@@ -76,7 +76,7 @@ const redCircle = addEntity({
   rotation: 0,
   scale: 1,
   behaviors: [
-    { type: "RenderCircle", radius: 10 },
+    { type: "RenderCircle", radius: 25 },
     { type: "ChangeColor", color: "red" }
   ]
 });
@@ -117,8 +117,7 @@ if (heart) {
     pulseSpeed: 1.1,
     pulseAmplitude: 0.1,
     onTick: \`
-      const originalScale = 1;
-      entity.scale = originalScale + Math.sin(totalTimeSeconds * this.pulseSpeed) * this.pulseAmplitude;
+      entity.scale = 1 + Math.sin(totalTimeSeconds * this.pulseSpeed) * this.pulseAmplitude;
     \`
   });
   console.log('✅ Pulse behavior added to the heart');
