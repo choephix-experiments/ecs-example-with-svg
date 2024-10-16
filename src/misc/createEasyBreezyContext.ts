@@ -12,10 +12,16 @@ import {
 
 type EasyBreezyEntity = StageEntityProps & {
   getBehavior: (
-    search: string | ((behavior: BehaviorProps) => boolean)
+    search: string | ((behavior: BehaviorProps) => boolean),
+    createIfNotFound: boolean
   ) => BehaviorProps | undefined;
+  removeBehavior: (
+    search: string | ((behavior: BehaviorProps) => boolean)
+  ) => void;
+  addBehavior: (behaviorBlueprint: any) => BehaviorProps;
   getBounds: () => { x: number; y: number; width: number; height: number };
   isInRange: (x: number, y: number, range: number) => boolean;
+  getDistance: (x: number, y: number) => number;
   destroy: () => void;
 };
 
@@ -55,6 +61,21 @@ export function createEasyBreezyContext() {
 
           return null;
         },
+        removeBehavior: (search) => {
+          const behavior = easyEntity.getBehavior(search, false);
+          if (behavior) {
+            worldDataStateActions.removeBehaviorFromEntity(
+              entity.uuid,
+              behavior.type
+            );
+          }
+        },
+        addBehavior: (behaviorBlueprint) => {
+          return worldDataStateActions.addBehaviorToEntity(
+            entity.uuid,
+            behaviorBlueprint
+          );
+        },
         getBounds: () => ({
           x: entity.x,
           y: entity.y,
@@ -62,9 +83,12 @@ export function createEasyBreezyContext() {
           height: 0,
         }),
         isInRange: (x: number, y: number, range: number) => {
+          return easyEntity.getDistance(x, y) <= range;
+        },
+        getDistance: (x: number, y: number) => {
           const dx = x - entity.x;
           const dy = y - entity.y;
-          return Math.sqrt(dx * dx + dy * dy) <= range;
+          return Math.sqrt(dx * dx + dy * dy);
         },
         destroy: () => worldDataStateActions.removeEntity(entity.uuid),
       };
