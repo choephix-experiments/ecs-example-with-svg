@@ -20,7 +20,7 @@ export const worldDataState = proxy<WorldStateProps>({
   },
 });
 
-const defaultEntityProps: Required<StageEntityBlueprint> = {
+export const defaultEntityProps: Required<StageEntityBlueprint> = {
   name: "Nameless",
   x: 0,
   y: 0,
@@ -29,18 +29,47 @@ const defaultEntityProps: Required<StageEntityBlueprint> = {
   behaviors: [],
 };
 
-const defaultBehaviorProps: Required<BehaviorBlueprint> = {
+export const defaultBehaviorProps: Required<BehaviorBlueprint> = {
   name: "Nameless",
   type: "CustomBehavior",
 };
 
 export const worldDataStateActions = {
   addEntity: (entityBlueprint: StageEntityBlueprint) => {
-    const entityProps: StageEntityProps = {
-      ...defaultEntityProps,
-      ...cloneDeep(entityBlueprint),
-      uuid: crypto.randomUUID(),
-    };
+    const entityProps = blueprintConverter.toEntityProps(entityBlueprint);
+
+    //// Apply extra-care fixes, like ensuring all numbers are numbers
+    //// and that behaviors is an array
+    for (const key of ["x", "y", "rotation", "scale"] as const) {
+      if (typeof entityProps[key] === "string") {
+        entityProps[key] = parseFloat(entityProps[key]);
+      }
+      if (isNaN(entityProps[key])) {
+        entityProps[key] = defaultEntityProps[key];
+      }
+    }
+    for (const key of ["name", "uuid"] as const) {
+      if (typeof entityProps[key] !== "string") {
+        entityProps[key] = String(entityProps[key]);
+      }
+    }
+
+    if (!Array.isArray(entityBlueprint.behaviors)) {
+      if (entityBlueprint.behaviors !== null) {
+        if (typeof entityBlueprint.behaviors === "object") {
+          entityBlueprint.behaviors = [entityBlueprint.behaviors];
+        }
+      }
+      // entityBlueprint.behaviors = [];
+    }
+
+    entityProps.behaviors = [];
+    for (const behaviorBlueprint of entityBlueprint.behaviors ?? []) {
+      console.log("🔄 Adding behavior to entity", behaviorBlueprint);
+      const behaviorProps = blueprintConverter.toBehaviorProps(behaviorBlueprint);
+      entityProps.behaviors.push(behaviorProps);
+    }
+
     worldDataState.entities.push(entityProps);
     return entityProps;
   },
@@ -62,11 +91,7 @@ export const worldDataStateActions = {
     const entity = worldDataState.entities.find((e) => e.uuid === entityId);
     if (!entity) throw new Error("Entity not found");
 
-    const behaviorProps: BehaviorProps = {
-      ...defaultBehaviorProps,
-      ...cloneDeep(behaviorBlueprint),
-      uuid: crypto.randomUUID(),
-    };
+    const behaviorProps = blueprintConverter.toBehaviorProps(behaviorBlueprint);
     entity.behaviors.push(behaviorProps);
     return behaviorProps;
   },
@@ -83,5 +108,22 @@ export const worldDataStateActions = {
   },
   getEntity: (id: string): StageEntityProps | undefined => {
     return worldDataState.entities.find((e) => e.uuid === id);
+  },
+};
+
+const blueprintConverter = {
+  toEntityProps: (blueprint: StageEntityBlueprint): StageEntityProps => {
+    return {
+      ...defaultEntityProps,
+      ...cloneDeep(blueprint),
+      uuid: crypto.randomUUID(),
+    };
+  },
+  toBehaviorProps: (blueprint: BehaviorBlueprint): BehaviorProps => {
+    return {
+      ...defaultBehaviorProps,
+      ...cloneDeep(blueprint),
+      uuid: crypto.randomUUID(),
+    };
   },
 };
