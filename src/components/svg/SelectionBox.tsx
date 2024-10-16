@@ -1,10 +1,10 @@
 import { ReadonlyDeep, StageEntityProps } from "../../types/data-types";
-import { findBehavior } from "../../utils/findBehavior";
+import { findEntityBehaviorByType } from "../../utils/finders";
 
 export const SelectionBox: React.FC<{
   entity: ReadonlyDeep<StageEntityProps>;
 }> = ({ entity }) => {
-  const circle = findBehavior(entity, "RenderCircle");
+  const circle = findEntityBehaviorByType(entity, "RenderCircle");
 
   const boxSize = (circle?.radius ?? 30) * 2 * entity.scale + 4;
   return (

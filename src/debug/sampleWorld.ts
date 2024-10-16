@@ -2,7 +2,7 @@ import {
   worldDataState,
   worldDataStateActions,
 } from "../stores/worldDataState";
-import { findBehavior } from "../utils/findBehavior";
+import { findEntityBehaviorByType } from "../utils/finders";
 
 const emojiList = ["😊", "🚀", "🌈", "🎉", "🦄", "🍕", "🌟", "🐱", "🌺", "🎸"];
 const colorList = [
@@ -79,7 +79,7 @@ export function populateSampleWorld() {
 
     // Add RenderEmoji behavior to every second entity
     if (index % 2 === 0) {
-      const circle = findBehavior(entity, "RenderCircle");
+      const circle = findEntityBehaviorByType(entity, "RenderCircle");
       const fontSizeMultiplier = 1.33;
       const fontSize = fontSizeMultiplier * (circle?.radius ?? 20);
       const randomEmoji =

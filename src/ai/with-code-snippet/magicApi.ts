@@ -9,7 +9,7 @@ import {
 } from "../../stores/worldDataState";
 import { BuiltInBehaviorBlueprint } from "../../types/blueprint-types";
 import { BehaviorProps, StageEntityProps } from "../../types/data-types";
-import { findBehavior } from "../../utils/findBehavior";
+import { findEntityBehaviorByType } from "../../utils/finders";
 
 export const magicApi = {
   // Get all entities
@@ -39,14 +39,14 @@ export const magicApi = {
   getEntityBehavior: <K extends BuiltInBehaviorType>(
     entityOrId: StageEntityProps | string,
     behaviorType: K
-  ): BuiltInBehaviorProps<K> | undefined => {
+  ) => {
     const entity =
       typeof entityOrId === "string"
         ? magicApi.findEntityById(entityOrId)
         : entityOrId;
     if (!entity) return undefined;
 
-    return findBehavior(entity, behaviorType);
+    return findEntityBehaviorByType(entity, behaviorType);
   },
 
   // New methods for actions
