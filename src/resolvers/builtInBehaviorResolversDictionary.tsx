@@ -8,7 +8,7 @@ import { BehaviorResolver } from "./BehaviorResolver.type";
 export const builtInBehaviorResolversDictionary = {
   RenderCircle: {
     render() {
-      return <circle r={this.radius!} />;
+      return <circle r={this.radius ?? 10} />;
     },
   },
   ChangeColor: {

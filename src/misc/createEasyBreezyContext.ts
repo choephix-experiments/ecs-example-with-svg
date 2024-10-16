@@ -9,6 +9,7 @@ import {
   findEntityBehaviorByType,
   findEntityBehaviorByUuid,
 } from "../utils/finders";
+import { StageEntityBlueprint } from "../types/blueprint-types";
 
 type EasyBreezyEntity = StageEntityProps & {
   getBehavior: (
@@ -28,80 +29,124 @@ type EasyBreezyEntity = StageEntityProps & {
 export function createEasyBreezyContext() {
   const easyBreezyState = {
     entities: [] as EasyBreezyEntity[],
+    addEntity: (entityBlueprint: StageEntityBlueprint): EasyBreezyEntity => {
+      const newEntity = worldDataStateActions.addEntity(entityBlueprint);
+      updateEasyBreezyEntities();
+      return easyBreezyState.getEntity(newEntity.uuid)!;
+    },
+    getEntity: (
+      search: string | ((entity: EasyBreezyEntity) => boolean)
+    ): EasyBreezyEntity | undefined => {
+      if (typeof search === "string") {
+        // Try to find by UUID first
+        let entity = easyBreezyState.entities.find((e) => e.uuid === search);
+        if (entity) return entity;
+
+        // Then by name
+        entity = easyBreezyState.entities.find((e) => e.name === search);
+        if (entity) return entity;
+
+        // Finally by any property that matches the string
+        return easyBreezyState.entities.find((e) =>
+          Object.values(e).some(
+            (value) => typeof value === "string" && value.includes(search)
+          )
+        );
+      } else if (typeof search === "function") {
+        // Use the condition function
+        return easyBreezyState.entities.find(search);
+      }
+      return undefined;
+    },
+    removeEntity: (
+      search: string | ((entity: EasyBreezyEntity) => boolean)
+    ): void => {
+      const entity = easyBreezyState.getEntity(search);
+      if (entity) {
+        worldDataStateActions.removeEntity(entity.uuid);
+        easyBreezyState.entities = easyBreezyState.entities.filter(
+          (e) => e.uuid !== entity.uuid
+        );
+      }
+    },
   };
 
-  const updateEasyBreezyEntities = () => {
-    easyBreezyState.entities = worldDataState.entities.map((entity) => {
-      const easyEntity: EasyBreezyEntity = {
-        ...entity,
-        getBehavior: (search, createIfNotFound = true) => {
-          if (typeof search === "string") {
-            // Try to find by UUID first
-            const byUuid = findEntityBehaviorByUuid(entity, search);
-            if (byUuid) return byUuid;
+  function createEasyBreezyEntity(entity: StageEntityProps): EasyBreezyEntity {
+    const easyEntity: EasyBreezyEntity = {
+      ...entity,
+      getBehavior: (search, createIfNotFound = true) => {
+        if (typeof search === "string") {
+          // Try to find by UUID first
+          const byUuid = findEntityBehaviorByUuid(entity, search);
+          if (byUuid) return byUuid;
 
-            // Then by type
-            const byType = findEntityBehaviorByType(entity, search as any);
-            if (byType) return byType;
+          // Then by type
+          const byType = findEntityBehaviorByType(entity, search as any);
+          if (byType) return byType;
 
-            // Finally by name
-            return findEntityBehaviorByName(entity, search);
-          } else if (typeof search === "function") {
-            // Use the condition function
-            return entity.behaviors.find(search);
-          }
+          // Finally by name
+          return findEntityBehaviorByName(entity, search);
+        } else if (typeof search === "function") {
+          // Use the condition function
+          return entity.behaviors.find(search);
+        }
 
-          if (createIfNotFound) {
-            const newBehavior = worldDataStateActions.addBehaviorToEntity(
-              entity.uuid,
-              search as any
-            );
-            return newBehavior;
-          }
-
-          return null;
-        },
-        removeBehavior: (search) => {
-          const behavior = easyEntity.getBehavior(search, false);
-          if (behavior) {
-            worldDataStateActions.removeBehaviorFromEntity(
-              entity.uuid,
-              behavior.type
-            );
-          }
-        },
-        addBehavior: (behaviorBlueprint) => {
-          return worldDataStateActions.addBehaviorToEntity(
+        if (createIfNotFound) {
+          const newBehavior = worldDataStateActions.addBehaviorToEntity(
             entity.uuid,
-            behaviorBlueprint
+            search as any
           );
-        },
-        getBounds: () => ({
-          x: entity.x,
-          y: entity.y,
-          width: 0,
-          height: 0,
-        }),
-        isInRange: (x: number, y: number, range: number) => {
-          return easyEntity.getDistance(x, y) <= range;
-        },
-        getDistance: (x: number, y: number) => {
-          const dx = x - entity.x;
-          const dy = y - entity.y;
-          return Math.sqrt(dx * dx + dy * dy);
-        },
-        destroy: () => worldDataStateActions.removeEntity(entity.uuid),
-      };
+          return newBehavior;
+        }
 
-      return new Proxy(easyEntity, {
-        set(target, prop: string, value) {
-          if (prop in entity) {
-            worldDataStateActions.updateEntity(entity.uuid, { [prop]: value });
-          }
-          return Reflect.set(target, prop, value);
-        },
-      });
+        return null;
+      },
+      removeBehavior: (search) => {
+        const behavior = easyEntity.getBehavior(search, false);
+        if (behavior) {
+          worldDataStateActions.removeBehaviorFromEntity(
+            entity.uuid,
+            behavior.type
+          );
+        }
+      },
+      addBehavior: (behaviorBlueprint) => {
+        return worldDataStateActions.addBehaviorToEntity(
+          entity.uuid,
+          behaviorBlueprint
+        );
+      },
+      getBounds: () => ({
+        x: entity.x,
+        y: entity.y,
+        width: 0,
+        height: 0,
+      }),
+      isInRange: (x: number, y: number, range: number) => {
+        return easyEntity.getDistance(x, y) <= range;
+      },
+      getDistance: (x: number, y: number) => {
+        const dx = x - entity.x;
+        const dy = y - entity.y;
+        return Math.sqrt(dx * dx + dy * dy);
+      },
+      destroy: () => worldDataStateActions.removeEntity(entity.uuid),
+    };
+
+    return new Proxy(easyEntity, {
+      set(target, prop: string, value) {
+        if (prop in entity) {
+          worldDataStateActions.updateEntity(entity.uuid, { [prop]: value });
+        }
+        return Reflect.set(target, prop, value);
+      },
     });
+  }
+
+  const updateEasyBreezyEntities = () => {
+    easyBreezyState.entities = worldDataState.entities.map(
+      createEasyBreezyEntity
+    );
   };
 
   // Initial update
