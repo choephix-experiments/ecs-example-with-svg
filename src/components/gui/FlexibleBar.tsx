@@ -2,19 +2,16 @@ import { Loader2, SparkleIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function FlexibleBar({
-  prompt,
-  setPrompt,
   onSubmit,
   disabled,
 }: {
-  prompt: string;
-  setPrompt: (value: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (prompt: string) => unknown | Promise<unknown>;
   disabled: boolean;
 }) {
+  const [prompt, setPrompt] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const promptHistory = usePromptHistory(prompt, setPrompt, onSubmit);
+  const promptHistory = usePromptHistory(prompt, setPrompt);
   const autoResize = useAutoResize(textareaRef, prompt);
   useAutoFocus(textareaRef, disabled);
 
@@ -23,11 +20,22 @@ export function FlexibleBar({
     promptHistory.handleChange();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    promptHistory.handleSubmit(e);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (disabled || !prompt.trim()) return;
+
+    await onSubmit(prompt);
+
+    promptHistory.handleSubmit(prompt);
+    setPrompt("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+
     promptHistory.handleKeyDown(e);
   };
 
@@ -107,11 +115,7 @@ function useAutoFocus(
   }, [disabled, textareaRef]);
 }
 
-function usePromptHistory(
-  prompt: string,
-  setPrompt: (value: string) => void,
-  onSubmit: (e: React.FormEvent) => void
-) {
+function usePromptHistory(prompt: string, setPrompt: (value: string) => void) {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [tempPrompt, setTempPrompt] = useState("");
@@ -138,8 +142,7 @@ function usePromptHistory(
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    onSubmit(e);
+  const handleSubmit = (prompt: string) => {
     if (prompt.trim() !== "") {
       setHistory((prevHistory) => [...prevHistory, prompt]);
       console.log("🔄 Added to history:", prompt);
@@ -149,10 +152,7 @@ function usePromptHistory(
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
       e.preventDefault();
       navigateHistory(e.key === "ArrowUp" ? "up" : "down");
     }

@@ -8,7 +8,6 @@ import { ideStateActions } from "../../stores/ideStore";
 const mode = "mock" as "snippet" | "actions" | "mock";
 
 export function PromptBar() {
-  const [prompt, setPrompt] = useState("");
   const { aiBusy } = useSnapshot(ideState);
 
   const aiServiceSlug = new URL(window.location.href).searchParams.get("ai");
@@ -23,17 +22,12 @@ export function PromptBar() {
     return null;
   }
 
-  const handlePromptSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (aiBusy || !prompt.trim()) return;
-
+  const handlePromptSubmit = async (prompt: string) => {
     console.log("🚀 Prompt submitted:", prompt);
 
     try {
       ideStateActions.setAIBusy(true);
       await runPromptToCodeSnippet(prompt);
-      setPrompt("");
     } catch (error) {
       console.error("❌ Error processing AI snippet:", error);
     } finally {
@@ -43,8 +37,6 @@ export function PromptBar() {
 
   return (
     <FlexibleBar
-      prompt={prompt}
-      setPrompt={setPrompt}
       onSubmit={handlePromptSubmit}
       disabled={aiBusy}
     />
@@ -54,7 +46,7 @@ export function PromptBar() {
 function useRunPromptFakely() {
   return async (prompt: string) => {
     console.log("🚀 Prompt submitted:", prompt);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 250));
     console.log("🚀 Prompt executed:", prompt);
   };
 }
