@@ -1,9 +1,10 @@
 import { proxy, subscribe } from "valtio";
 import { worldDataState, worldDataStateActions } from "../stores/worldDataState";
 import { StageEntityProps, BehaviorProps } from "../types/data-types";
+import { findEntityBehaviorByUuid, findEntityBehaviorByType, findEntityBehaviorByName } from "../utils/finders";
 
 type EasyBreezyEntity = StageEntityProps & {
-  getBehavior: (type: string) => BehaviorProps | undefined;
+  getBehavior: (search: string | ((behavior: BehaviorProps) => boolean)) => BehaviorProps | undefined;
   getBounds: () => { x: number; y: number; width: number; height: number };
   isInRange: (x: number, y: number, range: number) => boolean;
   destroy: () => void;
@@ -18,7 +19,30 @@ export function createEasyBreezyContext() {
     easyBreezyState.entities = worldDataState.entities.map((entity) => {
       const easyEntity: EasyBreezyEntity = {
         ...entity,
-        getBehavior: (type: string) => entity.behaviors.find(b => b.type === type),
+        getBehavior: (search, createIfNotFound = true) => {
+          if (typeof search === 'string') {
+            // Try to find by UUID first
+            const byUuid = findEntityBehaviorByUuid(entity, search);
+            if (byUuid) return byUuid;
+
+            // Then by type
+            const byType = findEntityBehaviorByType(entity, search as any);
+            if (byType) return byType;
+
+            // Finally by name
+            return findEntityBehaviorByName(entity, search);
+          } else if (typeof search === 'function') {
+            // Use the condition function
+            return entity.behaviors.find(search);
+          }
+
+          if (createIfNotFound) {
+            const newBehavior = worldDataStateActions.addBehaviorToEntity(entity.uuid, search as any);
+            return newBehavior;
+          }
+
+          return null;
+        },
         getBounds: () => ({
           x: entity.x,
           y: entity.y,
@@ -55,4 +79,3 @@ export function createEasyBreezyContext() {
 
   return easyBreezyState;
 }
-
