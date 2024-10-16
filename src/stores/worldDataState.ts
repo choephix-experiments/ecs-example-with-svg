@@ -1,9 +1,11 @@
 import { proxy } from "valtio";
-import {
+
+import type {
+  BehaviorBlueprint,
   BuiltInBehaviorBlueprint,
   StageEntityBlueprint,
 } from "../types/blueprint-types";
-import {
+import type {
   BehaviorProps,
   StageEntityProps,
   WorldStateProps,
@@ -18,9 +20,24 @@ export const worldDataState = proxy<WorldStateProps>({
   },
 });
 
+const defaultEntityProps: Required<StageEntityBlueprint> = {
+  name: "Nameless",
+  x: 0,
+  y: 0,
+  rotation: 0,
+  scale: 1,
+  behaviors: [],
+};
+
+const defaultBehaviorProps: Required<BehaviorBlueprint> = {
+  name: "Nameless",
+  type: "CustomBehavior",
+};
+
 export const worldDataStateActions = {
   addEntity: (entityBlueprint: StageEntityBlueprint) => {
     const entityProps: StageEntityProps = {
+      ...defaultEntityProps,
       ...cloneDeep(entityBlueprint),
       uuid: crypto.randomUUID(),
     };
@@ -46,6 +63,7 @@ export const worldDataStateActions = {
     if (!entity) throw new Error("Entity not found");
 
     const behaviorProps: BehaviorProps = {
+      ...defaultBehaviorProps,
       ...cloneDeep(behaviorBlueprint),
       uuid: crypto.randomUUID(),
     };
