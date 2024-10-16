@@ -114,7 +114,7 @@ Respond only with the JSON object, without any additional text.`;
 
   const snippet = findSnippetRecursively(snippetResponse);
 
-  console.log("🔍 Found snippet:", snippet);
+  console.log("🔍 Found snippet:\n", snippet);
 
   return snippet || "";
 }
