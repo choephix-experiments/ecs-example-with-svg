@@ -1,15 +1,24 @@
 import OpenAI from "openai";
 import Groq from "groq-sdk";
 import { createSystemPrompt } from "./createSystemPrompt";
+import { createApiKeyDispenser } from "../../services/apiKeyDispenser";
 
 let openai: OpenAI | null = null;
 let groq: Groq | null = null;
 
+const groqKeyDispenser = createApiKeyDispenser(
+  "groq_api_keys",
+  "Please enter your GROQ API keys (comma-separated):"
+);
+
+const openaiKeyDispenser = createApiKeyDispenser(
+  "openai_api_keys",
+  "Please enter your OpenAI API keys (comma-separated):"
+);
+
 const getOpenAIInstance = (): OpenAI => {
   if (!openai) {
-    const apiKey = localStorage.getItem("openai_api_key") || prompt("Please enter your OpenAI API key:");
-    if (!apiKey) throw new Error("OpenAI API key is required");
-    localStorage.setItem("openai_api_key", apiKey);
+    const apiKey = openaiKeyDispenser.getNextApiKey();
     openai = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
     console.log("🚀 OpenAI instance created");
   }
@@ -17,12 +26,10 @@ const getOpenAIInstance = (): OpenAI => {
 };
 
 const getGroqInstance = (): Groq => {
-  if (!groq) {
-    const apiKey = localStorage.getItem("groq_api_key") || prompt("Please enter your GROQ API key:");
-    if (!apiKey) throw new Error("GROQ API key is required");
-    localStorage.setItem("groq_api_key", apiKey);
+  const apiKey = groqKeyDispenser.getNextApiKey();
+  if (!groq || groq.apiKey !== apiKey) {
     groq = new Groq({ apiKey, dangerouslyAllowBrowser: true });
-    console.log("🚀 GROQ instance created");
+    console.log("🔄 GROQ instance created with rotated API key");
   }
   return groq;
 };
@@ -38,7 +45,9 @@ const snippetResponseSchema = {
   required: ["snippet"],
 };
 
-export async function getCodeSnippetFromOpenAI(prompt: string): Promise<string> {
+export async function getCodeSnippetFromOpenAI(
+  prompt: string
+): Promise<string> {
   const openaiInstance = getOpenAIInstance();
   const systemPrompt = createSystemPrompt();
 
@@ -49,11 +58,11 @@ export async function getCodeSnippetFromOpenAI(prompt: string): Promise<string> 
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt },
     ],
-    // response_format: { type: "json_object" },
     functions: [
       {
         name: "generate_snippet",
-        description: "Generate a JavaScript code snippet based on the user's request/",
+        description:
+          "Generate a JavaScript code snippet based on the user's request/",
         parameters: snippetResponseSchema,
       },
     ],
