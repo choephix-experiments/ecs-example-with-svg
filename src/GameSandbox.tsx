@@ -13,6 +13,7 @@ import { ideStateActions, useGetSelectedEntities } from "./stores/ideStore";
 import { worldDataState } from "./stores/worldDataState";
 import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
 import { useAnimationFrame } from "./utils/hooks/useAnimationFrame";
+import { DebugDataInspector } from "./components/gui/DebugDataInspector";
 
 export default function GameSandbox() {
   useAnimationFrame((deltaTime, totalTime) => {
@@ -119,6 +120,7 @@ const GUILayer = () => {
   return (
     <>
       <WorldStateInspector />
+      <DebugDataInspector />
       <div className="absolute top-4 right-4 max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto">
         {selectedEntities.map((entity) => (
           <EntityInspector entity={entity} key={`selection-${entity.uuid}`} />
