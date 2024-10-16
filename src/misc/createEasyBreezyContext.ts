@@ -1,26 +1,35 @@
-import { proxy, subscribe } from "valtio";
-import { worldDataState, worldDataStateActions } from "../stores/worldDataState";
-import { StageEntityProps, BehaviorProps } from "../types/data-types";
-import { findEntityBehaviorByUuid, findEntityBehaviorByType, findEntityBehaviorByName } from "../utils/finders";
+import { subscribe } from "valtio";
+import {
+  worldDataState,
+  worldDataStateActions,
+} from "../stores/worldDataState";
+import { BehaviorProps, StageEntityProps } from "../types/data-types";
+import {
+  findEntityBehaviorByName,
+  findEntityBehaviorByType,
+  findEntityBehaviorByUuid,
+} from "../utils/finders";
 
 type EasyBreezyEntity = StageEntityProps & {
-  getBehavior: (search: string | ((behavior: BehaviorProps) => boolean)) => BehaviorProps | undefined;
+  getBehavior: (
+    search: string | ((behavior: BehaviorProps) => boolean)
+  ) => BehaviorProps | undefined;
   getBounds: () => { x: number; y: number; width: number; height: number };
   isInRange: (x: number, y: number, range: number) => boolean;
   destroy: () => void;
 };
 
 export function createEasyBreezyContext() {
-  const easyBreezyState = proxy({
+  const easyBreezyState = {
     entities: [] as EasyBreezyEntity[],
-  });
+  };
 
   const updateEasyBreezyEntities = () => {
     easyBreezyState.entities = worldDataState.entities.map((entity) => {
       const easyEntity: EasyBreezyEntity = {
         ...entity,
         getBehavior: (search, createIfNotFound = true) => {
-          if (typeof search === 'string') {
+          if (typeof search === "string") {
             // Try to find by UUID first
             const byUuid = findEntityBehaviorByUuid(entity, search);
             if (byUuid) return byUuid;
@@ -31,13 +40,16 @@ export function createEasyBreezyContext() {
 
             // Finally by name
             return findEntityBehaviorByName(entity, search);
-          } else if (typeof search === 'function') {
+          } else if (typeof search === "function") {
             // Use the condition function
             return entity.behaviors.find(search);
           }
 
           if (createIfNotFound) {
-            const newBehavior = worldDataStateActions.addBehaviorToEntity(entity.uuid, search as any);
+            const newBehavior = worldDataStateActions.addBehaviorToEntity(
+              entity.uuid,
+              search as any
+            );
             return newBehavior;
           }
 
