@@ -10,15 +10,9 @@ export function PromptBar() {
   const { aiBusy } = useSnapshot(ideState);
   const [error, setError] = useState<string | null>(null);
 
-  const aiServiceSlug = new URL(window.location.href).searchParams.get("ai");
-  const runPromptToCodeSnippet =
-    mode === "snippet"
-      ? useRunPromptToCodeSnippet(aiServiceSlug as "groq" | "openai")
-      : mode === "actions"
-      ? useRunPromptToCodeSnippet(aiServiceSlug as "groq" | "openai")
-      : useRunPromptFakely();
+  const runPrompt = useRunPrompt();
 
-  if (!runPromptToCodeSnippet) {
+  if (!runPrompt) {
     return null;
   }
 
@@ -28,7 +22,7 @@ export function PromptBar() {
 
     try {
       ideStateActions.setAIBusy(true);
-      await runPromptToCodeSnippet(prompt);
+      await runPrompt(prompt);
     } catch (error) {
       console.error("❌ Error processing AI snippet:", error);
       setError(String(error));
@@ -46,12 +40,26 @@ export function PromptBar() {
   );
 }
 
+function useRunPrompt() {
+  const searchParams = new URL(window.location.href).searchParams;
+  const aiServiceSlug = searchParams.get("ai") as "groq" | "openai";
+  if (mode === "snippet") return useRunPromptToCodeSnippet(aiServiceSlug);
+  if (mode === "actions") return useRunPromptToCodeSnippet(aiServiceSlug);
+  return useRunPromptFakely();
+}
+
 function useRunPromptFakely() {
   return async (prompt: string) => {
     console.log("🚀 Prompt submitted:", prompt);
     await new Promise((resolve) => setTimeout(resolve, 250));
     if (prompt.includes("throw")) {
-      throw new Error("This is a test error. Here's a random JSON object: " + JSON.stringify({ message: "This is a test error", timestamp: new Date().toISOString() }));
+      throw new Error(
+        "This is a test error. Here's a random JSON object: " +
+          JSON.stringify({
+            message: "This is a test error",
+            timestamp: new Date().toISOString(),
+          })
+      );
     }
     console.log("🚀 Prompt executed:", prompt);
   };
