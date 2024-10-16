@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { ActionsResponseSchemaType } from "../../schemas/actionSchemas";
+import { ActionsResponseSchemaType } from "./actionSchemas";
 import { buildContextString } from "./contextAndPrompting";
 import { simplifiedActionsResponseSchema } from "./simplifiedActionsResponseSchema";
 
