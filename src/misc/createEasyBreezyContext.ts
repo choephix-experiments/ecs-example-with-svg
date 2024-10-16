@@ -3,7 +3,7 @@ import {
   worldDataState,
   worldDataStateActions,
 } from "../stores/worldDataState";
-import { ideStateActions } from "../stores/ideStore";
+import { ideState, ideStateActions } from "../stores/ideStore";
 import { BehaviorProps, StageEntityProps } from "../types/data-types";
 import {
   findEntityBehaviorByName,
@@ -88,6 +88,10 @@ export function createEasyBreezyContext() {
           (e) => e.uuid !== entity.uuid
         );
       }
+    },
+    getSelectedEntities: (): EasyBreezyEntity[] => {
+      const selectedEntityIds = ideState.selectedEntityIds;
+      return easyBreezyState.getEntities(selectedEntityIds);
     },
     selectEntities: (
       search: string | ((entity: EasyBreezyEntity) => boolean) | string[]
