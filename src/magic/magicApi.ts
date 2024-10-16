@@ -21,6 +21,12 @@ export const magicApi = {
   ): StageEntityProps | undefined => {
     return worldDataState.entities.find(condition);
   },
+  
+  findEntities: (
+    condition: (entity: StageEntityProps) => boolean
+  ): StageEntityProps[] => {
+    return worldDataState.entities.filter(condition);
+  },
 
   // Get a behavior from an entity by type (kept as is)
   getEntityBehavior: <T extends keyof BuiltInBehaviorsPropsDictionary>(
