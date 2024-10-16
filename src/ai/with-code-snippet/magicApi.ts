@@ -1,53 +1,12 @@
-import {
-  BuiltInBehaviorProps,
-  BuiltInBehaviorType,
-} from "../../resolvers/builtInBehaviorResolversDictionary";
 import { ideStateActions } from "../../stores/ideStore";
-import {
-  worldDataState,
-  worldDataStateActions,
-} from "../../stores/worldDataState";
+import { worldDataStateActions } from "../../stores/worldDataState";
 import { BuiltInBehaviorBlueprint } from "../../types/blueprint-types";
 import { BehaviorProps, StageEntityProps } from "../../types/data-types";
-import { findEntityBehaviorByType } from "../../utils/finders";
+import * as finders from "../../utils/finders";
 
 export const magicApi = {
-  // Get all entities
-  getAllEntities: (): StageEntityProps[] => {
-    return worldDataState.entities;
-  },
-
-  // Find an entity by ID
-  findEntityById: (id: string): StageEntityProps | undefined => {
-    return worldDataState.entities.find((entity) => entity.uuid === id);
-  },
-
-  // Find the first entity that matches the condition
-  findEntity: (
-    condition: (entity: StageEntityProps) => boolean
-  ): StageEntityProps | undefined => {
-    return worldDataState.entities.find(condition);
-  },
-
-  findEntities: (
-    condition: (entity: StageEntityProps) => boolean
-  ): StageEntityProps[] => {
-    return worldDataState.entities.filter(condition);
-  },
-
-  // Get a behavior from an entity by type (kept as is)
-  getEntityBehavior: <K extends BuiltInBehaviorType>(
-    entityOrId: StageEntityProps | string,
-    behaviorType: K
-  ) => {
-    const entity =
-      typeof entityOrId === "string"
-        ? magicApi.findEntityById(entityOrId)
-        : entityOrId;
-    if (!entity) return undefined;
-
-    return findEntityBehaviorByType(entity, behaviorType);
-  },
+  // Assign all functions from finders
+  ...finders,
 
   // New methods for actions
   addEntity: (entityProps: StageEntityProps): void => {
