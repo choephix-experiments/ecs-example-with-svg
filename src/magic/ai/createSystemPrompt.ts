@@ -96,7 +96,7 @@ if (heart) {
     pulseAmplitude: 0.1,
     update: \`
       const originalScale = 1;
-      entity.scale = originalScale + Math.sin(totalTime * this.pulseSpeed) * this.pulseAmplitude;
+      entity.scale = originalScale + Math.sin(totalTimeSeconds * this.pulseSpeed) * this.pulseAmplitude;
     \`
   });
   console.log('✅ Pulse behavior added to the heart');
@@ -123,7 +123,7 @@ magicApi.addEntity({
       bounceHeight: 100,
       bounceSpeed: 0.005,
       update: \`
-        entity.y = Math.abs(Math.sin(totalTime * this.bounceSpeed)) * this.bounceHeight;
+        entity.y = Math.abs(Math.sin(totalTimeSeconds * this.bounceSpeed)) * this.bounceHeight;
       \`
     }
   ]
@@ -172,7 +172,7 @@ magicApi.addEntity({
       name: "ColorCycle",
       cycleSpeed: 0.1,
       update: \`
-        const hue = (totalTime * this.cycleSpeed) % 360;
+        const hue = (totalTimeSeconds * this.cycleSpeed) % 360;
         magicApi.updateBehavior(entity.uuid, "ChangeColor", { color: \`hsl(\${hue}, 100%, 50%)\` });
       \`
     }
