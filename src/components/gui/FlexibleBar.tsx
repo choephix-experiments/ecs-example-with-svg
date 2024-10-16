@@ -78,6 +78,13 @@ export function FlexibleBar({
     setHistoryIndex(-1);
   };
 
+  useEffect(() => {
+    if (!disabled && textareaRef.current) {
+      textareaRef.current.focus();
+      console.log("🎯 Textarea focused after submission");
+    }
+  }, [disabled]);
+
   return (
     <form
       onSubmit={handleSubmit}
