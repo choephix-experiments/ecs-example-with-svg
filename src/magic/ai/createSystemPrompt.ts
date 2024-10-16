@@ -39,11 +39,6 @@ Built-in behaviors:
 - CustomBehavior: { type: "CustomBehavior", name: string, update?: string, [extrakeys: string]: any }
 - RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
 
-Note: CustomBehavior.update is a JavaScript function that will be executed every frame. It has access to the following variables:
-- entity: The entity object
-- totalTime: The total time since the game started (in seconds)
-- deltaTime: The time since the last frame (in seconds)
-
 Current state of the world:
 
 Stage bounds: ${stageBounds}

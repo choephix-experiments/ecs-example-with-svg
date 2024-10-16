@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSnapshot } from "valtio";
+
 import { EntityInspector } from "./components/gui/EntityInspector";
-import { PromptBar } from "./components/gui/PromptBar";
-import { StageGrid } from "./components/svg/StageGrid";
+import { WorldStateInspector } from "./components/gui/WorldStateInspector";
+import { PromptBar } from "./components/ide/PromptBar";
 import { RenderedEntity } from "./components/svg/RenderedEntity";
 import { SelectionBox } from "./components/svg/SelectionBox";
+import { StageBounds } from "./components/svg/StageBounds";
+import { StageGrid } from "./components/svg/StageGrid";
 import { EntityResolver } from "./services/EntityResolver";
 import { ideStateActions, useGetSelectedEntities } from "./stores/ideStore";
 import { worldDataState } from "./stores/worldDataState";
 import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
 import { useAnimationFrame } from "./utils/hooks/useAnimationFrame";
-import { WorldStateInspector } from "./components/gui/WorldStateInspector";
-import { StageBounds } from "./components/svg/StageBounds";
 
 export default function GameSandbox() {
   useAnimationFrame((deltaTime, totalTime) => {

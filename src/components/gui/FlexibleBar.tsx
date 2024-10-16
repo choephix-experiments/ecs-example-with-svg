@@ -1,66 +1,7 @@
-import { SparkleIcon, Loader2 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { useSnapshot } from "valtio";
-import { ideState, ideStateActions } from "../../stores/ideStore";
-import { getCodeSnippetFromGroq } from "../../magic/ai/getCodeSnippet";
-import { magicApi } from "../../magic/magicApi";
-import { getActionsFromGroq } from "../../actions/ai/groqActions";
-import { resolveAction } from "../../actions/actionResolver";
-import { getActionsFromOpenAI } from "../../actions/ai/openAiActions";
+import { Loader2, SparkleIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
-export function PromptBar() {
-  const [prompt, setPrompt] = useState("");
-  const { aiBusy } = useSnapshot(ideState);
-
-  const ai = new URL(window.location.href).searchParams.get("ai");
-
-  const handlePromptSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (aiBusy || !prompt.trim()) return;
-
-    console.log("🚀 Prompt submitted:", prompt);
-    ideStateActions.setAIBusy(true);
-
-    try {
-      const snippet = await getCodeSnippetFromGroq(prompt);
-      console.log("📜 Received code snippet:");
-      console.log(snippet);
-      
-      try {
-        // Create a new function with magicApi in its scope
-        const snippetFunction = new Function('magicApi', `
-          return (async () => {
-            ${snippet}
-          })();
-        `);
-        
-        // Execute the snippet function with magicApi as an argument
-        const result = await snippetFunction(magicApi);
-        console.log("✅ Snippet executed successfully");
-        console.log("Result:", result);
-      } catch (error) {
-        console.error("❌ Error executing snippet:", error);
-      }
-
-      setPrompt("");
-    } catch (error) {
-      console.error("❌ Error processing AI snippet:", error);
-    } finally {
-      ideStateActions.setAIBusy(false);
-    }
-  };
-
-  return (
-    <FlexibleBar
-      prompt={prompt}
-      setPrompt={setPrompt}
-      onSubmit={handlePromptSubmit}
-      disabled={aiBusy}
-    />
-  );
-}
-
-function FlexibleBar({
+export function FlexibleBar({
   prompt,
   setPrompt,
   onSubmit,
