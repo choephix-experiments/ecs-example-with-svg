@@ -1,5 +1,5 @@
-import { BuiltInBehaviorBlueprint } from "../behaviors/behaviors";
-import { BehaviorProps, StageEntityProps } from "../types/data-types";
+import { BuiltInBehaviorBlueprint } from "../../behaviors/behaviors";
+import { BehaviorProps, StageEntityProps } from "../../types/data-types";
 
 export type ActionProps =
   | { type: "addEntity"; entityProps: StageEntityProps }

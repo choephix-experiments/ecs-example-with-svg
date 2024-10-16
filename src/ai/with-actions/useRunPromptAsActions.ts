@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { resolveAction } from "../actionResolver";
-import { getActionsFromGroq } from "./groqActions";
+import { resolveAction } from "./actionResolver";
 import { getActionsFromOpenAI } from "./openAiActions";
+import { getActionsFromGroq } from "./groqActions";
 
 export function useRunPromptAsActions(aiServiceSlug: "groq" | "openai") {
   const runPrompt = useCallback(

@@ -3,7 +3,7 @@ import {
   getCodeSnippetFromGroq,
   getCodeSnippetFromOpenAI,
 } from "./getCodeSnippet";
-import { magicApi } from "../magicApi";
+import { magicApi } from "./magicApi";
 
 export function useRunPromptToCodeSnippet(aiServiceSlug: "groq" | "openai") {
   const runPrompt = useCallback(async (prompt: string) => {

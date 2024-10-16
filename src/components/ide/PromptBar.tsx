@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSnapshot } from "valtio";
-import { useRunPromptToCodeSnippet } from "../../magic/ai/useRunPromptToCodeSnippet";
+import { useRunPromptToCodeSnippet } from "../../ai/with-code-snippet/useRunPromptToCodeSnippet";
 import { ideState, ideStateActions } from "../../stores/ideStore";
 import { FlexibleBar } from "../gui/FlexibleBar";
 

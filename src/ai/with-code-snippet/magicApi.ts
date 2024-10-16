@@ -1,8 +1,8 @@
-import { BuiltInBehaviorBlueprint, BuiltInBehaviorsPropsDictionary } from "../behaviors/behaviors";
-import { ideStateActions } from "../stores/ideStore";
-import { worldDataState, worldDataStateActions } from "../stores/worldDataState";
-import { BehaviorProps, StageEntityProps } from "../types/data-types";
-import { findBehavior } from "../utils/findBehavior";
+import { BuiltInBehaviorBlueprint, BuiltInBehaviorsPropsDictionary } from "../../behaviors/behaviors";
+import { ideStateActions } from "../../stores/ideStore";
+import { worldDataState, worldDataStateActions } from "../../stores/worldDataState";
+import { BehaviorProps, StageEntityProps } from "../../types/data-types";
+import { findBehavior } from "../../utils/findBehavior";
 
 export const magicApi = {
   // Get all entities

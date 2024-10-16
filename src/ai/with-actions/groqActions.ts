@@ -1,7 +1,7 @@
 import Groq from "groq-sdk";
 import { ActionsResponseSchemaType } from "../../schemas/actionSchemas";
 import { buildContextString } from "./contextAndPrompting";
-import { simplifiedActionsResponseSchema } from "./simplifiedActionsResponseSchema";
+import { simplifiedActionsResponseSchema } from "../../ai/with-actions/simplifiedActionsResponseSchema";
 
 let groq: Groq | null = null;
 

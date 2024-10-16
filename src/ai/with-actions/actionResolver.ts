@@ -1,7 +1,8 @@
-import { worldDataStateActions } from "../stores/worldDataState";
-import { ideStateActions } from "../stores/ideStore";
-import { ActionProps } from "./actionTypes";
-import { BehaviorProps } from "../types/data-types";
+import { worldDataStateActions } from "../../stores/worldDataState";
+import { ideStateActions } from "../../stores/ideStore";
+import { BehaviorProps } from "../../types/data-types";
+
+import type { ActionProps } from "./actionTypes";
 
 type ActionResolver<T extends ActionProps["type"]> = (
   action: Extract<ActionProps, { type: T }>
