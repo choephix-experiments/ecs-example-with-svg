@@ -11,6 +11,7 @@ import {
   findEntityBehaviorByUuid,
 } from "../utils/finders";
 import { StageEntityBlueprint } from "../types/blueprint-types";
+import { createInputTracker } from "../input/createInputTracker";
 
 type EasyBreezyEntity = StageEntityProps & {
   getBehavior: (
@@ -27,8 +28,11 @@ type EasyBreezyEntity = StageEntityProps & {
   destroy: () => void;
 };
 
+const input = createInputTracker();
+
 export function createEasyBreezyContext() {
   const easyBreezyState = {
+    input: input,
     stage: worldDataState.stage,
     entities: [] as EasyBreezyEntity[],
     addEntity: (entityBlueprint: StageEntityBlueprint): EasyBreezyEntity => {

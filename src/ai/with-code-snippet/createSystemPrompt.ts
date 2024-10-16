@@ -50,6 +50,12 @@ Built-in behaviors:
 - CustomBehavior: { type: "CustomBehavior", name: string, onTick?: string, [extrakeys: string]: any }
 - RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
 
+You can check if a button is pressed with:
+- input.isKeyPressed(key: string): boolean
+- input.isMouseButtonPressed(button: "left" | "middle" | "right"): boolean
+- input.getMousePosition(): { x: number; y: number }
+- input.getAxis(axisName: "Horizontal" | "Vertical"): number
+
 Current state of the world:
 
 Stage bounds: ${stageBounds}
@@ -59,13 +65,12 @@ ${entitiesInWorld}
 
 Current selection (entity ids): [${ideState.selectedEntityIds.join(", ")}]
 
-When responding to user requests, write JavaScript code using the magicApi to perform the desired actions. Here are some examples:
+When responding to user requests, write JavaScript code using the above described api to perform the desired actions. Here are some examples:
 
 Example 1: Add a red circle to the world
 \`\`\`js
 console.log('➕ Adding a red circle to the world');
-magicApi.addEntity({
-  uuid: crypto.randomUUID(),
+const redCircle = addEntity({
   x: 0,
   y: 0,
   rotation: 0,
@@ -75,18 +80,24 @@ magicApi.addEntity({
     { type: "ChangeColor", color: "red" }
   ]
 });
+console.log('✅ Red circle added with UUID:', redCircle.uuid);
 \`\`\`
 
 Example 2: Select the blue circle and make it bigger and darker
 \`\`\`js
-const blueCircle = magicApi.findEntity(entity => 
-  magicApi.getEntityBehavior(entity, "ChangeColor")?.color === "blue"
+console.log('🔍 Finding and updating the blue circle');
+const blueCircle = getEntity(entity => 
+  entity.getBehavior("ChangeColor")?.color === "blue"
 );
 
 if (blueCircle) {
-  magicApi.selectEntities([blueCircle.uuid]);
-  magicApi.updateEntity(blueCircle.uuid, { scale: blueCircle.scale * 2 });
-  magicApi.updateBehavior(blueCircle.uuid, "ChangeColor", { color: "darkblue" });
+  selectEntities(blueCircle.uuid);
+  blueCircle.scale *= 2;
+  const colorBehavior = blueCircle.getBehavior("ChangeColor");
+  if (colorBehavior) {
+    colorBehavior.color = "darkblue";
+  }
+  console.log('✅ Blue circle updated');
 } else {
   console.log('❌ Blue circle not found');
 }
@@ -95,12 +106,12 @@ if (blueCircle) {
 Example 3: Make the heart pulse
 \`\`\`js
 console.log('💓 Adding pulse behavior to the heart');
-const heart = magicApi.findEntity(entity => 
-  magicApi.getEntityBehavior(entity, "RenderEmoji")?.emoji === "❤️"
+const heart = getEntity(entity => 
+  entity.getBehavior("RenderEmoji")?.emoji === "❤️"
 );
 
 if (heart) {
-  magicApi.addBehavior(heart.uuid, {
+  heart.addBehavior({
     type: "CustomBehavior",
     name: "Pulse",
     pulseSpeed: 1.1,
@@ -119,8 +130,7 @@ if (heart) {
 Example 4: Create a bouncing ball
 \`\`\`js
 console.log('🏀 Creating a bouncing ball');
-magicApi.addEntity({
-  uuid: crypto.randomUUID(),
+const ball = addEntity({
   x: 0,
   y: 0,
   rotation: 0,
@@ -139,14 +149,13 @@ magicApi.addEntity({
     }
   ]
 });
-console.log('✅ Bouncing ball created');
+console.log('✅ Bouncing ball created with UUID:', ball.uuid);
 \`\`\`
 
 Example 5: Add a shaking emoji
 \`\`\`js
 console.log('😵 Adding a shaking emoji');
-magicApi.addEntity({
-  uuid: crypto.randomUUID(),
+const shakyEmoji = addEntity({
   x: 0,
   y: 0,
   rotation: 0,
@@ -164,40 +173,43 @@ magicApi.addEntity({
     }
   ]
 });
-console.log('✅ Shaking emoji added');
+console.log('✅ Shaking emoji added with UUID:', shakyEmoji.uuid);
 \`\`\`
 
 Example 6: Create a color-changing polygon
 \`\`\`js
 console.log('🌈 Creating a color-changing polygon');
-magicApi.addEntity({
-  uuid: crypto.randomUUID(),
+const polygon = addEntity({
   x: 0,
   y: 0,
   rotation: 0,
   scale: 1,
   behaviors: [
     { type: "SimplifyMesh", sides: 6 },
+    { type: "ChangeColor", color: "hsl(0, 100%, 50%)" },
     {
       type: "CustomBehavior",
       name: "ColorCycle",
       cycleSpeed: 0.1,
       onTick: \`
         const hue = (totalTimeSeconds * this.cycleSpeed) % 360;
-        magicApi.updateBehavior(entity.uuid, "ChangeColor", { color: \`hsl(\${hue}, 100%, 50%)\` });
+        const colorBehavior = entity.getBehavior("ChangeColor");
+        if (colorBehavior) {
+          colorBehavior.color = \`hsl(\${hue}, 100%, 50%)\`;
+        }
       \`
     }
   ]
 });
-console.log('✅ Color-changing polygon created');
+console.log('✅ Color-changing polygon created with UUID:', polygon.uuid);
 \`\`\`
 
 Example 7: Make all entities rotate
 \`\`\`js
 console.log('🔄 Making all entities rotate');
-const entities = magicApi.getAllEntities();
+const entities = getEntities(() => true);
 entities.forEach(entity => {
-  magicApi.addBehavior(entity.uuid, {
+  entity.addBehavior({
     type: "CustomBehavior",
     name: "Rotate",
     rotationSpeed: 0.01,
@@ -212,15 +224,14 @@ console.log(\`✅ Rotation behavior added to \${entities.length} entities\`);
 Example 8: Clear the world and add random emojis
 \`\`\`js
 console.log('🧹 Clearing the world and adding random emojis');
-magicApi.clearWorld();
+clearWorld();
 
 const emojis = ["😀", "🎉", "🌈", "🚀", "🌟"];
 const numEmojis = 5;
 
 for (let i = 0; i < numEmojis; i++) {
   const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-  magicApi.addEntity({
-    uuid: crypto.randomUUID(),
+  addEntity({
     x: Math.random() * 800 - 400,
     y: Math.random() * 600 - 300,
     rotation: 0,
