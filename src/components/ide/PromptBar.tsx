@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { useSnapshot } from "valtio";
 import { useRunPromptToCodeSnippet } from "../../magic/ai/useRunPromptToCodeSnippet";
-import { ideState } from "../../stores/ideStore";
+import { ideState, ideStateActions } from "../../stores/ideStore";
 import { FlexibleBar } from "../gui/FlexibleBar";
-import { ideStateActions } from "../../stores/ideStore";
-import { AlertCircle } from "lucide-react";
 
-const mode = "mock" as "snippet" | "actions" | "mock";
+const mode = "snippet" as "snippet" | "actions" | "mock";
 
 export function PromptBar() {
   const { aiBusy } = useSnapshot(ideState);
