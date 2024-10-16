@@ -36,41 +36,10 @@ export const defaultBehaviorProps: Required<BehaviorBlueprint> = {
 
 export const worldDataStateActions = {
   addEntity: (entityBlueprint: StageEntityBlueprint) => {
-    const entityProps = blueprintConverter.toEntityProps(entityBlueprint);
-
-    //// Apply extra-care fixes, like ensuring all numbers are numbers
-    //// and that behaviors is an array
-    for (const key of ["x", "y", "rotation", "scale"] as const) {
-      if (typeof entityProps[key] === "string") {
-        entityProps[key] = parseFloat(entityProps[key]);
-      }
-      if (isNaN(entityProps[key])) {
-        entityProps[key] = defaultEntityProps[key];
-      }
-    }
-    for (const key of ["name", "uuid"] as const) {
-      if (typeof entityProps[key] !== "string") {
-        entityProps[key] = String(entityProps[key]);
-      }
-    }
-
-    if (!Array.isArray(entityBlueprint.behaviors)) {
-      if (entityBlueprint.behaviors !== null) {
-        if (typeof entityBlueprint.behaviors === "object") {
-          entityBlueprint.behaviors = [entityBlueprint.behaviors];
-        }
-      }
-      // entityBlueprint.behaviors = [];
-    }
-
-    entityProps.behaviors = [];
-    for (const behaviorBlueprint of entityBlueprint.behaviors ?? []) {
-      console.log("🔄 Adding behavior to entity", behaviorBlueprint);
-      const behaviorProps = blueprintConverter.toBehaviorProps(behaviorBlueprint);
-      entityProps.behaviors.push(behaviorProps);
-    }
-
+    const fixedBlueprint = blueprintFixer.fixEntityBlueprint(entityBlueprint);
+    const entityProps = blueprintConverter.toEntityProps(fixedBlueprint);
     worldDataState.entities.push(entityProps);
+
     return entityProps;
   },
   removeEntity: (id: string) => {
@@ -83,6 +52,8 @@ export const worldDataStateActions = {
     if (entity) {
       Object.assign(entity, updates);
     }
+
+    return entity;
   },
   addBehaviorToEntity: <T extends BuiltInBehaviorBlueprint>(
     entityId: string,
@@ -93,6 +64,7 @@ export const worldDataStateActions = {
 
     const behaviorProps = blueprintConverter.toBehaviorProps(behaviorBlueprint);
     entity.behaviors.push(behaviorProps);
+
     return behaviorProps;
   },
   removeBehaviorFromEntity: (entityId: string, behaviorType: string) => {
@@ -108,6 +80,51 @@ export const worldDataStateActions = {
   },
   getEntity: (id: string): StageEntityProps | undefined => {
     return worldDataState.entities.find((e) => e.uuid === id);
+  },
+};
+
+const blueprintFixer = {
+  fixEntityBlueprint(blueprint: StageEntityBlueprint) {
+    const fixedBlueprint = { ...blueprint };
+
+    for (const key of ["x", "y", "rotation", "scale"] as const) {
+      if (typeof fixedBlueprint[key] === "string") {
+        fixedBlueprint[key] = parseFloat(fixedBlueprint[key]);
+      }
+      if (isNaN(fixedBlueprint[key])) {
+        fixedBlueprint[key] = defaultEntityProps[key];
+      }
+    }
+
+    for (const key of ["name"] as const) {
+      if (typeof fixedBlueprint[key] !== "string") {
+        fixedBlueprint[key] = String(fixedBlueprint[key]);
+      }
+    }
+
+    if (!Array.isArray(fixedBlueprint.behaviors)) {
+      fixedBlueprint.behaviors = [fixedBlueprint.behaviors];
+    }
+
+    for (const behaviorBlueprintIndex in fixedBlueprint.behaviors ?? []) {
+      const behaviorBlueprint =
+        fixedBlueprint.behaviors[behaviorBlueprintIndex];
+      const fixedBehaviorBlueprint =
+        this.fixBehaviorBlueprint(behaviorBlueprint);
+      const behaviorProps = blueprintConverter.toBehaviorProps(
+        fixedBehaviorBlueprint
+      );
+      fixedBlueprint.behaviors[behaviorBlueprintIndex] = behaviorProps;
+    }
+
+    return fixedBlueprint;
+  },
+  fixBehaviorBlueprint(blueprint: BehaviorBlueprint) {
+    if (typeof blueprint === "string") {
+      blueprint = { type: blueprint };
+    }
+
+    return { ...blueprint };
   },
 };
 

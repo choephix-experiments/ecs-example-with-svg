@@ -69,7 +69,7 @@ export const builtInBehaviorResolversDictionary = {
   },
   RenderEmoji: {
     render(_, content) {
-      const emoji = this.emoji;
+      const emoji = this.emoji ?? "🙂";
       const fontSize = ~~(this.fontSize || 40);
       return (
         <>
