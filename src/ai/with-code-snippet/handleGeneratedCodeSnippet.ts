@@ -1,12 +1,14 @@
-import { magicApi } from "./magicApi";
+import { createEasyBreezyContext } from "../../misc/createEasyBreezyContext";
 
 export async function handleGeneratedCodeSnippet(snippet: string) {
   console.log("📜 Handling generated code snippet");
 
   try {
-    // Create a new function with magicApi in its scope
+    const easyContext = createEasyBreezyContext();
+    
+    // Create a new function with all easyContext properties in its scope
     const snippetFunction = new Function(
-      "magicApi",
+      ...Object.keys(easyContext),
       `
         return (async () => {
           ${snippet}
@@ -14,8 +16,8 @@ export async function handleGeneratedCodeSnippet(snippet: string) {
       `
     );
 
-    // Execute the snippet function with magicApi as an argument
-    const result = await snippetFunction(magicApi);
+    // Execute the snippet function with easyContext values as arguments
+    const result = await snippetFunction(...Object.values(easyContext));
     
     console.log("✅ Snippet executed successfully");
     console.log("🔍 Result:", result);
