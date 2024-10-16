@@ -1,23 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSnapshot } from "valtio";
 import YAML from "yaml";
 import { debugDataState } from "../../stores/debugDataStore";
+import { useToggleViaKeypress } from "../../utils/hooks/useToggleViaKeypress";
 
 export const DebugDataInspector: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible] = useToggleViaKeypress("-");
   const { values } = useSnapshot(debugDataState);
-
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === "-") {
-        setIsVisible((prev) => !prev);
-        console.log("🔀 Toggled Debug Data Inspector");
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
 
   if (!isVisible) return null;
 

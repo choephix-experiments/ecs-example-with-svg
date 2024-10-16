@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSnapshot } from "valtio";
 import YAML from "yaml";
-import { worldDataState } from "../../stores/worldDataState";
+
 import { ideState } from "../../stores/ideStore";
+import { worldDataState } from "../../stores/worldDataState";
+import { useToggleViaKeypress } from "../../utils/hooks/useToggleViaKeypress";
 
 export const WorldStateInspector: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible] = useToggleViaKeypress("`");
   const worldData = useSnapshot(worldDataState);
   const worldDataYamlStr = YAML.stringify(worldData);
   const ideData = useSnapshot(ideState);
   const ideStateYamlStr = YAML.stringify(ideData);
-
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === "`") {
-        setIsVisible((prev) => !prev);
-        console.log("🔀 Toggled World State Inspector");
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, []);
 
   if (!isVisible) return null;
 
