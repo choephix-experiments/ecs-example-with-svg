@@ -1,12 +1,14 @@
-import { Loader2, SparkleIcon } from "lucide-react";
+import { Loader2, SparkleIcon, AlertCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function FlexibleBar({
   onSubmit,
   disabled,
+  error,
 }: {
   onSubmit: (prompt: string) => unknown | Promise<unknown>;
   disabled: boolean;
+  error: string | null;
 }) {
   const [prompt, setPrompt] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -49,6 +51,11 @@ export function FlexibleBar({
           autoResize.isExpanded ? "w-[32rem]" : "w-96"
         }`}
       >
+        {error && (
+          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 px-4 py-2 bg-red-100 text-red-800 rounded-md flex items-center space-x-2 text-sm shadow-md z-50 w-screen max-w-screen-md">
+            <pre className="text-xs whitespace-pre-wrap w-full">{error}</pre>
+          </div>
+        )}
         <textarea
           rows={1}
           ref={textareaRef}
