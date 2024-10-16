@@ -9,12 +9,7 @@ const mode = "snippet" as "snippet" | "actions" | "mock";
 export function PromptBar() {
   const { aiBusy } = useSnapshot(ideState);
   const [error, setError] = useState<string | null>(null);
-
   const runPrompt = useRunPrompt();
-
-  if (!runPrompt) {
-    return null;
-  }
 
   const handlePromptSubmit = async (prompt: string) => {
     console.log("🚀 Prompt submitted:", prompt);
