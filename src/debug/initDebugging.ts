@@ -1,4 +1,3 @@
-import { magicApi } from "../ai/with-code-snippet/magicApi";
 import { createInputTracker } from "../input/createInputTracker";
 import { createEasyBreezyContext } from "../misc/createEasyBreezyContext";
 import { debugDataState } from "../stores/debugDataStore";
@@ -14,7 +13,6 @@ export async function initDebugging() {
   Object.assign(window, {
     worldDataState,
     worldDataStateActions,
-    magicApi,
     easyBreezyContext,
   });
 
