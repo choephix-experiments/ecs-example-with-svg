@@ -3,6 +3,7 @@ import {
   worldDataState,
   worldDataStateActions,
 } from "../stores/worldDataState";
+import { ideStateActions } from "../stores/ideStore";
 import { BehaviorProps, StageEntityProps } from "../types/data-types";
 import {
   findEntityBehaviorByName,
@@ -28,6 +29,7 @@ type EasyBreezyEntity = StageEntityProps & {
 
 export function createEasyBreezyContext() {
   const easyBreezyState = {
+    stage: worldDataState.stage,
     entities: [] as EasyBreezyEntity[],
     addEntity: (entityBlueprint: StageEntityBlueprint): EasyBreezyEntity => {
       const newEntity = worldDataStateActions.addEntity(entityBlueprint);
@@ -58,6 +60,20 @@ export function createEasyBreezyContext() {
       }
       return undefined;
     },
+    getEntities: (
+      search: string | ((entity: EasyBreezyEntity) => boolean) | string[]
+    ): EasyBreezyEntity[] => {
+      if (Array.isArray(search)) {
+        return search
+          .map((id) => easyBreezyState.getEntity(id))
+          .filter(Boolean) as EasyBreezyEntity[];
+      } else if (typeof search === "function") {
+        return easyBreezyState.entities.filter(search);
+      } else {
+        const entity = easyBreezyState.getEntity(search);
+        return entity ? [entity] : [];
+      }
+    },
     removeEntity: (
       search: string | ((entity: EasyBreezyEntity) => boolean)
     ): void => {
@@ -68,6 +84,30 @@ export function createEasyBreezyContext() {
           (e) => e.uuid !== entity.uuid
         );
       }
+    },
+    selectEntities: (
+      search: string | ((entity: EasyBreezyEntity) => boolean) | string[]
+    ): void => {
+      const entitiesToSelect = easyBreezyState.getEntities(search);
+      const entityIds = entitiesToSelect.map((entity) => entity.uuid);
+      console.log("🔍 Selecting entities:", entityIds);
+      ideStateActions.setSelectedEntityIds(entityIds);
+    },
+    deselectEntities: (
+      search: string | ((entity: EasyBreezyEntity) => boolean) | string[]
+    ): void => {
+      const entitiesToDeselect = easyBreezyState.getEntities(search);
+      const entityIds = entitiesToDeselect.map((entity) => entity.uuid);
+      console.log("👋 Deselecting entities:", entityIds);
+      ideStateActions.removeSelectedEntityIds(entityIds);
+    },
+    clearSelection: (): void => {
+      console.log("🧹 Clearing entity selection");
+      ideStateActions.clearSelection();
+    },
+    clearWorld: (): void => {
+      console.log("🧹 Clearing the world");
+      worldDataStateActions.clearWorld();
     },
   };
 
