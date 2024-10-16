@@ -5,7 +5,7 @@ import { ideState } from "../../stores/ideStore";
 import { FlexibleBar } from "../gui/FlexibleBar";
 import { ideStateActions } from "../../stores/ideStore";
 
-const mode = "snippet" as "snippet" | "actions" | "mock";
+const mode = "mock" as "snippet" | "actions" | "mock";
 
 export function PromptBar() {
   const [prompt, setPrompt] = useState("");
@@ -27,7 +27,7 @@ export function PromptBar() {
     e.preventDefault();
 
     if (aiBusy || !prompt.trim()) return;
-    
+
     console.log("🚀 Prompt submitted:", prompt);
 
     try {

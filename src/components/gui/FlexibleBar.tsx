@@ -14,6 +14,9 @@ export function FlexibleBar({
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [tempPrompt, setTempPrompt] = useState("");
 
   useEffect(() => {
     const shouldExpand = prompt.length > 30 || prompt.includes("\n");
@@ -31,13 +34,53 @@ export function FlexibleBar({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault();
-      onSubmit(e);
+      handleSubmit(e);
+    } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      e.preventDefault();
+      navigateHistory(e.key === "ArrowUp" ? "up" : "down");
     }
+  };
+
+  const navigateHistory = (direction: "up" | "down") => {
+    if (history.length === 0) return;
+
+    let newIndex = historyIndex;
+    if (direction === "up" && historyIndex < history.length - 1) {
+      newIndex++;
+    } else if (direction === "down" && historyIndex > -1) {
+      newIndex--;
+    }
+
+    setHistoryIndex(newIndex);
+
+    if (newIndex === -1) {
+      setPrompt(tempPrompt);
+    } else {
+      if (historyIndex === -1) {
+        setTempPrompt(prompt);
+      }
+      setPrompt(history[history.length - 1 - newIndex]);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    onSubmit(e);
+    if (prompt.trim() !== "") {
+      setHistory((prevHistory) => [...prevHistory, prompt]);
+      console.log("🔄 Added to history:", prompt);
+    }
+    setHistoryIndex(-1);
+    setTempPrompt("");
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setPrompt(e.target.value);
+    setHistoryIndex(-1);
   };
 
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       className="absolute bottom-8 left-1/2 transform -translate-x-1/2 select-none"
     >
       <div
@@ -49,12 +92,12 @@ export function FlexibleBar({
           rows={1}
           ref={textareaRef}
           value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
+          onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder="Enter prompt..."
           disabled={disabled}
           className={`w-full px-4 py-2 rounded-3xl border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all duration-300 ease-in-out ${
-            isExpanded ? "h-auto min-h-[6rem] text-xs" : "h-10 overflow-hidden"
+            isExpanded ? "h-auto min-h-[6rem] text-xs" : "h-10 min-h-[1rem] overflow-hidden"
           } ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
         />
         <button
