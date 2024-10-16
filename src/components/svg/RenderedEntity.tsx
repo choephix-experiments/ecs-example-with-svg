@@ -1,6 +1,7 @@
 import React from "react";
 import { entityResolver } from "../../resolvers/entityResolver";
 import { ReadonlyDeep, StageEntityProps } from "../../types/data-types";
+import { defaultEntityProps } from "../../stores/worldDataState";
 
 interface RenderedEntityProps {
   entity: ReadonlyDeep<StageEntityProps>;
@@ -18,23 +19,16 @@ export const RenderedEntity: React.FC<RenderedEntityProps> = ({
     onClick(entity, event);
   };
 
-  for (const prop of [
-    "x",
-    "y",
-    "rotation",
-    "scale",
-  ] satisfies (keyof StageEntityProps)[]) {
-    const value = entity[prop];
-    if (isNaN(value)) {
-      console.warn(
-        `Entity ${entity.uuid} has a non-numeric value for ${prop}: ${value}`
-      );
-      // @ts-ignore
-      entity[prop] = 1;
-    }
-  }
+  const safeEntity = {
+    ...defaultEntityProps,
+    ...entity,
+  };
 
-  const transform = `translate(${entity.x}, ${entity.y}) rotate(${entity.rotation}) scale(${entity.scale})`;
+  const transform = `
+  translate(${safeEntity.x}, ${safeEntity.y}) 
+  rotate(${safeEntity.rotation}) 
+  scale(${safeEntity.scale})
+  `;
 
   return (
     <g onClick={handleClick} transform={transform}>
