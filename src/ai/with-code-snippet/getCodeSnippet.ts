@@ -89,9 +89,14 @@ ${JSON.stringify(snippetResponseSchema, null, 2)}
 
 Respond only with the JSON object, without any additional text.`;
 
+  //// get model from url params if any
+  const model =
+    new URL(window.location.href).searchParams.get("model") ||
+    "mixtral-8x7b-32768";
+
   console.log("🤖 Sending request to GROQ");
   const completion = await groqInstance.chat.completions.create({
-    model: "mixtral-8x7b-32768",
+    model: model,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt },
@@ -106,5 +111,34 @@ Respond only with the JSON object, without any additional text.`;
   }
 
   const snippetResponse = JSON.parse(contentJson);
-  return snippetResponse.snippet || "";
+
+  const snippet = findSnippetRecursively(snippetResponse);
+
+  console.log("🔍 Found snippet:", snippet);
+
+  return snippet || "";
+}
+
+function findSnippetRecursively(obj: any): string | undefined {
+  if (typeof obj !== "object" || obj === null) {
+    return undefined;
+  }
+
+  if ("snippet" in obj && typeof obj.snippet === "string") {
+    return cleanCodeSnippet(obj.snippet);
+  }
+
+  for (const key in obj) {
+    const result = findSnippetRecursively(obj[key]);
+    if (result !== undefined) {
+      return cleanCodeSnippet(result);
+    }
+  }
+
+  return undefined;
+}
+
+function cleanCodeSnippet(snippet: string): string {
+  // Remove code block markers and leading/trailing whitespace
+  return snippet.replace(/^```[\w]*\n?|\n?```$/g, "").trim();
 }
