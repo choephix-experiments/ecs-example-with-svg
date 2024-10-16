@@ -87,25 +87,26 @@ export function createEasyBreezyContext() {
     },
     selectEntities: (
       search: string | ((entity: EasyBreezyEntity) => boolean) | string[]
-    ): void => {
+    ) => {
       const entitiesToSelect = easyBreezyState.getEntities(search);
       const entityIds = entitiesToSelect.map((entity) => entity.uuid);
       console.log("🔍 Selecting entities:", entityIds);
       ideStateActions.setSelectedEntityIds(entityIds);
+      return entitiesToSelect;
     },
     deselectEntities: (
       search: string | ((entity: EasyBreezyEntity) => boolean) | string[]
-    ): void => {
+    ) => {
       const entitiesToDeselect = easyBreezyState.getEntities(search);
       const entityIds = entitiesToDeselect.map((entity) => entity.uuid);
       console.log("👋 Deselecting entities:", entityIds);
       ideStateActions.removeSelectedEntityIds(entityIds);
     },
-    clearSelection: (): void => {
+    clearSelection: () => {
       console.log("🧹 Clearing entity selection");
       ideStateActions.clearSelection();
     },
-    clearWorld: (): void => {
+    clearWorld: () => {
       console.log("🧹 Clearing the world");
       worldDataStateActions.clearWorld();
     },
