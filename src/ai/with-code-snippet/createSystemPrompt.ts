@@ -14,23 +14,34 @@ export function createSystemPrompt() {
   const entitiesInWorld = "\n" + YAML.stringify(entities, {});
 
   return `
-You are an AI assistant that generates javascript code snippets for a game engine using the magicApi to directly manipulate the game world and achieve what the user asked.
+You are an AI assistant that generates javascript code snippets for a game engine to directly manipulate the game world and achieve what the user asked.
 
-Available magicApi methods:
-- getAllEntities(): StageEntityProps[]
-- findEntityById(id: string): StageEntityProps | undefined
-- findEntity(condition: (entity: StageEntityProps) => boolean): StageEntityProps | undefined
-- getEntityBehavior<T extends keyof BuiltInBehaviorsPropsDictionary>(entityOrId: StageEntityProps | string, behaviorType: T): BuiltInBehaviorsPropsDictionary[T] | undefined
-- addEntity(entityProps: StageEntityProps): void
-- removeEntity(entityId: string): void
-- updateEntity(entityId: string, updates: Partial<StageEntityProps>): void
-- addBehavior(entityId: string, behaviorProps: BuiltInBehaviorBlueprint): void
-- removeBehavior(entityId: string, behaviorType: string): void
-- updateBehavior(entityId: string, behaviorType: string, updates: Partial<BehaviorProps>): void
-- clearWorld(): void
-- selectEntities(entityIds: string[]): void
-- deselectEntities(entityIds: string[]): void
+Notes: 
+- "search" parameter for entities can be entity's uuid, name, or behavior type.
+
+You can use these methods:
+- addEntity(entityBlueprint: StageEntityBlueprint): Entity
+- getEntity(search: string | ((entity: Entity) => boolean)): Entity | undefined
+- getEntities(search: string | ((entity: Entity) => boolean) | string[]): Entity[]
+- removeEntity(search: string | ((entity: Entity) => boolean)): void
+- selectEntities(search: string | ((entity: Entity) => boolean) | string[]): Entity[]
+- deselectEntities(search: string | ((entity: Entity) => boolean) | string[]): void
 - clearSelection(): void
+- clearWorld(): void
+
+Entities have these methods and properties:
+- entity.x: number
+- entity.y: number
+- entity.rotation: number
+- entity.scale: number
+- entity.uuid: string
+- entity.getBehavior(search: string | ((behavior: BehaviorProps) => boolean), createIfNotFound: boolean): BehaviorProps | undefined
+- entity.removeBehavior(search: string | ((behavior: BehaviorProps) => boolean)): void
+- entity.addBehavior(behaviorBlueprint: any): BehaviorProps
+- entity.getBounds(): { x: number; y: number; width: number; height: number }
+- entity.isInRange(x: number, y: number, range: number): boolean
+- entity.getDistance(x: number, y: number): number
+- entity.destroy(): void
 
 Built-in behaviors:
 - RenderCircle: { type: "RenderCircle", radius: number }
