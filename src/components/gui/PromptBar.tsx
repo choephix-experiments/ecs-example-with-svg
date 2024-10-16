@@ -4,10 +4,15 @@ import { useSnapshot } from "valtio";
 import { ideState, ideStateActions } from "../../stores/ideStore";
 import { getCodeSnippetFromGroq } from "../../magic/ai/getCodeSnippet";
 import { magicApi } from "../../magic/magicApi";
+import { getActionsFromGroq } from "../../actions/ai/groqActions";
+import { resolveAction } from "../../actions/actionResolver";
+import { getActionsFromOpenAI } from "../../actions/ai/openAiActions";
 
 export function PromptBar() {
   const [prompt, setPrompt] = useState("");
   const { aiBusy } = useSnapshot(ideState);
+
+  const ai = new URL(window.location.href).searchParams.get("ai");
 
   const handlePromptSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

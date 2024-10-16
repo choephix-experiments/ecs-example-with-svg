@@ -1,9 +1,5 @@
-import React from "react";
-import {
-  BehaviorProps,
-  ReadonlyDeep,
-  StageEntityProps,
-} from "../types/data-types";
+import React from 'react';
+import { BehaviorProps, ReadonlyDeep, StageEntityProps } from '../types/data-types';
 
 type BuiltInBehaviorsExtraPropsDictionary = {
   RenderCircle: { radius?: number };
@@ -37,7 +33,7 @@ export type BuiltInBehaviorProps =
 
 export type BuiltInBehaviorBlueprint = Omit<
   BuiltInBehaviorsPropsDictionary[keyof BuiltInBehaviorsPropsDictionary],
-  "uuid"
+  'uuid'
 >;
 
 // Define the structure for behavior resolvers
@@ -51,7 +47,7 @@ export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {
 };
 
 // Global dictionary of behavior resolvers
-export const behaviorResolvers = {
+const behaviorResolvers = {
   RenderCircle: {
     render() {
       return <circle r={this.radius!} />;
@@ -59,44 +55,39 @@ export const behaviorResolvers = {
   },
   ChangeColor: {
     render(_, content) {
-      const color = this.color || "white";
+      const color = this.color || 'white';
       return <g fill={color}>{content}</g>;
     },
   },
   SimplifyMesh: {
     render(entity) {
-      const sides =
-        (entity.behaviors.find((b) => b.type === "SimplifyMesh") as any)
-          ?.sides || 6;
-      const radius =
-        (entity.behaviors.find((b) => b.type === "RenderCircle") as any)
-          ?.radius || 10;
+      const sides = (entity.behaviors.find(b => b.type === 'SimplifyMesh') as any)?.sides || 6;
+      const radius = (entity.behaviors.find(b => b.type === 'RenderCircle') as any)?.radius || 10;
       const color =
-        (entity.behaviors.find((b) => b.type === "ChangeColor") as any)
-          ?.color || undefined;
+        (entity.behaviors.find(b => b.type === 'ChangeColor') as any)?.color || undefined;
       const points = generatePolygonPoints(radius, sides);
       return <polygon points={points} fill={color} />;
     },
   },
   CustomBehavior: {
     update(entity, deltaTime, totalTime) {
-      if (typeof this.update === "function") {
+      if (typeof this.update === 'function') {
         return this.update.call(this, entity, deltaTime, totalTime);
       }
 
-      if (typeof this.update === "string") {
-        const func = new Function("entity", "deltaTime", "totalTime", this.update);
+      if (typeof this.update === 'string') {
+        const func = new Function('entity', 'deltaTime', 'totalTime', this.update);
         func.call(this, entity, deltaTime, totalTime);
       }
     },
     render(entity, content) {
-      if (typeof this.render === "function") {
+      if (typeof this.render === 'function') {
         return this.render.call(this, entity, content);
       }
 
-      if (typeof this.render === "string") {
+      if (typeof this.render === 'string') {
         const funcStr = `return (${this.render})`;
-        const func = new Function("entity", "content", funcStr);
+        const func = new Function('entity', 'content', funcStr);
         return func.call(this, entity, content);
       }
 
@@ -112,10 +103,10 @@ export const behaviorResolvers = {
           {content}
           <text
             fontSize={fontSize}
-            textAnchor="middle"
-            dominantBaseline="central"
-            style={{ userSelect: "none" }}
-            y="-2"
+            textAnchor='middle'
+            dominantBaseline='central'
+            style={{ userSelect: 'none' }}
+            y='-2'
           >
             {emoji}
           </text>
@@ -129,9 +120,26 @@ export const behaviorResolvers = {
   >;
 };
 
+export function getBehaviorResolver(
+  behaviorProps: BehaviorProps & { update?: unknown; render?: unknown }
+) {
+  const type = behaviorProps.type;
+  const resolver = behaviorResolvers[type as keyof typeof behaviorResolvers];
+  if (resolver) {
+    return resolver as BehaviorResolver<typeof behaviorProps>;
+  }
+
+  //// Default to CustomBehavior if 'update' or 'render' are string
+  if (typeof behaviorProps.update === 'string' || typeof behaviorProps.render === 'string') {
+    return behaviorResolvers.CustomBehavior as BehaviorResolver<typeof behaviorProps>;
+  }
+
+  return null;
+}
+
 // Helper function for SimplifyMesh
 function generatePolygonPoints(radius: number, sides: number): string {
-  let points = "";
+  let points = '';
   for (let i = 0; i < sides; i++) {
     const angle = (i / sides) * 2 * Math.PI;
     const x = radius * Math.cos(angle);
@@ -140,4 +148,3 @@ function generatePolygonPoints(radius: number, sides: number): string {
   }
   return points.trim();
 }
-
