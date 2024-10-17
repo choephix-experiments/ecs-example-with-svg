@@ -30,8 +30,17 @@ export async function handleGeneratedCodeSnippet(snippet: string) {
   }
 }
 
+export function runSnippetWithEasyBreezyContext(
+  $this: any,
+  snippet: string,
+  params: { [key: string]: any }
+) {
+  const context = createEasyBreezyContext();
+  return runSnippetWithContext($this, snippet, context, params);
+}
+
 export function runSnippetWithContext(
-  this: any,
+  $this: any,
   snippet: string,
   context: any,
   params: { [key: string]: any }
@@ -47,5 +56,5 @@ export function runSnippetWithContext(
     wrappedSnippet
   );
 
-  return snippetFunction.call(this, context, ...Object.values(params));
+  return snippetFunction.call($this, context, ...Object.values(params));
 }

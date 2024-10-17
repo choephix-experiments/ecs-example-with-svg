@@ -1,9 +1,8 @@
-import { runSnippetWithContext } from "../ai/with-code-snippet/handleGeneratedCodeSnippet";
-import { createEasyBreezyContext } from "../misc/createEasyBreezyContext";
+import { runSnippetWithEasyBreezyContext } from "../ai/with-code-snippet/handleGeneratedCodeSnippet";
 import {
-  StageEntityProps,
-  ReadonlyDeep,
   BehaviorProps,
+  ReadonlyDeep,
+  StageEntityProps,
 } from "../types/data-types";
 import { BehaviorResolver } from "./BehaviorResolver.type";
 
@@ -46,25 +45,12 @@ export const builtInBehaviorResolversDictionary = {
       }
 
       if (typeof this.onTick === "string") {
-        const easyContext = createEasyBreezyContext();
-        runSnippetWithContext.call(
-          this,
-          this.onTick,
-          easyContext,
-          {
-            entity,
-            deltaTimeSeconds,
-            totalTimeSeconds,
-          }
-        );
-    
-        // const func = new Function(
-        //   "entity",
-        //   "deltaTimeSeconds",
-        //   "totalTimeSeconds",
-        //   this.onTick
-        // );
-        // func.call(this, entity, deltaTimeSeconds, totalTimeSeconds);
+        const snippet = this.onTick;
+        runSnippetWithEasyBreezyContext(this, snippet, {
+          entity,
+          deltaTimeSeconds,
+          totalTimeSeconds,
+        });
       }
     },
     render(entity, content) {
@@ -73,9 +59,11 @@ export const builtInBehaviorResolversDictionary = {
       }
 
       if (typeof this.render === "string") {
-        const funcStr = `return (${this.render})`;
-        const func = new Function("entity", "content", funcStr);
-        return func.call(this, entity, content);
+        const snippet = `return (${this.render})`;
+        runSnippetWithEasyBreezyContext(this, snippet, {
+          entity,
+          content,
+        });
       }
 
       return content;
@@ -134,8 +122,8 @@ type BuiltInBehaviorsExtraPropsDictionary = {
 };
 
 type BuiltInBehaviorsPropsDictionary = {
-  [key in keyof BuiltInBehaviorsExtraPropsDictionary]: /******/
-  BehaviorProps & BuiltInBehaviorsExtraPropsDictionary[key] & { type: key };
+  [key in keyof BuiltInBehaviorsExtraPropsDictionary /******/]: BehaviorProps &
+    BuiltInBehaviorsExtraPropsDictionary[key] & { type: key };
 };
 
 export type BuiltInBehaviorType = keyof BuiltInBehaviorsPropsDictionary;

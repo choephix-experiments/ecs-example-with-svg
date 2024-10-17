@@ -1,5 +1,6 @@
 import { createInputTracker } from "../input/createInputTracker";
 import { createEasyBreezyContext } from "../misc/createEasyBreezyContext";
+import { entityResolver } from "../resolvers/entityResolver";
 import { debugDataState } from "../stores/debugDataStore";
 import {
   worldDataState,
@@ -11,6 +12,7 @@ export async function initDebugging() {
 
   const easyBreezyContext = createEasyBreezyContext();
   Object.assign(window, {
+    entityResolver,
     worldDataState,
     worldDataStateActions,
     easyBreezyContext,
