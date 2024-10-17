@@ -202,10 +202,7 @@ export function createEasyBreezyContext() {
   updateEasyBreezyEntities();
 
   // Subscribe to changes in worldDataState
-  subscribe(worldDataState, () => {
-    console.log("🔄 Updating EasyBreezy entities");
-    updateEasyBreezyEntities();
-  });
+  subscribe(worldDataState, () => updateEasyBreezyEntities());
 
   return easyBreezyState;
 }

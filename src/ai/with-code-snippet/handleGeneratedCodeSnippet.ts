@@ -5,20 +5,21 @@ export async function handleGeneratedCodeSnippet(snippet: string) {
 
   try {
     const easyContext = createEasyBreezyContext();
-    
-    // Create a new function with all easyContext properties in its scope
-    const snippetFunction = new Function(
-      ...Object.keys(easyContext),
-      `
-        return (async () => {
-          ${snippet}
-        })();
-      `
-    );
 
-    // Execute the snippet function with easyContext values as arguments
-    const result = await snippetFunction(...Object.values(easyContext));
-    
+    // Wrap the snippet in an async IIFE and pass the context as an argument
+    const wrappedSnippet = `
+      (async (context) => {
+        const { ${Object.keys(easyContext).join(", ")} } = context;
+        ${snippet}
+      })(this)
+    `;
+
+    // Create a new function with the wrapped snippet
+    const snippetFunction = new Function(wrappedSnippet);
+
+    // Execute the snippet function with easyContext as its `this` context
+    const result = await snippetFunction.call(easyContext);
+
     console.log("✅ Snippet executed successfully");
     console.log("🔍 Result:", result);
 
@@ -27,4 +28,24 @@ export async function handleGeneratedCodeSnippet(snippet: string) {
     console.error("❌ Error executing snippet:", error);
     throw error;
   }
+}
+
+export function runSnippetWithContext(
+  this: any,
+  snippet: string,
+  context: any,
+  params: { [key: string]: any }
+) {
+  const wrappedSnippet = `
+    const { ${Object.keys(context).join(", ")} } = context;
+    ${snippet}
+  `;
+
+  const snippetFunction = new Function(
+    "context",
+    ...Object.keys(params),
+    wrappedSnippet
+  );
+
+  return snippetFunction.call(this, context, ...Object.values(params));
 }

@@ -1,3 +1,5 @@
+import { runSnippetWithContext } from "../ai/with-code-snippet/handleGeneratedCodeSnippet";
+import { createEasyBreezyContext } from "../misc/createEasyBreezyContext";
 import {
   StageEntityProps,
   ReadonlyDeep,
@@ -44,13 +46,25 @@ export const builtInBehaviorResolversDictionary = {
       }
 
       if (typeof this.onTick === "string") {
-        const func = new Function(
-          "entity",
-          "deltaTimeSeconds",
-          "totalTimeSeconds",
-          this.onTick
+        const easyContext = createEasyBreezyContext();
+        runSnippetWithContext.call(
+          this,
+          this.onTick,
+          easyContext,
+          {
+            entity,
+            deltaTimeSeconds,
+            totalTimeSeconds,
+          }
         );
-        func.call(this, entity, deltaTimeSeconds, totalTimeSeconds);
+    
+        // const func = new Function(
+        //   "entity",
+        //   "deltaTimeSeconds",
+        //   "totalTimeSeconds",
+        //   this.onTick
+        // );
+        // func.call(this, entity, deltaTimeSeconds, totalTimeSeconds);
       }
     },
     render(entity, content) {
