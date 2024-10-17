@@ -51,9 +51,13 @@ export async function getCodeSnippetFromOpenAI(
   const openaiInstance = getOpenAIInstance();
   const systemPrompt = createSystemPrompt();
 
+  const model =
+    new URL(window.location.href).searchParams.get("model") ||
+    "gpt-4o-mini";
+
   console.log("🤖 Sending request to OpenAI");
   const completion = await openaiInstance.chat.completions.create({
-    model: "gpt-4-turbo-preview",
+    model: model,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt },
