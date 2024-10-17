@@ -89,19 +89,16 @@ export const EntitiesGroup: React.FC = () => {
     (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
       event.stopPropagation();
       ideStateActions.toggleEntitySelection(entity.uuid, event.ctrlKey);
-      console.log("🖱️ Entity clicked:", entity.uuid);
     },
     []
   );
 
   const handleEntityMouseEnter = useCallback((entityId: string) => {
     setHoveredEntityId(entityId);
-    console.log("🔍 Entity hovered:", entityId);
   }, []);
 
   const handleEntityMouseLeave = useCallback(() => {
     setHoveredEntityId(null);
-    console.log("👋 Entity unhovered");
   }, []);
 
   return (
