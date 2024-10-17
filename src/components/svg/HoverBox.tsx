@@ -1,7 +1,7 @@
 import { ReadonlyDeep, StageEntityProps } from "../../types/data-types";
 import { findEntityBehaviorByType } from "../../utils/finders";
 
-export const SelectionBox: React.FC<{
+export const HoverBox: React.FC<{
   entity: ReadonlyDeep<StageEntityProps>;
 }> = ({ entity }) => {
   const circle = findEntityBehaviorByType(entity, "RenderCircle");
@@ -22,7 +22,7 @@ export const SelectionBox: React.FC<{
       stroke="DodgerBlue"
       strokeWidth={dashThickness}
       strokeDasharray={`${dashLength},${dashLength}`}
-      opacity="1"
+      opacity="0.3"
     >
       <animate
         attributeName="stroke-dashoffset"

@@ -14,6 +14,7 @@ import { worldDataState } from "./stores/worldDataState";
 import { ReadonlyDeep, StageEntityProps } from "./types/data-types";
 import { useAnimationFrame } from "./utils/hooks/useAnimationFrame";
 import { DebugDataInspector } from "./components/gui/DebugDataInspector";
+import { HoverBox } from "./components/svg/HoverBox";
 
 export default function GameSandbox() {
   useAnimationFrame((deltaTime, totalTime) => {
@@ -82,6 +83,7 @@ const StageLayer = () => {
 
 export const EntitiesGroup: React.FC = () => {
   const { entities } = useSnapshot(worldDataState);
+  const [hoveredEntityId, setHoveredEntityId] = useState<string | null>(null);
 
   const handleEntityClick = useCallback(
     (entity: ReadonlyDeep<StageEntityProps>, event: React.MouseEvent) => {
@@ -92,11 +94,27 @@ export const EntitiesGroup: React.FC = () => {
     []
   );
 
+  const handleEntityMouseEnter = useCallback((entityId: string) => {
+    setHoveredEntityId(entityId);
+    console.log("🔍 Entity hovered:", entityId);
+  }, []);
+
+  const handleEntityMouseLeave = useCallback(() => {
+    setHoveredEntityId(null);
+    console.log("👋 Entity unhovered");
+  }, []);
+
   return (
     <g fill="#ddd" stroke="black" strokeWidth={1}>
       {entities.map((entity) => (
-        <g className="with-shadow" key={entity.uuid}>
+        <g
+          className="with-shadow"
+          key={entity.uuid}
+          onMouseEnter={() => handleEntityMouseEnter(entity.uuid)}
+          onMouseLeave={handleEntityMouseLeave}
+        >
           <RenderedEntity entity={entity} onClick={handleEntityClick} />
+          {hoveredEntityId === entity.uuid && <HoverBox entity={entity} />}
         </g>
       ))}
     </g>
