@@ -159,9 +159,17 @@ function usePromptHistory(prompt: string, setPrompt: (value: string) => void) {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+    const textarea = e.currentTarget;
+    const { selectionStart, value } = textarea;
+    const lines = value.split('\n');
+    const currentLineIndex = value.substr(0, selectionStart).split('\n').length - 1;
+
+    if (e.key === "ArrowUp" && currentLineIndex === 0) {
       e.preventDefault();
-      navigateHistory(e.key === "ArrowUp" ? "up" : "down");
+      navigateHistory("up");
+    } else if (e.key === "ArrowDown" && currentLineIndex === lines.length - 1) {
+      e.preventDefault();
+      navigateHistory("down");
     }
   };
 
