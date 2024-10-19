@@ -44,16 +44,16 @@ export function FlexibleBar({
   return (
     <form
       onSubmit={handleSubmit}
-      className="absolute bottom-8 left-1/2 transform -translate-x-1/2 select-none"
+      className='absolute bottom-8 left-1/2 transform -translate-x-1/2 select-none transition-all'
     >
       <div
         className={`relative transition-all duration-300 ease-in-out ${
-          autoResize.isExpanded ? "w-[32rem]" : "w-96"
+          autoResize.isExpanded ? 'w-[32rem]' : 'w-96'
         }`}
       >
         {error && (
-          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 px-4 py-2 bg-red-100 text-red-800 rounded-md flex items-center space-x-2 text-sm shadow-md z-50 w-screen max-w-screen-md">
-            <pre className="text-xs whitespace-pre-wrap w-full">{error}</pre>
+          <div className='absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 px-4 py-2 bg-red-100 text-red-800 rounded-md flex items-center space-x-2 text-sm shadow-md z-50 w-screen max-w-screen-md'>
+            <pre className='text-xs whitespace-pre-wrap w-full'>{error}</pre>
           </div>
         )}
         <textarea
@@ -62,23 +62,19 @@ export function FlexibleBar({
           value={prompt}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          placeholder="Enter prompt..."
+          placeholder='Enter prompt...'
           disabled={disabled}
           className={`w-full px-4 py-2 rounded-3xl border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all duration-300 ease-in-out ${
             autoResize.isExpanded
-              ? "h-auto min-h-[6rem] text-xs"
-              : "h-10 min-h-[1rem] overflow-hidden"
-          } ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
+              ? 'h-auto min-h-[6rem] text-xs'
+              : 'h-10 min-h-[1rem] overflow-hidden text-md'
+          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
         />
-        <button
-          type="submit"
-          className="absolute right-3 top-3"
-          disabled={disabled}
-        >
+        <button type='submit' className='absolute right-3 top-3' disabled={disabled}>
           {disabled ? (
-            <Loader2 className="h-5 w-5 text-gray-500 animate-spin" />
+            <Loader2 className='h-5 w-5 text-gray-500 animate-spin' />
           ) : (
-            <SparkleIcon className="h-5 w-5 text-gray-500" />
+            <SparkleIcon className='h-5 w-5 text-gray-500' />
           )}
         </button>
       </div>
