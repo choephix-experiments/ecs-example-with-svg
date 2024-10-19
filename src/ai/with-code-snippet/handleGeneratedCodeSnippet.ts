@@ -9,7 +9,7 @@ export async function handleGeneratedCodeSnippet(snippet: string) {
     // Wrap the snippet in an async IIFE and pass the context as an argument
     const wrappedSnippet = `
       (async (context) => {
-        const { ${Object.keys(easyContext).join(", ")} } = context;
+        var { ${Object.keys(easyContext).join(', ')} } = context;
         ${snippet}
       })(this)
     `;
@@ -46,7 +46,7 @@ export function runSnippetWithContext(
   params: { [key: string]: any }
 ) {
   const wrappedSnippet = `
-    const { ${Object.keys(context).join(", ")} } = context;
+    var { ${Object.keys(context).join(", ")} } = context;
     ${snippet}
   `;
 
