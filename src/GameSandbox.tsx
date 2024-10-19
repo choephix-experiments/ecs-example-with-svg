@@ -46,14 +46,14 @@ const StageLayer = () => {
       const { innerWidth, innerHeight } = window;
       const scale =
         Math.min(innerWidth / stage.width, innerHeight / stage.height) * 0.8;
-      const viewBoxWidth = innerWidth / scale;
-      const viewBoxHeight = innerHeight / scale;
+      const viewBoxWidth = Math.round(innerWidth / scale);
+      const viewBoxHeight = Math.round(innerHeight / scale);
 
       // Calculate offsets based on anchor points
       const offsetX =
-        -viewBoxWidth * anchor[0] + stage.width * (anchor[0] - 0.5);
+        Math.round(-viewBoxWidth * anchor[0] + stage.width * (anchor[0] - 0.5));
       const offsetY =
-        -viewBoxHeight * anchor[1] + stage.height * (anchor[1] - 0.5);
+        Math.round(-viewBoxHeight * anchor[1] + stage.height * (anchor[1] - 0.5));
 
       setViewBox(`${offsetX} ${offsetY} ${viewBoxWidth} ${viewBoxHeight}`);
       console.log(
