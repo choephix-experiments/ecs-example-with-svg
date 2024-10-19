@@ -21,13 +21,14 @@ Notes:
 
 You can use these methods:
 - addEntity(entityBlueprint: StageEntityBlueprint): Entity
-- getEntity(search: string | ((entity: Entity) => boolean)): Entity | undefined
-- getEntities(search: string | ((entity: Entity) => boolean) | string[]): Entity[]
-- removeEntity(search: string | ((entity: Entity) => boolean)): void
-- selectEntities(search: string | ((entity: Entity) => boolean) | string[]): Entity[]
-- deselectEntities(search: string | ((entity: Entity) => boolean) | string[]): void
-- clearSelection(): void
-- clearWorld(): void
+- duplicateEntity(search: string | ((entity) => boolean)): Entity | undefined
+- getEntity(search: string | ((entity) => boolean)): Entity | undefined
+- getEntities(search: string | ((entity) => boolean) | string[]): Entity[]
+- removeEntity(search: string | ((entity) => boolean))
+- selectEntities(search: string | ((entity) => boolean) | string[]): Entity[] 
+- deselectEntities(search: string | ((entity) => boolean) | string[])
+- clearSelection()
+- clearWorld()
 
 Entities have these methods and properties:
 - entity.x: number
@@ -35,13 +36,13 @@ Entities have these methods and properties:
 - entity.rotation: number
 - entity.scale: number
 - entity.uuid: string
-- entity.getBehavior(search: string | ((behavior: BehaviorProps) => boolean), createIfNotFound: boolean): BehaviorProps | undefined
-- entity.removeBehavior(search: string | ((behavior: BehaviorProps) => boolean)): void
-- entity.addBehavior(behaviorBlueprint: any): BehaviorProps
-- entity.getBounds(): { x: number; y: number; width: number; height: number }
-- entity.isInRange(x: number, y: number, range: number): boolean
-- entity.getDistance(x: number, y: number): number
-- entity.destroy(): void
+- entity.getBehavior(search: string | ((behavior) => boolean), createIfNotFound: boolean): BehaviorProps | undefined
+- entity.removeBehavior(search: string | ((behavior) => boolean))
+- entity.addBehavior(behaviorBlueprint): BehaviorProps
+- entity.getBounds(): { x, y, width, height }
+- entity.isInRange(x, y, range): boolean
+- entity.getDistance(x, y): number
+- entity.destroy()
 
 Built-in behaviors:
 - RenderCircle: { type: "RenderCircle", radius: number }
