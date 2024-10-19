@@ -3,6 +3,7 @@ import { Groq } from 'groq-sdk';
 import { Cerebras } from '@cerebras/cerebras_cloud_sdk';
 import { createSystemPrompt } from './createSystemPrompt';
 import { createApiKeyDispenser } from '../../services/apiKeyDispenser';
+import { mockSnippets } from './mockSnippets';
 
 let openai: OpenAI | null = null;
 let groq: Groq | null = null;
@@ -165,7 +166,7 @@ export async function getCodeSnippetFromCerebras(prompt: string): Promise<string
     }
   } catch (error) {
     // If parsing fails, assume the content is the snippet itself
-    
+
     console.log('Failed to parse JSON, using raw content as snippet');
   }
 
@@ -210,4 +211,37 @@ function cleanCodeSnippet(text: string) {
     }
   }
   return result;
+}
+
+export async function getCodeSnippetFromMock(prompt: string): Promise<string> {
+  console.log('🤖 Generating mock snippet');
+  const words = prompt.toLowerCase().split(/\s+/);
+
+  for (const word of words) {
+    if (word in mockSnippets) {
+      console.log(`✅ Found mock snippet for key: ${word}`);
+      return mockSnippets[word];
+    }
+  }
+
+  console.log('❌ No matching mock snippet found');
+  return 'console.log("No matching mock snippet found");';
+}
+
+export async function getCodeSnippet(
+  prompt: string,
+  provider: 'openai' | 'groq' | 'cerebras' | 'mock'
+): Promise<string> {
+  switch (provider) {
+    case 'openai':
+      return getCodeSnippetFromOpenAI(prompt);
+    case 'groq':
+      return getCodeSnippetFromGroq(prompt);
+    case 'cerebras':
+      return getCodeSnippetFromCerebras(prompt);
+    case 'mock':
+      return getCodeSnippetFromMock(prompt);
+    default:
+      throw new Error(`Unsupported provider: ${provider}`);
+  }
 }
