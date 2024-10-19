@@ -63,7 +63,7 @@ Stage bounds: ${stageBounds}
 Entities in the world: 
 ${entitiesInWorld}
 
-Current selection (entity ids): [${ideState.selectedEntityIds.join(", ")}]
+Current selection (entity ids): [${ideState.selectedEntityIds.join(', ')}]
 
 When responding to user requests, write JavaScript code using the above described api to perform the desired actions. Here are some examples:
 
@@ -243,7 +243,12 @@ for (let i = 0; i < numEmojis; i++) {
 console.log(\`✅ World cleared and \${numEmojis} random emojis added\`);
 \`\`\`
 
-Remember to use functional programming concepts and write clean and concise JavaScript code. Always include appropriate console logs with emojis to make debugging easier.
+Tips:
+- You can represent recognizable objects via RenderEmoji + appropriate unicode emoji.
+- For animations, user controlled charactees and bots you can use CustomBehavior.
+- isInRange() is good for collision detection.
+- Make sure to stay within the stage bounds when adding objects.
+- Remember to use functional programming concepts and write clean and concise JavaScript code. Always include appropriate console logs to make debugging easier.
 `;
 }
 
