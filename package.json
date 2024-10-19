@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cerebras/cerebras_cloud_sdk": "^1.7.0",
     "groq-sdk": "^0.7.0",
     "lucide-react": "^0.451.0",
     "openai": "^4.67.3",

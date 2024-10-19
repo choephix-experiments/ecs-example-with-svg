@@ -1,26 +1,33 @@
-import OpenAI from "openai";
-import Groq from "groq-sdk";
-import { createSystemPrompt } from "./createSystemPrompt";
-import { createApiKeyDispenser } from "../../services/apiKeyDispenser";
+import { OpenAI } from 'openai';
+import { Groq } from 'groq-sdk';
+import { Cerebras } from '@cerebras/cerebras_cloud_sdk';
+import { createSystemPrompt } from './createSystemPrompt';
+import { createApiKeyDispenser } from '../../services/apiKeyDispenser';
 
 let openai: OpenAI | null = null;
 let groq: Groq | null = null;
+let cerebras: Cerebras | null = null;
 
 const groqKeyDispenser = createApiKeyDispenser(
-  "groq_api_keys",
-  "Please enter your GROQ API keys (comma-separated):"
+  'groq_api_keys',
+  'Please enter your GROQ API keys (comma-separated):'
 );
 
 const openaiKeyDispenser = createApiKeyDispenser(
-  "openai_api_keys",
-  "Please enter your OpenAI API keys (comma-separated):"
+  'openai_api_keys',
+  'Please enter your OpenAI API keys (comma-separated):'
+);
+
+const cerebrasKeyDispenser = createApiKeyDispenser(
+  'cerebras_api_keys',
+  'Please enter your Cerebras API keys (comma-separated):'
 );
 
 const getOpenAIInstance = (): OpenAI => {
   if (!openai) {
     const apiKey = openaiKeyDispenser.getNextApiKey();
     openai = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
-    console.log("🚀 OpenAI instance created");
+    console.log('🚀 OpenAI instance created');
   }
   return openai;
 };
@@ -29,57 +36,61 @@ const getGroqInstance = (): Groq => {
   const apiKey = groqKeyDispenser.getNextApiKey();
   if (!groq || groq.apiKey !== apiKey) {
     groq = new Groq({ apiKey, dangerouslyAllowBrowser: true });
-    console.log("🔄 GROQ instance created with rotated API key");
+    console.log('🔄 GROQ instance created with rotated API key');
   }
   return groq;
 };
 
-const snippetResponseSchema = {
-  type: "object",
-  properties: {
-    snippet: {
-      type: "string",
-      description: "The JavaScript code snippet to be executed",
-    },
-  },
-  required: ["snippet"],
+const getCerebrasInstance = (): Cerebras => {
+  const apiKey = cerebrasKeyDispenser.getNextApiKey();
+  if (!cerebras || cerebras.apiKey !== apiKey) {
+    cerebras = new Cerebras({ apiKey });
+    console.log('🧠 Cerebras instance created with rotated API key');
+  }
+  return cerebras;
 };
 
-export async function getCodeSnippetFromOpenAI(
-  prompt: string
-): Promise<string> {
+const snippetResponseSchema = {
+  type: 'object',
+  properties: {
+    snippet: {
+      type: 'string',
+      description: 'The JavaScript code snippet to be executed',
+    },
+  },
+  required: ['snippet'],
+};
+
+export async function getCodeSnippetFromOpenAI(prompt: string): Promise<string> {
   const openaiInstance = getOpenAIInstance();
   const systemPrompt = createSystemPrompt();
 
-  const model =
-    new URL(window.location.href).searchParams.get("model") ||
-    "gpt-4o-mini";
+  const model = new URL(window.location.href).searchParams.get('model') || 'gpt-4o-mini';
 
-  console.log("🤖 Sending request to OpenAI");
+  console.log('🤖 Sending request to OpenAI');
   const completion = await openaiInstance.chat.completions.create({
     model: model,
     messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: prompt },
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: prompt },
     ],
     functions: [
       {
-        name: "generate_snippet",
-        description:
-          "Generate a JavaScript code snippet based on the user's request/",
+        name: 'generate_snippet',
+        description: "Generate a JavaScript code snippet based on the user's request/",
         parameters: snippetResponseSchema,
       },
     ],
-    function_call: { name: "generate_snippet" },
+    function_call: { name: 'generate_snippet' },
   });
 
-  console.log("✅ Received response from OpenAI");
+  console.log('✅ Received response from OpenAI');
   const functionCall = completion.choices[0].message.function_call;
-  if (functionCall && functionCall.name === "generate_snippet") {
-    const snippetResponse = JSON.parse(functionCall.arguments || "{}");
-    return snippetResponse.snippet || "";
+  if (functionCall && functionCall.name === 'generate_snippet') {
+    const snippetResponse = JSON.parse(functionCall.arguments || '{}');
+    return snippetResponse.snippet || '';
   } else {
-    throw new Error("Unexpected response format from OpenAI");
+    throw new Error('Unexpected response format from OpenAI');
   }
 }
 
@@ -94,41 +105,79 @@ ${JSON.stringify(snippetResponseSchema, null, 2)}
 Respond only with the JSON object, without any additional text.`;
 
   //// get model from url params if any
-  const model =
-    new URL(window.location.href).searchParams.get("model") ||
-    "mixtral-8x7b-32768";
+  const model = new URL(window.location.href).searchParams.get('model') || 'mixtral-8x7b-32768';
 
-  console.log("🤖 Sending request to GROQ");
+  console.log('🤖 Sending request to GROQ');
   const completion = await groqInstance.chat.completions.create({
     model: model,
     messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: prompt },
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: prompt },
     ],
-    response_format: { type: "json_object" },
+    response_format: { type: 'json_object' },
   });
 
-  console.log("✅ Received response from GROQ");
+  console.log('✅ Received response from GROQ');
   const contentJson = completion.choices[0]?.message?.content;
   if (!contentJson) {
-    throw new Error("Unexpected response format from GROQ");
+    throw new Error('Unexpected response format from GROQ');
   }
 
   const snippetResponse = JSON.parse(contentJson);
 
   const snippet = findSnippetRecursively(snippetResponse);
 
-  console.log("🔍 Found snippet:\n", snippet);
+  console.log('🔍 Found snippet:\n', snippet);
 
-  return snippet || "";
+  return snippet || '';
+}
+
+export async function getCodeSnippetFromCerebras(prompt: string): Promise<string> {
+  const cerebrasInstance = getCerebrasInstance();
+  const systemPrompt = createSystemPrompt();
+
+  const model = new URL(window.location.href).searchParams.get('model') || 'llama3.1-70b';
+
+  console.log('🤖 Sending request to Cerebras');
+  const completion = await cerebrasInstance.chat.completions.create({
+    model,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: prompt },
+    ],
+    max_completion_tokens: 1024,
+    temperature: 0.7,
+    top_p: 1,
+  });
+
+  console.log('✅ Received response from Cerebras');
+  const content = completion.choices[0]?.message?.content;
+  if (!content) {
+    throw new Error('Unexpected response format from Cerebras');
+  }
+
+  // Attempt to parse the content as JSON
+  try {
+    const snippetResponse = JSON.parse(content);
+    const snippet = findSnippetRecursively(snippetResponse);
+    if (snippet) {
+      return snippet;
+    }
+  } catch (error) {
+    // If parsing fails, assume the content is the snippet itself
+    
+    console.log('Failed to parse JSON, using raw content as snippet');
+  }
+
+  return cleanCodeSnippet(content);
 }
 
 function findSnippetRecursively(obj: any): string | undefined {
-  if (typeof obj !== "object" || obj === null) {
+  if (typeof obj !== 'object' || obj === null) {
     return undefined;
   }
 
-  if ("snippet" in obj && typeof obj.snippet === "string") {
+  if ('snippet' in obj && typeof obj.snippet === 'string') {
     return cleanCodeSnippet(obj.snippet);
   }
 
@@ -142,7 +191,23 @@ function findSnippetRecursively(obj: any): string | undefined {
   return undefined;
 }
 
-function cleanCodeSnippet(snippet: string): string {
+function cleanCodeSnippet(text: string) {
+  console.log('🧹 Cleaning code snippet:', text);
+
   // Remove code block markers and leading/trailing whitespace
-  return snippet.replace(/^```[\w]*\n?|\n?```$/g, "").trim();
+  // return snippet.replace(/^```[\w]*\n?|\n?```$/g, "").trim();
+
+  const codeBlockRegex = /```[\w]*\n?([\s\S]*?)\n?```/g;
+  const matches = text.matchAll(codeBlockRegex);
+  const snippetCandidates = [...matches].map(match => match[1]);
+
+  console.log('🔍 Snippet candidates:', snippetCandidates);
+
+  let result = '';
+  for (const candidate of snippetCandidates) {
+    if (candidate.length > result.length) {
+      result = candidate;
+    }
+  }
+  return result;
 }
