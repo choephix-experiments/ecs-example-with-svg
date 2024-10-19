@@ -445,12 +445,19 @@ Tips:
 - isInRange() is good for collision detection.
 - Make sure to stay within the stage bounds when adding objects.
 - Remember to use functional programming concepts and write clean and concise JavaScript code. Always include appropriate console logs to make debugging easier.
-`}function sf(t){if(typeof t!="object"||t===null)return t;if(Array.isArray(t))return t.map(n=>sf(n));const e={};for(const[n,r]of Object.entries(t))typeof r=="number"?e[n]=Math.round(r):typeof r=="object"?e[n]=sf(r):e[n]=r;return e}const Ud=(t,e)=>{let n=[],r=0;const s=()=>{const l=localStorage.getItem(t);if(l)n=l.split(",");else{const a=prompt(e);if(!a)throw new Error("API keys are required");n=a.split(",").map(u=>u.trim()),localStorage.setItem(t,n.join(","))}r=Math.floor(Math.random()*n.length),console.log(`🔑 API keys initialized for ${t}`)};return{getNextApiKey:()=>{n.length===0&&s();const l=n[r];return r=(r+1)%n.length,l},resetApiKeys:()=>{localStorage.removeItem(t),n=[],r=0,console.log(`🔄 API keys reset for ${t}`)}}},Yp={hello:'console.log("Hello, World!");',fibonacci:`function fibonacci(n) {
+`}function sf(t){if(typeof t!="object"||t===null)return t;if(Array.isArray(t))return t.map(n=>sf(n));const e={};for(const[n,r]of Object.entries(t))typeof r=="number"?e[n]=Math.round(r):typeof r=="object"?e[n]=sf(r):e[n]=r;return e}const Ud=(t,e)=>{let n=[],r=0;const s=()=>{const l=localStorage.getItem(t);if(l)n=l.split(",");else{const a=prompt(e);if(!a)throw new Error("API keys are required");n=a.split(",").map(u=>u.trim()),localStorage.setItem(t,n.join(","))}r=Math.floor(Math.random()*n.length),console.log(`🔑 API keys initialized for ${t}`)};return{getNextApiKey:()=>{n.length===0&&s();const l=n[r];return r=(r+1)%n.length,l},resetApiKeys:()=>{localStorage.removeItem(t),n=[],r=0,console.log(`🔄 API keys reset for ${t}`)}}},Yp={hello:`
+console.log("Hello, World!");
+`,fibonacci:`
+function fibonacci(n) {
   if (n <= 1) return n;
   return fibonacci(n - 1) + fibonacci(n - 2);
-}`,sort:`const numbers = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5];
+}
+`,sort:`
+const numbers = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5];
 numbers.sort((a, b) => a - b);
-console.log(numbers);`,api:`async function fetchData(url) {
+console.log(numbers);
+`,api:`
+async function fetchData(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -458,7 +465,8 @@ console.log(numbers);`,api:`async function fetchData(url) {
   } catch (error) {
     console.error("Error fetching data:", error);
   }
-}`};let Ou=null,no=null,ro=null;const pb=Ud("groq_api_keys","Please enter your GROQ API keys (comma-separated):"),mb=Ud("openai_api_keys","Please enter your OpenAI API keys (comma-separated):"),yb=Ud("cerebras_api_keys","Please enter your Cerebras API keys (comma-separated):"),gb=()=>{if(!Ou){const t=mb.getNextApiKey();Ou=new oe({apiKey:t,dangerouslyAllowBrowser:!0}),console.log("🚀 OpenAI instance created")}return Ou},wb=()=>{const t=pb.getNextApiKey();return(!no||no.apiKey!==t)&&(no=new le({apiKey:t,dangerouslyAllowBrowser:!0}),console.log("🔄 GROQ instance created with rotated API key")),no},vb=()=>{const t=yb.getNextApiKey();return(!ro||ro.apiKey!==t)&&(ro=new ae({apiKey:t}),console.log("🧠 Cerebras instance created with rotated API key")),ro},l1={type:"object",properties:{snippet:{type:"string",description:"The JavaScript code snippet to be executed"}},required:["snippet"]};async function Sb(t){const e=gb(),n=Fd(),r=new URL(window.location.href).searchParams.get("model")||"gpt-4o-mini";console.log("🤖 Sending request to OpenAI");const s=await e.chat.completions.create({model:r,messages:[{role:"system",content:n},{role:"user",content:t}],functions:[{name:"generate_snippet",description:"Generate a JavaScript code snippet based on the user's request/",parameters:l1}],function_call:{name:"generate_snippet"}});console.log("✅ Received response from OpenAI");const i=s.choices[0].message.function_call;if(i&&i.name==="generate_snippet")return JSON.parse(i.arguments||"{}").snippet||"";throw new Error("Unexpected response format from OpenAI")}async function kb(t){var a,u;const e=wb(),n=`${Fd()}
+}
+`};let Ou=null,no=null,ro=null;const pb=Ud("groq_api_keys","Please enter your GROQ API keys (comma-separated):"),mb=Ud("openai_api_keys","Please enter your OpenAI API keys (comma-separated):"),yb=Ud("cerebras_api_keys","Please enter your Cerebras API keys (comma-separated):"),gb=()=>{if(!Ou){const t=mb.getNextApiKey();Ou=new oe({apiKey:t,dangerouslyAllowBrowser:!0}),console.log("🚀 OpenAI instance created")}return Ou},wb=()=>{const t=pb.getNextApiKey();return(!no||no.apiKey!==t)&&(no=new le({apiKey:t,dangerouslyAllowBrowser:!0}),console.log("🔄 GROQ instance created with rotated API key")),no},vb=()=>{const t=yb.getNextApiKey();return(!ro||ro.apiKey!==t)&&(ro=new ae({apiKey:t}),console.log("🧠 Cerebras instance created with rotated API key")),ro},l1={type:"object",properties:{snippet:{type:"string",description:"The JavaScript code snippet to be executed"}},required:["snippet"]};async function Sb(t){const e=gb(),n=Fd(),r=new URL(window.location.href).searchParams.get("model")||"gpt-4o-mini";console.log("🤖 Sending request to OpenAI");const s=await e.chat.completions.create({model:r,messages:[{role:"system",content:n},{role:"user",content:t}],functions:[{name:"generate_snippet",description:"Generate a JavaScript code snippet based on the user's request/",parameters:l1}],function_call:{name:"generate_snippet"}});console.log("✅ Received response from OpenAI");const i=s.choices[0].message.function_call;if(i&&i.name==="generate_snippet")return JSON.parse(i.arguments||"{}").snippet||"";throw new Error("Unexpected response format from OpenAI")}async function kb(t){var a,u;const e=wb(),n=`${Fd()}
 
 Please generate a JavaScript code snippet based on the user's request. Your response should be a JSON object that strictly adheres to the following schema:
 
