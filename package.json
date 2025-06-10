@@ -5,7 +5,7 @@
   "type": "module",
   "homepage": "https://choephix-experiments.github.io/ecs-example-with-svg/",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 6060",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
