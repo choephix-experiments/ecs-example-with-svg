@@ -19,7 +19,7 @@ export const worldDataState = proxy<WorldStateProps>({
     height: 1000,
   },
   global: {
-    timeScale: 0,
+    timeScale: 1,
   },
 });
 

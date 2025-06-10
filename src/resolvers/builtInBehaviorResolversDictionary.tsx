@@ -43,7 +43,7 @@ export const builtInBehaviorResolversDictionary = {
     },
   },
   CustomBehavior: {
-    onTick(entity, deltaTimeSeconds, totalTimeSeconds) {
+    onTick(entity, deltaTimeSeconds, totalTimeSeconds) {;
       if (typeof this.onTick === "function") {
         return this.onTick.call(
           this,

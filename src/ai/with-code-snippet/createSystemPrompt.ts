@@ -217,9 +217,9 @@ entities.forEach(entity => {
   entity.addBehavior({
     type: "CustomBehavior",
     name: "Rotate",
-    rotationSpeed: 100,
+    rotationSpeed: 1000,
     onTick: \`
-      entity.rotation += this.rotationSpeed;
+      entity.rotation += this.rotationSpeed * deltaTimeSeconds;
     \`
   });
 });

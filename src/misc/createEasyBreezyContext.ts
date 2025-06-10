@@ -28,6 +28,9 @@ type SearchParam<T> = string | ((entity: T) => boolean);
 
 const input = createInputTracker();
 
+// Module-level cache for EasyBreezyEntity proxies
+const easyBreezyEntityCache: Record<string, EasyBreezyEntity> = {};
+
 export function createEasyBreezyContext() {
   const easyBreezyState = {
     input: input,
@@ -113,10 +116,21 @@ export function createEasyBreezyContext() {
     clearWorld: () => {
       console.log('🧹 Clearing the world');
       worldDataStateActions.clearWorld();
+      // Clear the cache as well
+      Object.keys(easyBreezyEntityCache).forEach(uuid => delete easyBreezyEntityCache[uuid]);
     },
   };
 
   function createEasyBreezyEntity(entity: StageEntityProps): EasyBreezyEntity {
+    // If a proxy for this uuid exists, update its reference and return it
+    const cached = easyBreezyEntityCache[entity.uuid];
+    if (cached) {
+      // Update the underlying reference for getRawProps
+      (cached as any).getRawProps = () => entity;
+      // Also update all direct properties (x, y, etc.)
+      Object.assign(cached, entity);
+      return cached;
+    }
     const easyEntity: EasyBreezyEntity = {
       ...entity,
       getBehavior: (search, createIfNotFound = true) => {
@@ -167,11 +181,10 @@ export function createEasyBreezyContext() {
         return Math.sqrt(dx * dx + dy * dy);
       },
       destroy: () => worldDataStateActions.removeEntity(entity.uuid),
-
       getRawProps: () => entity,
     };
 
-    return new Proxy(easyEntity, {
+    const proxy = new Proxy(easyEntity, {
       set(target, prop: string, value) {
         if (prop in entity) {
           worldDataStateActions.updateEntity(entity.uuid, { [prop]: value });
@@ -179,9 +192,19 @@ export function createEasyBreezyContext() {
         return Reflect.set(target, prop, value);
       },
     });
+    easyBreezyEntityCache[entity.uuid] = proxy;
+    return proxy;
   }
 
   const updateEasyBreezyEntities = () => {
+    // Remove proxies for entities that no longer exist
+    const currentUuids = new Set(worldDataState.entities.map(e => e.uuid));
+    Object.keys(easyBreezyEntityCache).forEach(uuid => {
+      if (!currentUuids.has(uuid)) {
+        delete easyBreezyEntityCache[uuid];
+      }
+    });
+    // Update the entities array with proxies from the cache
     easyBreezyState.entities = worldDataState.entities.map(createEasyBreezyEntity);
   };
 

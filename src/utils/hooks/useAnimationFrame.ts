@@ -13,6 +13,7 @@ export const useAnimationFrame = (callback: (deltaTime: number, totalTime: numbe
     if (previousTimeRef.current !== undefined) {
       const deltaTime = ((time - previousTimeRef.current) / 1000) * global.timeScale;
       const totalTime = ((time - startTimeRef.current) / 1000) * global.timeScale;
+      
       callback(deltaTime, totalTime);
     }
     previousTimeRef.current = time;
