@@ -8,12 +8,16 @@ import { useToggleViaKeypress } from "../../utils/hooks/useToggleViaKeypress";
 
 export const WorldStateInspector: React.FC = () => {
   const [isVisible] = useToggleViaKeypress("`");
+  if (!isVisible) return null;
+
+  return <WorldStateInspectorVisible />;
+};
+
+export const WorldStateInspectorVisible: React.FC = () => {
   const worldData = useSnapshot(worldDataState);
   const worldDataYamlStr = YAML.stringify(worldData);
   const ideData = useSnapshot(ideState);
   const ideStateYamlStr = YAML.stringify(ideData);
-
-  if (!isVisible) return null;
 
   return (
     <div className="absolute top-4 left-4 max-h-[calc(100vh-32px)] overflow-y-auto bg-white rounded-lg border border-gray-300 shadow-md animate-slide-in">

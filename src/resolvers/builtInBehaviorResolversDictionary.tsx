@@ -98,7 +98,7 @@ export const builtInBehaviorResolversDictionary = {
       );
     },
     getBounds(entity) {
-      const fontSize = ~~(this.fontSize || 40) * entity.scale;
+      const fontSize = 40 * entity.scale;
       return {
         x: entity.x - fontSize / 2,
         y: entity.y - fontSize / 2,
