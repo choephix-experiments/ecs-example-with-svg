@@ -60,6 +60,14 @@ export const contextAndPrompting = {
      * @property {number} [fontSize] - Optional. The font size of the emoji
      */
     RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
+
+    /**
+     * Renders a rectangle shape for the entity.
+     * @property {string} type - Always "RenderRectangle"
+     * @property {number} [width] - Optional. The width of the rectangle (default 20)
+     * @property {number} [height] - Optional. The height of the rectangle (default 20)
+     */
+    RenderRectangle: { type: "RenderRectangle", width?: number, height?: number }
   `,
 
   examples: `
@@ -206,6 +214,27 @@ export const contextAndPrompting = {
         { "type": "addEntity", "entityProps": { "x": 440, "y": 490, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderEmoji", "emoji": "🐭" }] } },
         { "type": "addEntity", "entityProps": { "x": -200, "y": -220, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderEmoji", "emoji": "🐹" }] } },
         { "type": "addEntity", "entityProps": { "x": 200, "y": -300, "rotation": 0, "scale": 1, "behaviors": [{ "type": "RenderEmoji", "emoji": "🐰" }] } }
+      ]
+    }
+
+    Example 9:
+    User: "Add a green rectangle to the world."
+    Assistant:
+    {
+      "actions": [
+        {
+          "type": "addEntity",
+          "entityProps": {
+            "x": 100,
+            "y": 0,
+            "rotation": 0,
+            "scale": 1,
+            "behaviors": [
+              { "type": "RenderRectangle", "width": 60, "height": 30 },
+              { "type": "ChangeColor", "color": "green" }
+            ]
+          }
+        }
       ]
     }
   `,

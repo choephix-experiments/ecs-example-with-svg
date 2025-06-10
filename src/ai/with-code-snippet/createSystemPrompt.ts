@@ -50,6 +50,7 @@ Built-in behaviors:
 - SimplifyMesh: { type: "SimplifyMesh", sides: number }
 - CustomBehavior: { type: "CustomBehavior", name: string, onTick?: string, [extrakeys: string]: any }
 - RenderEmoji: { type: "RenderEmoji", emoji: string, fontSize?: number }
+- RenderRectangle: { type: "RenderRectangle", width?: number, height?: number }
 
 You can check if a button is pressed with:
 - input.isKeyPressed(key: string): boolean
@@ -242,6 +243,22 @@ for (let i = 0; i < numEmojis; i++) {
   });
 }
 console.log(\`✅ World cleared and \${numEmojis} random emojis added\`);
+\`\`\`
+
+Example 9: Add a green rectangle to the world
+\`\`\`js
+console.log('🟩 Adding a green rectangle to the world');
+const greenRectangle = addEntity({
+  x: 100,
+  y: 0,
+  rotation: 0,
+  scale: 1,
+  behaviors: [
+    { type: "RenderRectangle", width: 60, height: 30 },
+    { type: "ChangeColor", color: "green" }
+  ]
+});
+console.log('✅ Green rectangle added with UUID:', greenRectangle.uuid);
 \`\`\`
 
 Tips:

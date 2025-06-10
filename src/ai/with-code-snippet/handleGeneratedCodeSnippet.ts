@@ -17,6 +17,8 @@ export async function handleGeneratedCodeSnippet(snippet: string) {
     // Create a new function with the wrapped snippet
     const snippetFunction = new Function(wrappedSnippet);
 
+    console.log("🔍 Wrapped snippet:", wrappedSnippet);
+
     // Execute the snippet function with easyContext as its `this` context
     const result = await snippetFunction.call(easyContext);
 

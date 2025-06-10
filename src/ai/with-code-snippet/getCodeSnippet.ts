@@ -202,6 +202,10 @@ function cleanCodeSnippet(text: string) {
   const matches = text.matchAll(codeBlockRegex);
   const snippetCandidates = [...matches].map(match => match[1]);
 
+  if (snippetCandidates.length === 0) {
+    return text;
+  }
+
   console.log('🔍 Snippet candidates:', snippetCandidates);
 
   let result = '';

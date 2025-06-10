@@ -89,6 +89,13 @@ export const builtInBehaviorResolversDictionary = {
       );
     },
   },
+  RenderRectangle: {
+    render() {
+      const width = this.width ?? 20;
+      const height = this.height ?? 20;
+      return <rect width={width} height={height} />;
+    },
+  },
 } as {
   [key in keyof BuiltInBehaviorsPropsDictionary]: BehaviorResolver<
     BuiltInBehaviorsPropsDictionary[key]
@@ -119,6 +126,7 @@ type BuiltInBehaviorsExtraPropsDictionary = {
     [key: string]: unknown;
   };
   RenderEmoji: { emoji: string; fontSize?: number };
+  RenderRectangle: { width?: number; height?: number };
 };
 
 type BuiltInBehaviorsPropsDictionary = {
