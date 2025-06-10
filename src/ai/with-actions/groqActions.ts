@@ -28,8 +28,6 @@ const getGroqInstance = (): Groq => {
   return groq;
 };
 
-// ... existing actionsResponseSchema ...
-
 export async function getActionsFromGroq(
   prompt: string
 ): Promise<ActionsResponseSchemaType> {
