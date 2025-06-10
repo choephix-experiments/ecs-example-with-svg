@@ -1,26 +1,30 @@
 import { ReadonlyDeep, StageEntityProps } from "../../types/data-types";
-import { findEntityBehaviorByType } from "../../utils/finders";
+import { findEntityBehaviorByType, getEntityBounds } from "../../utils/finders";
 
 export const SelectionBox: React.FC<{
   entity: ReadonlyDeep<StageEntityProps>;
 }> = ({ entity }) => {
-  const circle = findEntityBehaviorByType(entity, "RenderCircle");
-
+  const bounds = getEntityBounds(entity);
   const padding = 8;
-  const boxSize = (circle?.radius ?? 30) * 2 * entity.scale + padding;
+
+  if (!bounds) return null;
+
+  const x = bounds.x - padding / 2;
+  const y = bounds.y - padding / 2;
+  const width = bounds.width + padding;
+  const height = bounds.height + padding;
 
   const dashLength = 6;
   const dashThickness = 2;
-
   const label = entity.name;
 
   return (
     <>
       <rect
-        x={entity.x - boxSize / 2}
-        y={entity.y - boxSize / 2}
-        width={boxSize}
-        height={boxSize}
+        x={x}
+        y={y}
+        width={width}
+        height={height}
         fill="none"
         stroke="DodgerBlue"
         strokeWidth={dashThickness}
@@ -37,8 +41,8 @@ export const SelectionBox: React.FC<{
       </rect>
 
       <text
-        x={entity.x}
-        y={entity.y + boxSize / 2 + 20}
+        x={x + width / 2}
+        y={y + height + 20}
         textAnchor="middle"
         fill="DodgerBlue"
         fontSize="17"
@@ -51,8 +55,8 @@ export const SelectionBox: React.FC<{
       </text>
 
       <text
-        x={entity.x}
-        y={entity.y + boxSize / 2 + 20}
+        x={x + width / 2}
+        y={y + height + 20}
         textAnchor="middle"
         fill="DodgerBlue"
         fontSize="17"
@@ -65,8 +69,8 @@ export const SelectionBox: React.FC<{
       </text>
 
       <text
-        x={entity.x}
-        y={entity.y + boxSize / 2 + 20}
+        x={x + width / 2}
+        y={y + height + 20}
         textAnchor="middle"
         fill="DodgerBlue"
         fontSize="17"

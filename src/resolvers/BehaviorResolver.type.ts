@@ -17,4 +17,8 @@ export type BehaviorResolver<T extends BehaviorProps = BehaviorProps> = {
     entity: ReadonlyDeep<StageEntityProps>,
     content: React.ReactNode | null
   ) => React.ReactNode | null;
+  getBounds?: (
+    this: T,
+    entity: ReadonlyDeep<StageEntityProps>
+  ) => { x: number; y: number; width: number; height: number } | undefined;
 };

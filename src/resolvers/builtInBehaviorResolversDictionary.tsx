@@ -11,6 +11,15 @@ export const builtInBehaviorResolversDictionary = {
     render() {
       return <circle r={this.radius ?? 10} />;
     },
+    getBounds(entity) {
+      const radius = (this.radius ?? 10) * entity.scale;
+      return {
+        x: entity.x - radius,
+        y: entity.y - radius,
+        width: radius * 2,
+        height: radius * 2,
+      };
+    },
   },
   ChangeColor: {
     render(_, content) {
@@ -88,12 +97,31 @@ export const builtInBehaviorResolversDictionary = {
         </>
       );
     },
+    getBounds(entity) {
+      const fontSize = ~~(this.fontSize || 40) * entity.scale;
+      return {
+        x: entity.x - fontSize / 2,
+        y: entity.y - fontSize / 2,
+        width: fontSize,
+        height: fontSize,
+      };
+    },
   },
   RenderRectangle: {
     render() {
       const width = this.width ?? 20;
       const height = this.height ?? 20;
       return <rect width={width} height={height} />;
+    },
+    getBounds(entity) {
+      const width = (this.width ?? 20) * entity.scale;
+      const height = (this.height ?? 20) * entity.scale;
+      return {
+        x: entity.x - width / 2,
+        y: entity.y - height / 2,
+        width,
+        height,
+      };
     },
   },
 } as {

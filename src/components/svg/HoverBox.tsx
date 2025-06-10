@@ -1,28 +1,33 @@
 import { ReadonlyDeep, StageEntityProps } from "../../types/data-types";
-import { findEntityBehaviorByType } from "../../utils/finders";
+import { getEntityBounds } from "../../utils/finders";
 
 export const HoverBox: React.FC<{
   entity: ReadonlyDeep<StageEntityProps>;
 }> = ({ entity }) => {
-  const circle = findEntityBehaviorByType(entity, "RenderCircle");
-
+  const bounds = getEntityBounds(entity);
   const padding = 8;
-  const boxSize = (circle?.radius ?? 30) * 2 * entity.scale + padding;
+
+  if (!bounds) return null;
+
+  const x = bounds.x - padding / 2;
+  const y = bounds.y - padding / 2;
+  const width = bounds.width + padding;
+  const height = bounds.height + padding;
 
   const dashLength = 6;
   const dashThickness = 2;
 
   return (
     <rect
-      x={entity.x - boxSize / 2}
-      y={entity.y - boxSize / 2}
-      width={boxSize}
-      height={boxSize}
+      x={x}
+      y={y}
+      width={width}
+      height={height}
       fill="none"
       stroke="DodgerBlue"
       strokeWidth={dashThickness}
       strokeDasharray={`${dashLength},${dashLength}`}
-      opacity="0.3"
+      opacity="0.6"
     >
       <animate
         attributeName="stroke-dashoffset"
