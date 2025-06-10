@@ -73,6 +73,7 @@ Example 1: Add a red circle to the world
 \`\`\`js
 console.log('➕ Adding a red circle to the world');
 const redCircle = addEntity({
+  name: "Red Circle",
   x: 0,
   y: 0,
   rotation: 0,
@@ -132,6 +133,7 @@ Example 4: Create a bouncing ball
 \`\`\`js
 console.log('🏀 Creating a bouncing ball');
 const ball = addEntity({
+  name: "Bouncing Ball",
   x: 0,
   y: 0,
   rotation: 0,
@@ -157,6 +159,7 @@ Example 5: Add a shaking emoji
 \`\`\`js
 console.log('😵 Adding a shaking emoji');
 const shakyEmoji = addEntity({
+  name: "Shaky Guy",
   x: 0,
   y: 0,
   rotation: 0,
@@ -181,6 +184,7 @@ Example 6: Create a color-changing polygon
 \`\`\`js
 console.log('🌈 Creating a color-changing polygon');
 const polygon = addEntity({
+  name: "Color-Changing Polygon",
   x: 0,
   y: 0,
   rotation: 0,
@@ -213,7 +217,7 @@ entities.forEach(entity => {
   entity.addBehavior({
     type: "CustomBehavior",
     name: "Rotate",
-    rotationSpeed: 0.01,
+    rotationSpeed: 100,
     onTick: \`
       entity.rotation += this.rotationSpeed;
     \`
@@ -233,6 +237,7 @@ const numEmojis = 5;
 for (let i = 0; i < numEmojis; i++) {
   const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
   addEntity({
+    name: \`Random Emoji \${i + 1}\`,
     x: Math.random() * 800 - 400,
     y: Math.random() * 600 - 300,
     rotation: 0,
@@ -249,6 +254,7 @@ Example 9: Add a green rectangle to the world
 \`\`\`js
 console.log('🟩 Adding a green rectangle to the world');
 const greenRectangle = addEntity({
+  name: "Green Rectangle",
   x: 100,
   y: 0,
   rotation: 0,

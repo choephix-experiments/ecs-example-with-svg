@@ -28,7 +28,7 @@ const BehaviorSection: React.FC<{ behavior: ReadonlyDeep<StageEntityProps['behav
 );
 
 export function EntityInspector({ entity }: EntityInspectorProps) {
-  console.log('🔍 Rendering EntityInspector', { entity });
+  // console.log('🔍 Rendering EntityInspector', { entity });
 
   return (
     <div className="bg-white p-4 rounded-lg border border-gray-300 shadow-md mb-2 max-w-xs">
